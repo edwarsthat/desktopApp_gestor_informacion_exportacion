@@ -64,16 +64,16 @@ const mostrarKilose = (item) => {
 
 
 }
-const ICAalterno = (id, proveedores) => {
-   console.log(id)
-   const prov = proveedores.find(pro => pro._id === id)
-   console.log(prov)
+// const ICAalterno = (id, proveedores) => {
+//    console.log(id)
+//    const prov = proveedores.find(pro => pro._id === id)
+//    console.log(prov)
 
-   if (!prov) return "Predio no encontrado"
-   return prov.SISPAP ? prov.ICA.code : 'Sin SISPAP';
+//    if (!prov) return "Predio no encontrado"
+//    return prov.SISPAP ? prov.ICA.code : 'Sin SISPAP';
 
 
-}
+// }
 function aplicar_ggn_code(item, contenendor) {
    if (
       item.lote?.GGN &&
@@ -361,7 +361,7 @@ const setCellPropertiesDatalogger = (cell, value, font = 14, bold = false) => {
 };
 async function crear_lista_empaque(data, pathDocument) {
    const cont = data.contenedor
-   const proveedores = data.proveedores
+   // const proveedores = data.proveedores
    const fuente = 16
    const alto_celda = 50
 
@@ -572,7 +572,7 @@ async function crear_lista_empaque(data, pathDocument) {
                item.calidad,
                item.calibre,
                item.cajas,
-               ICAalterno(item.lote.predioID, proveedores),
+               item.lote.SISPAP ? item.lote.ICA.code : 'Sin SISPAP',
                aplicar_ggn_code(item, cont) !== "" ? aplicar_ggn_code(item, cont) : "N/A",
                aplicar_ggn_fecha(item, cont) !== "" ?
                   formatearFecha(aplicar_ggn_fecha(item, cont)) : "N/A"
@@ -589,7 +589,7 @@ async function crear_lista_empaque(data, pathDocument) {
                item.calidad,
                item.calibre,
                item.cajas,
-               ICAalterno(item.lote.predioID, proveedores),
+               item.lote.SISPAP ? item.lote.ICA.code : 'Sin SISPAP',
                aplicar_ggn_code(item, cont) !== "" ? aplicar_ggn_code(item, cont) : "N/A",
                aplicar_ggn_fecha(item, cont) !== "" ?
                   formatearFecha(aplicar_ggn_fecha(item, cont)) : "N/A"

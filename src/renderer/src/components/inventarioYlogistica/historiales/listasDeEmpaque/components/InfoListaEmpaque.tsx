@@ -42,6 +42,7 @@ export default function InfoListaEmpaque(props: propsType): JSX.Element {
                         proveedores: props.proveedores
                     }
                 }
+                console.log(data)
                 window.api.crearDocumento(data)
 
         } catch (err) {
