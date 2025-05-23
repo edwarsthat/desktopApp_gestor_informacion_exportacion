@@ -1,0 +1,234 @@
+/* Contenedor principal */
+.filtroContainer {
+    margin: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: var(--color-fondo);
+    border-radius: 12px;
+    box-shadow: 0 4px 8px var(--color-shadow);
+}
+
+.filtroContainer div {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 24px;
+    align-items: center;
+}
+
+.filtroContainer h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-texto);
+    margin-bottom: 8px;
+}
+
+.filtroContainer hr {
+    border: none;
+    border-top: 1px solid var(--border-Color);
+    margin: 10px 0;
+}
+
+/* Acciones filtro */
+.div-filter-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Estilos de selects e inputs */
+.filtroContainer textarea {
+    color: var(--color-texto);
+    background-color: var(--color-fondo);
+    width: 280px;
+    height: 3.8rem;
+    border: 1px solid var(--border-Color);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.filtroContainer select {
+    color: var(--color-texto);
+    background-color: var(--color-fondo);
+    width: 280px;
+    height: 2.5rem;
+    border: 1px solid var(--border-Color);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    cursor: pointer;
+    outline: none;
+}
+
+.filtroContainer select:hover {
+    border-color: var(--color-primario);
+}
+
+.filtroContainer select:focus {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 2px rgba(var(--color-primario-rgb), 0.2);
+}
+
+.filtroContainer select option {
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    padding: 8px;
+}
+
+.filtroContainer input {
+    color: var(--color-texto);
+    background-color: var(--color-fondo);
+    width: 180px;
+    height: 2.8rem;
+    border: 1px solid var(--border-Color);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.filtroContainer select:focus,
+.filtroContainer input:focus {
+    outline: none;
+    border-color: var(--color-Celifrut-brigth);
+    box-shadow: 0 0 0 2px rgba(126, 186, 39, 0.3);
+}
+
+/* Botones */
+.filtroContainer button {
+    background-color: var(--color-Celifrut);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 2px 5px var(--color-shadow);
+}
+
+.filtroContainer button:hover {
+    background-color: var(--color-Celifrut-dark);
+    transform: translateY(-2px);
+}
+
+.filtroContainer button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px var(--color-shadow);
+}
+
+/* Input específico para imágenes o archivos */
+.filtroContainer .input-imagenes {
+    width: auto;
+    height: auto;
+    padding: 6px;
+}
+
+/* Mejoras visuales para modo oscuro */
+.dark-theme .filtroContainer select,
+.dark-theme .filtroContainer input {
+    background-color: var(--color-fondo-hover);
+}
+
+/* Estilos para Checkbox */
+.filtroContainer .checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adjust gap as needed */
+    cursor: pointer;
+    /* Optional: Add some margin if needed, e.g., margin-bottom: 8px; */
+}
+
+.filtroContainer .checkbox-container input[type="checkbox"] {
+    /* Hide the default checkbox */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: absolute;
+    left: -9999px; /* Move off-screen */
+}
+
+.filtroContainer .checkbox-container .checkmark {
+    display: inline-block;
+    width: 20px; /* Adjust size to match your design */
+    height: 20px; /* Adjust size */
+    border: 1px solid var(--border-Color);
+    border-radius: 4px; /* Slightly less rounded than inputs, or adjust to match */
+    background-color: var(--color-fondo);
+    position: relative;
+    transition: all 0.2s ease-in-out;
+    flex-shrink: 0; /* Prevent shrinking in flex layout */
+}
+
+/* Style for the checkmark icon */
+.filtroContainer .checkbox-container .checkmark::after {
+    content: '';
+    position: absolute;
+    top: 4px; /* Adjust to center the checkmark */
+    left: 6px; /* Adjust to center the checkmark */
+    width: 6px; /* Adjust checkmark size */
+    height: 10px; /* Adjust checkmark size */
+    border: solid white; /* Checkmark color */
+    border-width: 0 2px 2px 0; /* Create the checkmark shape */
+    transform: rotate(45deg);
+    opacity: 0; /* Hide the checkmark by default */
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Style when the checkbox is checked */
+.filtroContainer .checkbox-container input[type="checkbox"]:checked + .checkmark {
+    background-color: var(--color-Celifrut); /* Use a primary color for checked state */
+    border-color: var(--color-Celifrut);
+}
+
+.filtroContainer .checkbox-container input[type="checkbox"]:checked + .checkmark::after {
+    opacity: 1; /* Show the checkmark when checked */
+}
+
+/* Hover state */
+.filtroContainer .checkbox-container:hover .checkmark {
+    border-color: var(--color-Celifrut-brigth); /* Highlight border on hover */
+}
+
+/* Focus state (for accessibility) */
+.filtroContainer .checkbox-container input[type="checkbox"]:focus + .checkmark {
+    outline: none;
+    border-color: var(--color-Celifrut-brigth);
+    box-shadow: 0 0 0 2px rgba(126, 186, 39, 0.3); /* Match input focus style */
+}
+
+/* Label style */
+.filtroContainer .checkbox-container label {
+    color: var(--color-texto);
+    font-size: 14px; /* Match other form elements */
+    cursor: pointer;
+}
+
+/* Dark theme adjustments */
+.dark-theme .filtroContainer .checkbox-container .checkmark {
+    background-color: var(--color-fondo-hover); /* Match dark theme input background */
+    border-color: var(--border-Color);
+}
+
+.dark-theme .filtroContainer .checkbox-container input[type="checkbox"]:checked + .checkmark {
+    background-color: var(--color-Celifrut); /* Keep primary color for checked in dark theme */
+    border-color: var(--color-Celifrut);
+}
+
+.dark-theme .filtroContainer .checkbox-container:hover .checkmark {
+     border-color: var(--color-Celifrut-brigth);
+}
+
+.dark-theme .filtroContainer .checkbox-container input[type="checkbox"]:focus + .checkmark {
+     border-color: var(--color-Celifrut-brigth);
+     box-shadow: 0 0 0 2px rgba(126, 186, 39, 0.3);
+}
