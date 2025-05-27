@@ -39,7 +39,8 @@
     display: flex;
     justify-content: flex-start;
     flex-direction: row;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: .5rem;
     font-size: 14px;
     width: 100%;
     

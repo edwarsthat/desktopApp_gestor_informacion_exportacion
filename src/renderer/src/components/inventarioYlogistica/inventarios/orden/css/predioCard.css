@@ -1,25 +1,98 @@
-.orden-vaciado-tarjeta-container{
-    background-color: rgb(184, 210, 198);
-    -webkit-box-shadow: 0px 9px 10px 1px rgba(186, 186, 186, 1);
-    -moz-box-shadow: 0px 9px 10px 1px rgba(186, 186, 186, 1);
-    box-shadow: 0px 9px 10px 1px var(--color-shadow);
-    width: 100%;
-    padding: 15px 8px;
-    border-radius: 8px;
+.predio-card-grid {
+    display: grid;
+    grid-template-areas:
+        "main extra stats action";
+    grid-template-columns: 1fr 1fr 1fr 0.25fr;
+    background: #f9f9fa;
+    box-shadow: 0 2px 10px rgba(30,30,30,0.10);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 10px 0;
+    align-items: center;
+    gap: 0 32px;
+    min-height: 110px;
+    transition: box-shadow 0.2s;
     color: black;
-    display: flex;
-    flex-direction: row;
 }
 
-.orden-vaciado-tarjeta-predio-div{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+.predio-card-grid:hover {
+    box-shadow: 0 4px 24px rgba(20, 140, 80, 0.13);
 }
 
-.orden-vaciado-tarjeta-nombre-predio-div{
+.grid-main-info {
+    grid-area: main;
     display: flex;
-    flex-direction: row;
-    width: 100%;
-    gap: 15px
+    flex-direction: column;
+    gap: 3px 16px;
+    font-weight: 500;
+    font-size: 1rem;
+    color: #22855b;
+}
+
+.grid-main-info .enf {
+    font-size: .9rem;
+    color: #22855b;
+}
+
+
+.grid-extra-info {
+    grid-area: extra;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 0.98rem;
+}
+
+.tag-desverdizado {
+    background: #ffe6aa;
+    color: #a88300;
+    font-size: 0.87rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.grid-stats {
+    grid-area: stats;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 1rem;
+}
+
+.exportacion b {
+    color: #2e7d32;
+}
+
+.descarte b {
+    color: #c62828;
+}
+
+.grid-action {
+    grid-area: action;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.boton-accion {
+    background: #e8ffe8;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(40,100,40,0.07);
+    padding: 10px;
+    cursor: pointer;
+    transition: 
+        background 0.15s,
+        color 0.13s,
+        transform 0.12s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.13s;
+    color: var(--color-Celifrut);
+}
+.boton-accion:hover {
+    color: var(--color-Celifrut-dark);
+}
+.boton-accion:active {
+    transform: scale(0.93);
+    box-shadow: 0 1px 2px rgba(40,100,40,0.11);
 }

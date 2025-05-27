@@ -3,10 +3,11 @@ import { lotesType } from "@renderer/types/lotesType"
 import "../css/listaOrdenVaceo.css"
 import OrdenVaciadoCard from "../utils/OrdenVaciadoCard"
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import ConfirmacionModal from "@renderer/messages/ConfirmacionModal"
 import useAppContext from "@renderer/hooks/useAppContext"
 import { requestVaciar } from "../functions/request"
+import { useConfirm } from "@renderer/hooks/useModalConfimartion"
 
 type propsType = {
   lotes: lotesType[]
@@ -16,41 +17,33 @@ type propsType = {
 }
 
 export default function ListaOrdenVaceo(props: propsType): JSX.Element {
-  const {messageModal} = useAppContext();
-  const [activarDropp, setActivarDropp] = useState<string>('');
-  const [confirm, setConfirm] = useState<boolean>(false)
-  const [showConfirmation, setShowConfirmation] = useState<boolean>(false)
-  const [message, setMessage] = useState<string>('')
+  const { messageModal, setLoading, loading } = useAppContext();
+  const [activarDropp,] = useState<string>('orden-vaceo-droppable');
+  const {
+    setShowConfirmation, showConfirmation,
+    message, setConfirm, requestConfirm
+  } = useConfirm();
 
-  const handleVaciar = async (): Promise<void> => {
-    setShowConfirmation(true)
-    setMessage("¿Desea vaciar el predio?")
-  };
 
-  useEffect(() => {
-    console.log(props.lotes)
-    if(confirm){
-      vaciar();
-      setConfirm(false)
-    }
-  },[confirm]);
-
-  const vaciar = async (): Promise<void> =>{
-    try{
-      if(props.lotesOrdenVaceo.length === 0){
+  const vaciar = async (): Promise<void> => {
+    try {
+      setLoading(true)
+      if (props.lotesOrdenVaceo.length === 0) {
         throw new Error("Error: no hay lista de orden de vaceo");
       }
       const req = requestVaciar(props.lotesOrdenVaceo[0])
       const response = await window.api.server2(req);
-      if(response.status !== 200){
+      if (response.status !== 200) {
         throw new Error(response.message);
       }
       props.handleRemoveOrdenVaceo(props.lotesOrdenVaceo[0]._id)
       messageModal("success", "Lote vaciado con exito!")
-    }catch(e){
-      if(e instanceof Error){
+    } catch (e) {
+      if (e instanceof Error) {
         messageModal("error", e.message);
       }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -95,23 +88,12 @@ export default function ListaOrdenVaceo(props: propsType): JSX.Element {
         </Droppable>
       </DragDropContext>
       <div className="lista-orden-vaceo-div-button">
-        <button className="defaulButtonAgree" onClick={handleVaciar}>Vaciar</button>
-        {  (activarDropp === "" ?
-          <button
-            onClick={(): void => setActivarDropp(new Date().toISOString())}
-            className="defaulButtonAgree"
-          >
-            Activar
-          </button>
-          :
-          <button
-            onClick={(): void => setActivarDropp("")}
-            className="defaulButtonError"
-          >
-            Desactivar
-          </button>)
-        }
-
+        <button
+          disabled={loading}
+          className="defaulButtonAgree"
+          onClick={():void => requestConfirm(vaciar, "¿Seguro desea vacear el lote?")}>
+          Vaciar
+        </button>
       </div>
       {showConfirmation && <ConfirmacionModal message={message} setConfirmation={setConfirm} setShowConfirmationModal={setShowConfirmation} />}
     </div>

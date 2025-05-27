@@ -2,41 +2,43 @@
 import { lotesType } from "@renderer/types/lotesType"
 import "../css/prediosEnInventario.css"
 import PredioCard from "../utils/PredioCard"
-import BuscadorListaPredios from "../utils/BuscadorListaPredios"
-import { useEffect, useState } from "react"
+import { filtroPrediosInventarioType } from "../hooks/useDataOrdenVaceo"
 
 type propsType = {
+    filtroPrediosInventario: filtroPrediosInventarioType
+    setFiltroPrediosInventario: (e: filtroPrediosInventarioType) => void
     lotes: lotesType[]
-    lotesOriginal: lotesType[]
     handleAddOrdenVaceo: (_id) => void
-    setLotes: (e) => void
 }
 
-export default function PrediosEnInventario(props:propsType):JSX.Element {
-    const [filtro, setFiltro] = useState<string>('');
-    const [filtroSelect, setFiltroSelect] = useState<string>('');
+export default function PrediosEnInventario(props: propsType): JSX.Element {
 
-    useEffect(() => {
-        let data = props.lotesOriginal.filter(item => item.predio?.PREDIO?.toLocaleLowerCase().startsWith(filtro));
-        if(filtroSelect !== "")
-            data = data.filter(item => item.tipoFruta === filtroSelect);
-        props.setLotes(data);
-    }, [filtro, filtroSelect, props.lotes, props.lotesOriginal])
+const handleFiltro = (e): void => {
+    props.setFiltroPrediosInventario({
+        ...props.filtroPrediosInventario,
+        filtro: e.target.value,
+    });
+}
 
-    const handleFiltro = (e): void => {
-        const data = e.target.value
-        setFiltro(String(data).toLowerCase())
-    }
-    
-  return (
+return (
     <div className="predios-en-inventario-container">
         <h3>Lista de Predios</h3>
-        <BuscadorListaPredios handleFiltro={handleFiltro} setFiltroSelect={setFiltroSelect}/>
-        {props.lotes.map(lote => (
-            <div key={lote._id} className="predios-en-inventario-card-div">
-                <PredioCard lote={lote} handleAddOrdenVaceo={props.handleAddOrdenVaceo}/>
-            </div>
-        ))}
+        <div className="filtros-predios-inventario-container">
+            <input type="text" className="defaultSelect" onChange={handleFiltro} />
+            <select className="defaultSelect" onChange={(e): void => props.setFiltroPrediosInventario({...props.filtroPrediosInventario, select: e.target.value })}>
+                <option value="">Tipo de fruta</option>
+                <option value="Naranja">Naranja</option>
+                <option value="Limon">Limon</option>
+            </select>
+            <hr />
+        </div>
+        <div>
+            {props.lotes.map(lote => (
+                <div key={lote._id} className="predios-en-inventario-card-div">
+                    <PredioCard lote={lote} handleAddOrdenVaceo={props.handleAddOrdenVaceo} />
+                </div>
+            ))}
+        </div>
     </div>
-  )
+)
 }

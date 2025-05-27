@@ -10,6 +10,8 @@ type outType = {
     obtenerPredios: () => Promise<void>
     tiposFruta: string[]
     obtenerTipoFruta: () => Promise<void>
+    dataDefectos: object
+    obtenerDefectos: () => Promise<void>
 }
 
 type propsType = {
@@ -20,6 +22,7 @@ export default function useGetSysData({ proveedoresProp = 'all' }:propsType): ou
     const { messageModal } = useAppContext();
     const [proveedores, setProveedores] = useState<proveedoresType[]>([])
     const [tiposFruta, setTiposFruta] = useState<string[]>([])
+    const [dataDefectos, setDataDefectos] = useState<object>({})
 
     const obtenerPredios = async (): Promise<void> => {
         try {
@@ -35,7 +38,6 @@ export default function useGetSysData({ proveedoresProp = 'all' }:propsType): ou
             }
         }
     }
-
     const obtenerTipoFruta = async (): Promise<void> => {
         try {
             const response = await window.api.obtenerFruta()
@@ -45,11 +47,30 @@ export default function useGetSysData({ proveedoresProp = 'all' }:propsType): ou
                 messageModal("error", `Error obteniendo la fruta ${err.message} `)
         }
     }
+    const obtenerDefectos = async ():Promise<void> => {
+        try{
+            const request = {
+                action:"get_constantes_sistema_clasificacion_descarte"
+            }
+            const response = await window.api.server2(request)
+            if(response.status !== 200){
+                throw new Error(`Code ${response.status}: ${response.message}`)
+            }
+            console.log(response.data)
+            setDataDefectos(response.data)
+        } catch (err){
+            if(err instanceof Error){
+                messageModal("error", err.message)
+            }
+        }
+    }
 
     return {
         proveedores,
         obtenerPredios,
         tiposFruta,
-        obtenerTipoFruta
+        obtenerTipoFruta,
+        dataDefectos,
+        obtenerDefectos
     }
 }

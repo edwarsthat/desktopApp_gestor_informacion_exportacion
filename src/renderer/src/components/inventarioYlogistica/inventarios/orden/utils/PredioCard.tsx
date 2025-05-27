@@ -28,43 +28,35 @@ export default function PredioCard(props: propsType): JSX.Element {
         }
     }, [props.lote])
     return (
-        <div className="orden-vaciado-tarjeta-container">
-            <div className="div1">
-                <div className="orden-vaciado-tarjeta-nombre-predio-div">
-                    <p>{props.lote.enf}</p>
-                    <p>{props.lote.predio?.PREDIO}</p>
-                    <p>{formatearFecha(props.lote.fecha_ingreso_inventario)}</p>
-                    <p>{props.lote.tipoFruta}</p>
-                    {Object.prototype.hasOwnProperty.call(props.lote, "desverdizado") ?
-                        <p> Canastillas: {Number(props.lote?.inventario)}</p> :
-                        <p>Canastillas: {Number(props.lote?.inventario)}</p>
-                    }
-
-                </div>
-                <div className="orden-vaciado-tarjeta-nombre-predio-div">
-                    {Object.prototype.hasOwnProperty.call(props.lote, "desverdizado") ?
-                        <p>Canastillas:
-                            {(Number(props.lote?.inventario) *
-                                Number(props.lote.promedio)).toLocaleString('es-CO')} Kg</p> :
-                        <p> Canastillas:
-                            {(Number(props.lote?.inventario) *
-                                Number(props.lote.promedio)).toLocaleString('es-CO')} Kg</p>
-                    }
-                    {Object.prototype.hasOwnProperty.call(props.lote, "desverdizado") &&
-                        <p>Desverdizado</p>
-                    }
-                    <p>Exportacion: {exportacion?.toFixed(2)} %</p>
-                    <p>Descarte: {descarte?.toFixed(2)} %</p>
-                    {/* <p>{props.lote._id}</p> */}
-                </div>
+        <div className="predio-card-grid">
+            <div className="grid-main-info">
+                <span className="enf">{props.lote.enf}</span>
+                <span className="predio">{props.lote.predio?.PREDIO}</span>
+                <span>{props.lote.tipoFruta}</span>
             </div>
-            <div className="div2">
+            <div className="grid-extra-info">
+                <span>{formatearFecha(props.lote.fecha_ingreso_inventario)}</span>
 
+                <span>Can: {Number(props.lote?.inventario)}</span>
+                <span>{(Number(props.lote?.inventario) * Number(props.lote.promedio)).toFixed(0)} Kg</span>
+                {Object.prototype.hasOwnProperty.call(props.lote, "desverdizado") && (
+                    <span className="tag-desverdizado">Desverdizado</span>
+                )}
+            </div>
+            <div className="grid-stats">
+                <span className="exportacion">
+                    Exp: <b>{exportacion?.toFixed(2)}%</b>
+                </span>
+                <span className="descarte">
+                    Des: <b>{descarte?.toFixed(2)}%</b>
+                </span>
+                <span>GGN: {props.lote.GGN && props.lote.predio.GGN.code}</span>
 
-                <button onClick={(): void => props.handleAddOrdenVaceo(props.lote._id)}>
-                    <BsArrowRightSquareFill />
+            </div>
+            <div className="grid-action">
+                <button className="boton-accion" onClick={():void => props.handleAddOrdenVaceo(props.lote._id)}>
+                    <BsArrowRightSquareFill size={28} />
                 </button>
-
             </div>
         </div>
     )

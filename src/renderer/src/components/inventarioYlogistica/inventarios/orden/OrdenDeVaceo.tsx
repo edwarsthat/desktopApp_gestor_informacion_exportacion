@@ -1,16 +1,64 @@
 /* eslint-disable prettier/prettier */
 
-import OrdenVaceo from "./components/OrdenVaceo";
+import useAppContext from "@renderer/hooks/useAppContext";
+import ListaOrdenVaceo from "./components/ListaOrdenVaceo";
+import PrediosEnInventario from "./components/PrediosEnInventario";
 import "./css/predioCard.css"
+import "./css/ordenVaceo.css"
+import { useEffect, useState } from "react";
+import useDataOrdenVaceo, { filtroPrediosInventarioType } from "./hooks/useDataOrdenVaceo";
 
 
 export default function OrdenDeVaceo(): JSX.Element {
+    const { eventoServidor, triggerServer } = useAppContext();
+    const [filtroPrediosInventario, setFiltroPrediosInventario] = useState<filtroPrediosInventarioType>({ filtro: '', select: '' });
+    const {
+        obtenerData,
+        handleAddOrdenVaceo,
+        handleRemoveOrdenVaceo,
+        handleMoveOrdenVaceo,
+        lotes,
+        lotesOrdenVaceo
+    } = useDataOrdenVaceo({ filtroPrediosInventario });
 
+    useEffect(() => {
+        obtenerData()
+    }, [])
+
+    useEffect(() => {
+        if (
+            eventoServidor === 'add_lote' ||
+            eventoServidor === 'vaciar_lote' ||
+            eventoServidor === 'directo_nacional' ||
+            eventoServidor === 'modificar_orden_vaceo' ||
+            eventoServidor === 'modificar_historial_fruta_procesada' ||
+            eventoServidor === 'inspeccion_fruta' ||
+            eventoServidor === 'derogar_lote' ||
+            eventoServidor === 'enviar_desverdizado' ||
+            eventoServidor === 'finalizar_desverdizado'
+        ) {
+            obtenerData()
+        }
+    }, [triggerServer])
     return (
         <div className="componentContainer">
             <div className="navBar"></div>
             <h2>Orden de vaceo</h2>
-            <OrdenVaceo />
+            <hr />
+            <div className="componentContainer">
+                <div className='orden-vaceo-div'>
+                    <PrediosEnInventario
+                        setFiltroPrediosInventario={setFiltroPrediosInventario}
+                        filtroPrediosInventario={filtroPrediosInventario}
+                        lotes={lotes}
+                        handleAddOrdenVaceo={handleAddOrdenVaceo} />
+                    <ListaOrdenVaceo
+                        lotes={lotes}
+                        handleRemoveOrdenVaceo={handleRemoveOrdenVaceo}
+                        lotesOrdenVaceo={lotesOrdenVaceo}
+                        handleMoveOrdenVaceo={handleMoveOrdenVaceo} />
+                </div>
+            </div>
         </div>
     )
 }
