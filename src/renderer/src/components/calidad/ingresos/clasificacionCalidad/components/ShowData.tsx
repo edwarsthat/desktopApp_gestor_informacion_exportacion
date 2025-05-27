@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { elementoDefectoType, elementoPorcentajeType } from "../types/clasificacionTypes"
-import { dataDefectos } from "../functions/data"
+
 
 type propsType = {
     dataArray: elementoDefectoType[]
     eliminarItem: (index:number) => void
+    dataDefectos: object
 }
 export default function ShowData(props: propsType): JSX.Element {
     const [data, setData] = useState<elementoPorcentajeType[]>([])
@@ -29,7 +30,7 @@ export default function ShowData(props: propsType): JSX.Element {
             {data.map((item, index) => (
                 <div key={index} className="container-clasificacion-calidad-show-info-item">
                     <div className="container-clasificacion-calidad-show-info-item-defecto">
-                        <p>{dataDefectos[item.defecto]}</p>
+                        <p>{props.dataDefectos[item.defecto]}</p>
                         <p>{item.porcentage.toFixed(2)}%</p>
                     </div>
                     <button onClick={():void => props.eliminarItem(index)}>
