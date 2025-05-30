@@ -1,67 +1,37 @@
 /* eslint-disable prettier/prettier */
 
-import { descarteType } from "../types/types"
+import { descarteEncerado, descarteLavadoType, formType, inventarioDescarteType } from "../types/types"
 
-
-
-export const sumatoriaDescartes = (data: descarteType[]): number => {
-  if (!data) return 0
-
-  const sumatoria = data.reduce(
-    (acu1, lote) =>
-    (acu1 +=
-      (Object.values(lote.descarteEncerado).reduce((acuEncerado, item) => (acuEncerado += Number(item)), 0))
-      +
-      (Object.values(lote.descarteLavado).reduce((acuLavado, item) => (acuLavado += Number(item)), 0))),
-    0
-  )
-
-  return sumatoria
-}
-
-export const sumatoriaTipoDescarte = (data: descarteType[], tipoDescarte: string): number => {
+export const sumatoriaTipoDescarte = (data: descarteEncerado | descarteLavadoType, tipoDescarte: string): number => {
   if (!data) return 0
   if (tipoDescarte !== 'descarteLavado' && tipoDescarte !== 'descarteEncerado') return 0
 
-  const sumatoria = data.reduce((acu, lote) => {
-    if (lote[tipoDescarte]) {
-      return acu += Object.values(lote[tipoDescarte]).reduce((acu2, value) => {
-        if (typeof value === 'number') {
-          return acu2 += value
-        } else {
-          return acu2 += 0
-        }
-      }, 0)
-    } else {
-      return acu += 0
-    }
-  }, 0)
+  const sumatoria = Object.values(data).reduce((acu, item) => acu += Number(item), 0)
 
   return sumatoria
 }
 
-export const sumatoriaDescarteEspecifico = (
-  data: descarteType[],
-  descarte: string,
-  tipoDescarte: string
-): number => {
+export const sumatoriaDescartesTotal = (data: inventarioDescarteType): number => {
+  let totalOut = 0
   if (!data) return 0
-
-  const sumatoria = data.reduce((acu, lote) => {
-    if (lote[descarte] && lote[descarte][tipoDescarte]) {
-      return acu += lote[descarte][tipoDescarte]
-    } else {
-      return acu += 0
-    }
-  }, 0)
-
-  return sumatoria
+  Object.keys(data).forEach(total => {
+    if (!data[total]) return
+    Object.keys(data[total]).forEach(tipoDescarte => {
+      if (!data[total][tipoDescarte]) return
+      Object.values(data[total][tipoDescarte]).forEach(item => {
+        totalOut += Number(item)
+      })
+    })
+  })
+  return totalOut
 }
 
-export const sumatoriaDescarteSeleccionado = (enfObj: object): number => {
-  if (Object.keys(enfObj).length === 0) return 0
-
-  const sumatoria = Object.keys(enfObj).reduce((acu, item) => (acu += enfObj[item]), 0)
-  return sumatoria
+export const sumatoriaTotalForm = (data: formType): number => {
+  if (!data) return 0
+  const total = Object.entries(data).reduce((acumulador, [key, value]) => {
+    if(key === "tipoFruta") return 0
+    else return acumulador += Number(value ?? 0) ?? 0
+  }, 0);
+  return total
 }
 

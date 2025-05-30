@@ -1,37 +1,50 @@
 /* eslint-disable prettier/prettier */
-export type descarteType = {
-    descarteLavado:descarteLavadoType
-    descarteEncerado:descarteEncerado
-    enf:string
-    fecha:string
-    predio: predioType
-    tipoFruta: string
-    _id: string
+
+//descarte data
+export type descarteLavadoType = {
+    descarteGeneral: string
+    pareja: string
+    balin: string
 }
 
-type descarteLavadoType = {
-    descarteGeneral:string
-    pareja:string
-    balin:string
+export type descarteEncerado = {
+    descarteGeneral: string
+    pareja: string
+    balin: string
+    extra: string
+    suelo: string
+    frutaNacional: string
 }
-
-type descarteEncerado ={
-    descarteGeneral:string
-    pareja:string
-    balin:string
-    extra:string
-    suelo:string
-}
-
-type predioType = {
-    ICA:string
-    PREDIO:string
-    _id:string
-}
-
-
 
 export type inventarioDescarteType = {
-    descarteLavado: descarteLavadoType
-    descarteEncerado: descarteEncerado
+    [key: string]: {
+        descarteLavado: descarteLavadoType
+        descarteEncerado: descarteEncerado
+    }
+}
+
+//formulario inventario
+export type formType = {
+    tipoFruta: string
+    "descarteLavado:descarteGeneral":string
+    "descarteLavado:pareja":string
+    "descarteLavado:balin":string
+    "descarteEncerado:descarteGeneral":string
+    "descarteEncerado:pareja":string
+    "descarteEncerado:balin":string
+    "descarteEncerado:extra":string
+    "descarteEncerado:suelo":string
+    "descarteEncerado:frutaNacional":string
+}
+
+//formulario despacho fruta
+
+export type formDespachoType = {
+    cliente: string
+    placa: string
+    nombreConductor: string
+    telefono: string
+    cedula: string
+    remision:string
+    kilos:number
 }

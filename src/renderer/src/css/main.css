@@ -13,6 +13,17 @@
   --color-Celifrut-dark: #75ac23;   /* Verde más oscuro */
   --color-Celifrut-brigth: #8ecc30; /* Verde más claro */
   --border-Color: #e5e7eb;
+  
+  /* Nuevas variables para el inventario */
+  --color-card-bg: white;
+  --color-card-shadow: rgba(0, 0, 0, 0.1);
+  --color-input-bg: #f8f9fa;
+  --color-input-border: #e1e8ed;
+  --color-input-focus: #3498db;
+  --color-title: #2c3e50;
+  --color-subtitle: #34495e;
+  --color-text: #576574;
+  --color-border-accent: var(--color-Celifrut);
 
   --color-ListaEmpaqueTexto: rgb(59 130 246);
   --color-ListaEmpaqueFondo: rgb(233, 240, 251);
@@ -31,6 +42,17 @@
   --color-shadow: rgb(92, 91, 96);
   --color-predioCard-ordenVaciado: rgb(79, 88, 83);
   --border-Color: #475569;
+  
+  /* Sobreescritura de variables para el inventario en modo oscuro */
+  --color-card-bg: #1a1f36;
+  --color-card-shadow: rgba(0, 0, 0, 0.3);
+  --color-input-bg: #141829;
+  --color-input-border: #2d3748;
+  --color-input-focus: var(--color-Celifrut);
+  --color-title: #e2e8f0;
+  --color-subtitle: #cbd5e1;
+  --color-text: #94a3b8;
+  --color-border-accent: var(--color-Celifrut);
 
   --sombra--boton-menu: rgba(255, 255, 255, 0.35);
 }

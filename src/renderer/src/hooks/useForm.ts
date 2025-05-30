@@ -12,6 +12,7 @@ type OutType<T> = {
     resetForm: () => void
     fillForm: (formData) => void
     validateForm: (schema: ZodSchema<unknown>) => boolean
+    setFormState: (e) => void
 }
 
 export default function useForm<T extends Record<string, number | string>>(initialState?: T): OutType<T> {
@@ -65,6 +66,7 @@ export default function useForm<T extends Record<string, number | string>>(initi
         handleChange,
         resetForm,
         fillForm,
-        validateForm
+        validateForm,
+        setFormState
     }
 }

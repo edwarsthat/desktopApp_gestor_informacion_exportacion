@@ -100,7 +100,7 @@ export default function IngresoClasificacionCalidad(): JSX.Element {
   const eliminarItem = (index: number): void => {
     setDataArray(prev => {
       const newArray = [...prev];
-      newArray.splice(index, 1); // Eliminar el elemento en el índice especificado
+      newArray.splice(index, 1); 
       return newArray;
     })
   }

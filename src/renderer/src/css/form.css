@@ -54,21 +54,30 @@
 
 .form-container input,
 .form-container select,
-.form-container textarea {
+.form-container textarea,
+.dialog-body input,
+.dialog-body select,
+.dialog-body textarea {
     padding: 10px 12px;
     font-size: 14px;
     background-color: white;
-    color: black;
-    border: 1px solid var(--color-border, #999); /* fallback por si explota */
+    color: #333;
+    border: 1px solid var(--color-border, #ccc);
     border-radius: 8px;
     transition: border-color 0.2s ease, background-color 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .form-container input:focus,
 .form-container select:focus,
-.form-container textarea:focus {
+.form-container textarea:focus,
+.dialog-body input:focus,
+.dialog-body select:focus,
+.dialog-body textarea:focus {
     border-color: var(--color-accent);
     outline: none;
+    background-color: white;
 }
 
 .form-container select option {

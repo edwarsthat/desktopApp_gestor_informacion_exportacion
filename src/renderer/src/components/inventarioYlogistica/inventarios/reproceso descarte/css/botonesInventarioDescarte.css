@@ -1,0 +1,66 @@
+/* Contenedor principal de los botones */
+.botones-descarte-container {
+    margin: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background-color: var(--color-card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 8px var(--color-card-shadow);
+}
+
+/* Contenedor de los botones */
+.botones-descarte-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content:flex-start;
+    align-items: center;
+}
+
+/* Estilos para los botones */
+.botones-descarte-grid button {
+    min-width: 160px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: 1px solid var(--color-Celifrut);
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.botones-descarte-grid button:hover {
+    background-color: var(--color-Celifrut);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px var(--color-shadow);
+}
+
+.botones-descarte-grid button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px var(--color-shadow);
+}
+
+/* Estilo para el botón de fruta descompuesta */
+.botones-descarte-grid button.descompuesta {
+    border-color: #dc2626;
+}
+
+.botones-descarte-grid button.descompuesta:hover {
+    background-color: #dc2626;
+}
+
+/* Total descarte */
+.total-descarte {
+    text-align: start;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-texto);
+    padding: 12px;
+    border-top: 1px solid var(--border-Color);
+    margin-top: 8px;
+}
