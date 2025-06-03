@@ -18,7 +18,7 @@ import ModalCrearRegistroFrutaDescompuesta from './components/ModalCrearRegistro
 
 export default function ReprocesoDescarte(): JSX.Element {
   const {eventoServidor,triggerServer} = useAppContext();
-  const { setCurrentFilters, currentFilters } = useFiltroValue();
+  const { setCurrentFilters, currentFilters, resetCurrentValue } = useFiltroValue();
   const {
     formState, handleChange, setFormState,
     resetForm, formErrors, validateForm
@@ -56,6 +56,7 @@ export default function ReprocesoDescarte(): JSX.Element {
         onFiltersChange={setCurrentFilters}
       />
       <BotonesInventarioDescarte
+        resetCurrentValue={resetCurrentValue}
         setOpenDescompuesta={setOpenDescompuesta}
         setOpenDespacho={setOpenDespacho}
         formState={formState}
@@ -70,6 +71,7 @@ export default function ReprocesoDescarte(): JSX.Element {
         handleChange={handleChange} />
 
       <ModalDespachoFruta
+        resetCurrentValue={resetCurrentValue}
         resetInventarioForm={resetForm}
         formInventario={formState}
         tipoFruta={currentFilters.tipoFruta}
@@ -79,6 +81,7 @@ export default function ReprocesoDescarte(): JSX.Element {
       />
 
       <ModalCrearRegistroFrutaDescompuesta 
+        resetCurrentValue={resetCurrentValue}
         formInventario={formState}
         resetInventarioForm={resetForm}
         tipoFruta={currentFilters.tipoFruta}

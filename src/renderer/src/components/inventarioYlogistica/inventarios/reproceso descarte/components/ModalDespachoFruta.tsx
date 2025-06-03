@@ -6,6 +6,8 @@ import { formDespachoType, formType, inventarioDescarteType } from "../types/typ
 import useAppContext from "@renderer/hooks/useAppContext"
 import { sumatoriaTotalForm } from "../function/sumatorias"
 import { useEffect } from "react"
+import useGetSysData from "@renderer/hooks/useGetSysData"
+import FormSelect from "@renderer/components/UI/components/FormSelect"
 
 type propsType = {
     open: boolean,
@@ -14,11 +16,18 @@ type propsType = {
     tipoFruta: string
     formInventario: formType
     resetInventarioForm: () => void
+    resetCurrentValue: () => void
 }
 
-export default function ModalDespachoFruta({ open, onClose, fruta, tipoFruta, formInventario, resetInventarioForm }: propsType): JSX.Element {
+export default function ModalDespachoFruta({
+    open, onClose, fruta, tipoFruta, formInventario, resetInventarioForm, resetCurrentValue
+}: propsType): JSX.Element {
     const { messageModal, setLoading, loading } = useAppContext();
     const { formState, handleChange, formErrors, validateForm, setFormState, resetForm } = useForm<formDespachoType>(initialDespachoFruta)
+    const { obtenerClientesNacionales, clientesNacionales } = useGetSysData({});
+    useEffect(() => {
+        obtenerClientesNacionales()
+    }, [])
     useEffect(() => {
         const kilos = sumatoriaTotalForm(formInventario)
         setFormState({ ...formState, kilos: kilos })
@@ -33,17 +42,19 @@ export default function ModalDespachoFruta({ open, onClose, fruta, tipoFruta, fo
             if (!result) return
             const request = {
                 action: "put_inventarios_frutaDescarte_despachoDescarte",
-                data:formState,
+                data: formState,
                 inventario: formInventario
             }
             const response = await window.api.server2(request)
-            if(response.status !== 200){
+            if (response.status !== 200) {
                 throw new Error(`Code ${response.status}: ${response.message}`)
             }
-            messageModal("success","Se despacho la fruta con exito")
+            messageModal("success", "Se despacho la fruta con exito")
             resetForm()
             resetInventarioForm()
             onClose()
+            resetCurrentValue()
+
         } catch (err) {
             if (err instanceof Error) {
                 messageModal("error", err.message)
@@ -60,13 +71,14 @@ export default function ModalDespachoFruta({ open, onClose, fruta, tipoFruta, fo
                 <button className="close-button" aria-label="Cerrar" onClick={onClose}>×</button>
             </div>
             <div className="dialog-body">
-                <FormInput
+
+                <FormSelect
                     name="cliente"
-                    label="Cliente"
-                    type="text"
                     value={formState.cliente}
+                    label="Cliente"
                     onChange={handleChange}
                     error={formErrors.cliente}
+                    data={clientesNacionales.map((item) => ({ _id: item._id, name: item.cliente }))}
                 />
 
                 <FormInput
@@ -113,8 +125,8 @@ export default function ModalDespachoFruta({ open, onClose, fruta, tipoFruta, fo
                     onChange={handleChange}
                     error={formErrors.remision}
                 />
-                {formErrors.kilos && 
-                    <p style={{color:'red'}}>Error ingrese kilos en el formulario</p>
+                {formErrors.kilos &&
+                    <p style={{ color: 'red' }}>Error ingrese kilos en el formulario</p>
                 }
             </div>
             <div className="dialog-footer">

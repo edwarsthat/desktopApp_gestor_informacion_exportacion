@@ -107,7 +107,7 @@ export const initialDespachoFruta = {
 }
 
 export const despachoSchema = z.object({
-    cliente: z.string().min(1, "El nombre del cliente es obligatorio"),
+    cliente: z.string().refine((val) => /^[0-9a-fA-F]{24}$/.test(val), "El _id debe ser un ObjectId válido de MongoDB"),
     placa: z.string()
         .length(6, "La placa debe tener exactamente 6 caracteres")
         .regex(/^[A-Z]{3}[0-9]{3}$/, "La placa debe tener 3 letras seguidas de 3 números"),

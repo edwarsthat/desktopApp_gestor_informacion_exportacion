@@ -1,65 +1,48 @@
 /* eslint-disable prettier/prettier */
 
-import useAppContext from "@renderer/hooks/useAppContext";
 import { useEffect, useState } from "react"
 import TablaHistorialDespachoDescarte from "./components/TablaHistorialDespachoDescarte";
 import { despachoDescartesType } from "@renderer/types/despachoDescartesType";
-import { GrLinkNext } from "react-icons/gr";
-import { GrLinkPrevious } from "react-icons/gr";
+import BotonesPasarPaginas from "@renderer/components/UI/BotonesPasarPaginas";
+import { useFetchPaginatedList } from "@renderer/hooks/useFetchPaginatedList";
+import useAppContext from "@renderer/hooks/useAppContext";
 
 export default function HistorialDespachoDescartes(): JSX.Element {
-    const { messageModal } = useAppContext();
-    const [data, setData] = useState<despachoDescartesType[]>();
-    const [countPage, setCountPage] = useState<number>(1);
-
-    useEffect(() => {
-        obtenerData();
-        window.api.reload(() => {
-            obtenerData()
-        });
-        return () => {
-            window.api.removeReload()
-        }
-    }, []);
-
-    const obtenerData = async (): Promise<void> => {
-        try {
-            const request = {
-                action: "get_inventarios_historiales_despachoDescarte",
-                page: countPage
-            }
-            const response = await window.api.server2(request);
-            if (response.status !== 200)
-                throw new Error(`Code ${response.status}: ${response.message}`);
-            setData(response.data)
-        } catch (err) {
-            if (err instanceof Error) {
-                messageModal("error", err.message)
+    const { setLoading } = useAppContext();
+    const [page, setPage] = useState<number>(1);
+    const {data, numeroElementos, obtenerCantidadElementos, obtenerData} = useFetchPaginatedList<despachoDescartesType>({
+        page, 
+        actionData: "get_inventarios_historiales_despachoDescarte",
+        actionNumberData: "get_inventarios_historiales_numero_DespachoDescarte"
+    });
+    useEffect(()=>{
+        const fetchData = async():Promise<void> => {
+            try{
+                setLoading(true)
+                await obtenerData()
+                await obtenerCantidadElementos()
+            } catch(err){
+                console.log(err)
+            } finally {
+                setLoading(false)
             }
         }
-    }
+        fetchData()
+    },[])
 
     return (
         <div>
             <div className="navBar"></div>
             <h2>Historial despacho descarte</h2>
             <hr />
-
-            <TablaHistorialDespachoDescarte data={data} />
+            <TablaHistorialDespachoDescarte data={data} obtenerData={obtenerData} />
             <div></div>
-            <div className="paage-tabla-div-button">
-                {countPage === 1 ? <div></div> :
-                    <button onClick={(): void => setCountPage(countPage - 1)}>
-                        <GrLinkPrevious />
-                    </button>}
-                <p>{countPage === 1 ? 1 : countPage}</p>
-                {data && data?.length < 50 ? <div></div>
-                    :
-                    <button onClick={(): void => setCountPage(countPage + 1)}>
-                        <GrLinkNext />
-                    </button>
-                }
-            </div>
+                <BotonesPasarPaginas
+                    division={50}
+                    page={page}
+                    numeroElementos={numeroElementos}
+                    setPage={setPage}
+                />
         </div>
     )
 }

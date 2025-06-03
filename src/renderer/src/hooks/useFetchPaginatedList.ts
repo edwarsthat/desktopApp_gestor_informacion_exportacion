@@ -29,6 +29,7 @@ export function useFetchPaginatedList<T>({ page, actionData, actionNumberData }:
                 page: page
             }
             const response = await window.api.server2(request)
+            console.log("useFetchPaginatedList", response)
             if (response.status !== 200)
                 throw new Error(response.message)
             setData([...response.data])

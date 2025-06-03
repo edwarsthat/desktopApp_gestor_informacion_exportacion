@@ -2,6 +2,18 @@
 
 import { useState } from "react"
 
+const initCurrentFilter = {
+            tipoFruta: '',
+        fechaInicio: '',
+        fechaFin: '',
+        GGN: false,
+        buscar: '',
+        proveedor: '',
+        tipoFecha:'',
+        EF: '',
+        all: false,
+}
+
 type outType = {
     fechaInicio: string
     setFechaInicio: (e: string) => void
@@ -71,22 +83,18 @@ export function useFiltro(): outType {
 type currentValuestype = {
     currentFilters: FilterValues
     setCurrentFilters: (e) => void
+    resetCurrentValue: () => void
 }
 
 export function useFiltroValue(): currentValuestype {
-    const [currentFilters, setCurrentFilters] = useState<FilterValues>({
-        tipoFruta: '',
-        fechaInicio: '',
-        fechaFin: '',
-        GGN: false,
-        buscar: '',
-        proveedor: '',
-        tipoFecha:'',
-        EF: '',
-        all: false,
-    });
+    const [currentFilters, setCurrentFilters] = useState<FilterValues>(initCurrentFilter);
+
+    const resetCurrentValue = ():void => {
+        setCurrentFilters(initCurrentFilter)
+    }
     return {
         currentFilters,
-        setCurrentFilters
+        setCurrentFilters,
+        resetCurrentValue
     }
 }

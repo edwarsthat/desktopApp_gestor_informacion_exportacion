@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-import { lotesType } from "./lotesType"
-
+import { clientesNacionalesType } from "./clientesType"
 
 export type despachoDescartesType = {
     _id: string
@@ -13,12 +12,20 @@ export type despachoDescartesType = {
     remision:string
     tipoFruta:string
     user:string
-    kilos: kilosType
-    lotesDespachados:lotesType[]
+    kilos: number
+    cliente: clientesNacionalesType
+    descarteLavado:{
+        descarteGeneral:number
+        pareja:number
+        balin:number
+    }
+    descarteEncerado:{
+        descarteGeneral:number
+        pareja:number
+        balin:number
+        extra:number
+        suelo:number
+        frutaNacional:number
+    }
 }
 
-type kilosType = {
-    descarteLavado: descarteLavadoType
-    descarteEncerado: descarteEnceradoType
-    _id:string
-}

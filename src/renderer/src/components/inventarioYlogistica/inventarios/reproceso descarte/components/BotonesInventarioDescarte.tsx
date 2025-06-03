@@ -17,10 +17,11 @@ type propsType = {
     validateForm: (schema: ZodSchema<unknown>) => boolean
     setOpenDespacho: (e) => void
     setOpenDescompuesta: (e) => void
+    resetCurrentValue: () => void
 }
 
 export default function BotonesInventarioDescarte({
-    data, formState, resetForm, validateForm, setOpenDespacho, setOpenDescompuesta
+    data, formState, resetForm, validateForm, setOpenDespacho, setOpenDescompuesta, resetCurrentValue
 }: propsType): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
     const {
@@ -49,6 +50,7 @@ export default function BotonesInventarioDescarte({
             }
             messageModal("success", "Se reproceso con exito")
             resetForm()
+            resetCurrentValue()
         } catch (err) {
             if (err instanceof Error) {
                 messageModal("error", err.message)

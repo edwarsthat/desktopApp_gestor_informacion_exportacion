@@ -5,7 +5,6 @@ import { formType, inventarioDescarteType } from "../types/types"
 import { descompuestaSchema, formDescompuestaKeys, formDescompuestaType, initFormDescaompuesta, validateKilos } from "../validations/validateRequest"
 import useAppContext from "@renderer/hooks/useAppContext"
 import { sumatoriaTotalForm } from "../function/sumatorias"
-import { useEffect } from "react"
 
 type propsType = {
   open: boolean,
@@ -14,11 +13,13 @@ type propsType = {
   tipoFruta: string
   formInventario: formType
   resetInventarioForm: () => void
+  resetCurrentValue: () => void
+
 }
 
 
 export default function ModalCrearRegistroFrutaDescompuesta({
-  open, onClose, tipoFruta, fruta, formInventario, resetInventarioForm
+  open, onClose, tipoFruta, fruta, formInventario, resetInventarioForm, resetCurrentValue
 }: propsType): JSX.Element {
   const { messageModal, setLoading } = useAppContext();
   const { handleChange, formState, formErrors, validateForm, resetForm } = useForm<formDescompuestaType>(initFormDescaompuesta)
@@ -48,6 +49,7 @@ export default function ModalCrearRegistroFrutaDescompuesta({
       resetForm()
       resetInventarioForm()
       onClose()
+      resetCurrentValue()
     } catch (err) {
       if (err instanceof Error) {
         messageModal("error", err.message)
@@ -59,7 +61,7 @@ export default function ModalCrearRegistroFrutaDescompuesta({
   }
 
   return (
-    <dialog open={open} className='"dialog-container"'>
+    <dialog open={open} className="dialog-container">
       <div className="dialog-header">
         <h3>Ingresar Fruta descompuesta</h3>
         <button className="close-button" aria-label="Cerrar" onClick={onClose}>×</button>
