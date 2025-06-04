@@ -2,10 +2,23 @@
 
 export type RegistroFrutaDescompuestaType = {
     _id: string;
-    kilos_total: number;
+    kilos: number;
     user: string;
     razon: string;
     comentario_adicional: string;
-    tipo_fruta: string;
+    tipoFruta: string;
     createdAt: string;
+        descarteLavado:{
+        descarteGeneral:number
+        pareja:number
+        balin:number
+    }
+    descarteEncerado:{
+        descarteGeneral:number
+        pareja:number
+        balin:number
+        extra:number
+        suelo:number
+        frutaNacional:number
+    }
 }

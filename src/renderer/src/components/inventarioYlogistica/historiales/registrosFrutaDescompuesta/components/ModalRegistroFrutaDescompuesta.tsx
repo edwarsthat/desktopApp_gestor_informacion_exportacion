@@ -3,52 +3,37 @@
 import FormSelect from "@renderer/components/UI/components/FormSelect";
 import useForm from "@renderer/hooks/useForm";
 import useGetSysData from "@renderer/hooks/useGetSysData"
-import { formType } from "../types/types";
-import { formSchema, initFormKeys, initFormState } from "../validations/validations";
 import { useEffect } from "react";
 import FormInput from "@renderer/components/UI/components/Forminput";
 import useAppContext from "@renderer/hooks/useAppContext";
-import { despachoDescartesType } from "@renderer/types/despachoDescartesType";
+import { RegistroFrutaDescompuestaType } from "@renderer/types/frutaDescompuesta";
+import { formSchema, formType, initFormKeys, initFormState } from "../validations/validations";
 
 type propsType = {
     open: boolean
     onClose: () => void
-    registroSelected: despachoDescartesType | undefined
+    registroSelected: RegistroFrutaDescompuestaType | undefined
     obtenerData: () => Promise<void>
-
 }
 
-export default function ModalModificarHistorialDespacho({
+export default function ModalRegistroFrutaDescompuesta({
     open, onClose, registroSelected, obtenerData
 }: propsType): JSX.Element {
     const { setLoading, loading, messageModal } = useAppContext();
-    const { obtenerClientesNacionales, clientesNacionales, obtenerTipoFruta, tiposFruta } = useGetSysData({});
+    const { obtenerTipoFruta, tiposFruta } = useGetSysData({});
     const { formState, handleChange, formErrors, setFormState, validateForm, resetForm } = useForm<formType>(initFormState);
+
     useEffect(() => {
-        const fetchData = async (): Promise<void> => {
-            try {
-                setLoading(true)
-                await Promise.all([
-                    obtenerClientesNacionales(),
-                    obtenerTipoFruta()
-                ])
-            } catch (err) {
-                console.log(err)
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchData()
+        obtenerTipoFruta()
     }, [])
-    useEffect(()=>{
-        if(registroSelected){
+
+    useEffect(() => {
+        if (registroSelected) {
             const newObjt: formType = {
-                cliente: registroSelected.cliente._id,
-                nombreConductor: registroSelected.nombreConductor,
-                telefono: registroSelected.telefono,
-                cedula: registroSelected.cedula,
-                remision: registroSelected.remision,
-                tipoFruta: registroSelected.tipoFruta,                
+                tipoFruta: registroSelected.tipoFruta,
+                kilos: String(registroSelected.kilos),
+                razon: registroSelected.razon,
+                comentario_adicional: registroSelected.comentario_adicional,
                 "descarteLavado.descarteGeneral": String(registroSelected.descarteLavado?.descarteGeneral || 0),
                 "descarteLavado.balin": String(registroSelected.descarteLavado?.balin || 0),
                 "descarteLavado.pareja": String(registroSelected.descarteLavado?.pareja || 0),
@@ -61,52 +46,56 @@ export default function ModalModificarHistorialDespacho({
             }
             setFormState(newObjt)
         }
-    },[open])
-    const modificarData = async ():Promise<void> => {
-        try{
+    }, [open])
+
+    const modificarDataServidor = async (): Promise<void> => {
+        try {
             setLoading(true)
             const result = validateForm(formSchema)
-            if(!result) return
-            const request = {
-                action: "put_inventarios_historiales_despachoDescarte",
-                _id: registroSelected?._id,
-                data: formState
+            if (!result) return
+            if (formState?.kilos) {
+                if (formState.kilos && isNaN(Number(formState.kilos))) {
+                    throw new Error("Kilos debe ser un número");
+                }
             }
-            const response = await window.api.server2(request)
-            if(response.status !== 200){
-                throw new Error(`Code ${response.status}: ${response.message}`)
+            const query = {
+                action: "put_inventarios_registros_fruta_descompuesta",
+                data: formState,
+                _id: registroSelected?._id
             }
-            messageModal("success", "Registro modificado con exito")
+            const response = await window.api.server2(query);
+            if (response.status !== 200) {
+                throw new Error(`Code ${response.status}: ${response.message}`);
+            }
+            messageModal("success", "Registro modificado correctamente");
+            await obtenerData();
             resetForm()
-            await obtenerData()
             onClose()
-        } catch(err){
-            if(err instanceof Error){
-                messageModal("error", err.message)
+        } catch (error) {
+            if (error instanceof Error) {
+                messageModal("error", error.message);
             }
         } finally {
             setLoading(false)
         }
     }
+    const handleClose = ():void => {
+        onClose()
+        resetForm()
+    }
+
+
     return (
         <dialog open={open} className="dialog-container">
             <div className="dialog-header">
                 <h3>Modificar registro despacho descarte</h3>
-                <button className="close-button" aria-label="Cerrar" onClick={onClose}>×</button>
+                <button className="close-button" aria-label="Cerrar" onClick={handleClose}>×</button>
             </div>
             <div className="dialog-body">
                 <FormSelect
-                    name="cliente"
-                    value={formState.cliente}
-                    label="Cliente"
-                    onChange={handleChange}
-                    error={formErrors.cliente}
-                    data={clientesNacionales.map((item) => ({ _id: item._id, name: item.cliente }))}
-                />
-                <FormSelect
                     name="tipoFruta"
                     value={formState.tipoFruta}
-                    label="Cliente"
+                    label="Tipo fruta"
                     onChange={handleChange}
                     error={formErrors.tipoFruta}
                     data={tiposFruta.map((item) => ({ _id: item, name: item }))}
@@ -128,8 +117,8 @@ export default function ModalModificarHistorialDespacho({
 
             </div>
             <div className="dialog-footer">
-                <button className="default-button-agree" disabled={loading} onClick={modificarData} >Guardar</button>
-                <button className="default-button-error" onClick={onClose}>Cerrar</button>
+                <button className="default-button-agree" disabled={loading} onClick={modificarDataServidor} >Guardar</button>
+                <button className="default-button-error" onClick={handleClose}>Cerrar</button>
             </div>
         </dialog>
     )
