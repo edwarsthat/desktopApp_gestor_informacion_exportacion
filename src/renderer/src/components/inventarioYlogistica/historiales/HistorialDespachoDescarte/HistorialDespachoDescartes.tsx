@@ -29,6 +29,9 @@ export default function HistorialDespachoDescartes(): JSX.Element {
         }
         fetchData()
     },[])
+    useEffect(() => {
+        obtenerData()
+    },[page])
 
     return (
         <div>

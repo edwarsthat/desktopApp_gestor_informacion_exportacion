@@ -73,6 +73,7 @@ import HistorialInventarioCanastillas from "../inventarioYlogistica/historiales/
 import IngresoClienteNacional from "../comercial/ingresos/clienteNacional/IngresoClienteNacional"
 import ClientesNacionales from "../comercial/clientesNacional/ClientesNacionales"
 import HabilitarInstancias from "../sistema/habilitarInstanancias/HabilitarInstancias"
+import ReclamacionesClientes from "../calidad/reclamaciones/clientesContenedores/ReclamacionesClientes"
 
 
 type propsType = {
@@ -167,7 +168,7 @@ export default function Ventana(props: propsType): JSX.Element {
                         {activas.includes("67f6e82e563bdb1fb94b3b71") && <HistorialInventarioCanastillas />}
                     </div>
 
-                    {/* Calidad */}
+                    {/* #region Calidad */}
                     {/* historial */}
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "66b66ff077549ed0672a901f" ? 'block' : 'none' }}>
                         {activas.includes("66b66ff077549ed0672a901f") && <HistorialCalidadInterna />}
@@ -218,7 +219,11 @@ export default function Ventana(props: propsType): JSX.Element {
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "66feb92b38a347aa97a5dbd2" ? 'block' : 'none' }}>
                         {activas.includes("66feb92b38a347aa97a5dbd2") && <ControlPlagas />}
                     </div>
-
+                    {/* reclamaciones calidad */}
+                    <div className="componentContainer" style={{ display: props.pestañaActiva === "6841cf9549ced0a52dcb9e71" ? 'block' : 'none' }}>
+                        {activas.includes("6841cf9549ced0a52dcb9e71") && <ReclamacionesClientes />}
+                    </div>
+                    {/* #endregion Calidad */}
 
                     {/* Gestion de cuentas */}
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "66b670e977549ed0672a9033" ? 'block' : 'none' }}>

@@ -22,6 +22,7 @@ export default function TablaHistorialDespachoDescarte(props: propsType): JSX.El
     }
     return (
         <div className="table-container">
+            <div>
             <table className="table-main">
                 <thead>
                     <tr>
@@ -58,12 +59,7 @@ export default function TablaHistorialDespachoDescarte(props: propsType): JSX.El
                     ))}
                 </tbody>
             </table>
-            <ModalModificarHistorialDespacho 
-                obtenerData={props.obtenerData}
-                registroSelected={registroSelected}
-                open={open}
-                onClose={():void => setOpen(false)}
-                />
+</div>
         </ div>
     )
 }

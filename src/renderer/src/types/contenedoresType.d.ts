@@ -58,7 +58,6 @@ export type infoContendorType = {
   rtoEstimado: string
   calibres: string[]
   desverdizado: boolean
-  _id: string
 
 }
 

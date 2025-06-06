@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 import { es } from 'date-fns/locale';
 import { toZonedTime } from 'date-fns-tz';
 
@@ -12,22 +12,33 @@ import { toZonedTime } from 'date-fns-tz';
  * @returns {string} La cadena de fecha formateada.
  */
 export const formatearFecha = (fechaString: string, hora = false): string => {
-    if (!fechaString) {
-        return '';
-    }
+    if (!fechaString) return 'Sin fecha';
 
     const zonaHoraria = 'America/Bogota';
+    let fechaUTC;
 
-    // Analizar la fecha UTC
-    const fechaUTC = parseISO(fechaString);
-
-    // Convertir a la zona horaria de Bogotá
-    const fechaBogota = toZonedTime(fechaUTC, zonaHoraria);
-
-    // Formatear la fecha
-    if (hora) {
-        return format(fechaBogota, 'dd/MM/yyyy HH:mm:ss', { locale: es });
+    try {
+        fechaUTC = parseISO(fechaString);
+    } catch {
+        return 'Fecha inválida';
     }
 
-    return format(fechaBogota, 'dd/MM/yyyy', { locale: es });
+    // Verifica si la fecha es válida
+    if (!isValid(fechaUTC)) return 'Fecha inválida';
+
+    let fechaBogota;
+    try {
+        fechaBogota = toZonedTime(fechaUTC, zonaHoraria);
+    } catch {
+        return 'Fecha inválida';
+    }
+
+    try {
+        if (hora) {
+            return format(fechaBogota, 'dd/MM/yyyy HH:mm:ss', { locale: es });
+        }
+        return format(fechaBogota, 'dd/MM/yyyy', { locale: es });
+    } catch {
+        return 'Fecha inválida';
+    }
 };
