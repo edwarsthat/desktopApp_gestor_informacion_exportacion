@@ -181,3 +181,12 @@ button.add-record:disabled {
     pointer-events: none; /* Para que el clic pase al input */
     font-size: 1.2rem; /* Ajusta el tamaño según tu preferencia */
   }
+
+
+
+  .filtros-add-proveedores-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-right: 15px;
+  }

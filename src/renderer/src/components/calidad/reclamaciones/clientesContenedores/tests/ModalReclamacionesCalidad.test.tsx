@@ -1,12 +1,10 @@
 /* eslint-disable prettier/prettier */
-import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import "@testing-library/jest-dom";
-import { contenedoresType } from '@renderer/types/contenedoresType';
 
 // Importaciones normales
 import ModalReclamacionesCalidad from '../components/ModalReclamacionesCalidad';
-import { formatearFecha } from '@renderer/functions/fechas';
 import { generateMockContenedor } from '@renderer/mock/contenedores';
 
 // Mock de formatearFecha

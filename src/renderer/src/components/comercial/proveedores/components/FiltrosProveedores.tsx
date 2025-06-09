@@ -12,7 +12,7 @@ type propsType = {
     filtro: filtroType | undefined
 }
 
-export default function FiltrosProveedores(props:propsType): JSX.Element {
+export default function FiltrosProveedores(props: propsType): JSX.Element {
     const { messageModal } = useAppContext();
     const handleAddProveedor = (): void => {
         const dialogINfo = document.getElementById("ingresar_proveedor_modal") as HTMLDialogElement;
@@ -35,7 +35,7 @@ export default function FiltrosProveedores(props:propsType): JSX.Element {
         })
     }
     const handleChange = (e): void => {
-        const {value, name} = e.target
+        const { value, name } = e.target
 
         props.setFiltro({
             ...props.filtro,
@@ -46,8 +46,8 @@ export default function FiltrosProveedores(props:propsType): JSX.Element {
         try {
             await props.numeroRegistros(props.filtro)
             await props.obtenerRegistros(props.filtro)
-        } catch(err){
-            if(err instanceof Error){
+        } catch (err) {
+            if (err instanceof Error) {
                 messageModal("error", err.message)
             }
         }
@@ -55,14 +55,22 @@ export default function FiltrosProveedores(props:propsType): JSX.Element {
 
     return (
         <div className="filtros-add-proveedores-container">
-            <div>
-                <button 
-                    onClick={handleAddProveedor} 
-                    data-testid="comercial-proveedores-button-add-proveedor"
-                    className="add-record">
-                    Agregar Proveedor
-                    <AiFillFileAdd />
-                </button>
+            <div className="filtros-add-proveedores-header">
+                <div>
+                    <button
+                        onClick={handleAddProveedor}
+                        data-testid="comercial-proveedores-button-add-proveedor"
+                        className="add-record">
+                        Agregar Proveedor
+                        <AiFillFileAdd />
+                    </button>
+
+                </div>
+                <div>
+                    <h2>
+                        CoC: 4063061801296
+                    </h2>
+                </div>
             </div>
             <hr />
             <div className="filtro_proveedores-div">
@@ -80,7 +88,7 @@ export default function FiltrosProveedores(props:propsType): JSX.Element {
                     </select>
                 </div>
                 <div>
-                    <label  className="search-label">
+                    <label className="search-label">
                         PREDIO:
                     </label>
                     <div className="search-container">
@@ -112,9 +120,9 @@ export default function FiltrosProveedores(props:propsType): JSX.Element {
                         />
                     </div>
                 </div>
-                <button 
+                <button
                     data-testid="comercial-proveedores-button-buscar"
-                    className="add-record" 
+                    className="add-record"
                     onClick={handleBuscar}>
                     Buscar
                     <CiSearch />
