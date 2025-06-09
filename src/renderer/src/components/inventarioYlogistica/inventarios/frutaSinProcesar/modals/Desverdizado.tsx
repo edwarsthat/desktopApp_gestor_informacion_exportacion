@@ -1,98 +1,103 @@
 /* eslint-disable prettier/prettier */
 import useAppContext from '@renderer/hooks/useAppContext'
 import { lotesType } from '@renderer/types/lotesType'
-import { useState } from 'react'
+import { useEffect } from 'react'
 import "../../../../../css/modal-style.css"
+import useGetCatalogData from '@renderer/hooks/useGetCatalogData'
+import FormSelect from '@renderer/components/UI/components/FormSelect'
+import useForm from '@renderer/hooks/useForm'
+import { formSchema, formType, initialForm } from '../validations/desverdizado'
+import FormInput from '@renderer/components/UI/components/Forminput'
 
 
 type vaciadoType = {
-  closeDesverdizado: () => void
   loteSeleccionado: lotesType | undefined
-  handleInfo: () => void
-  obtenerFruta: () => void
-
+  open: boolean
+  onClose: () => void
 }
 
-export default function Desverdizado(props: vaciadoType): JSX.Element {
-  const { messageModal } = useAppContext();
-  const [canastillas, setCanastillas] = useState<number>(0)
-  const [cuartoDesverdizado, setCuartoDesverdizado] = useState<string>('')
+export default function Desverdizado({
+  open, onClose, loteSeleccionado
+}: vaciadoType): JSX.Element {
+  const { obtenerCuartosDesverdizados, cuartosDesverdizados } = useGetCatalogData();
+  const { formState, formErrors, handleChange, validateForm, resetForm } = useForm<formType>(initialForm);
+  const { loading, setLoading, messageModal } = useAppContext();
 
-  if(props.loteSeleccionado === undefined){
-    messageModal("error", "No se ha seleccionado ningun lote")
-    props.closeDesverdizado()
-    return(
-      <div></div>
-    )
-  }
 
-  const vaciar = async (): Promise<void> => {
-    if(props.loteSeleccionado === undefined) return
+  useEffect(() => {
+    obtenerCuartosDesverdizados()
+  }, [open])
+
+  const desverdizar = async (): Promise<void> => {
+    console.log("Form:", formState);
+    if (loteSeleccionado === undefined) throw new Error("Lote seleccionado no válido");
     try {
-      const canastillasInt = canastillas
-      const propsCanastillasInt = props.loteSeleccionado.inventario ? props.loteSeleccionado.inventario : 0
-      if (props.loteSeleccionado.promedio)
-        if (propsCanastillasInt !== undefined && canastillasInt > propsCanastillasInt) {
-          messageModal("error", "Error en el numero de canastillas!")
-        } else {
-          const request = {
+      setLoading(true)
+      const result = validateForm(formSchema)
+      if (!result) return
 
-            inventario: Number(canastillas),
-            _id: props.loteSeleccionado._id,
-            desverdizado: {
-              canastillasIngreso: canastillasInt,
-              kilosIngreso: Number(canastillas) * props.loteSeleccionado.promedio,
-              cuartoDesverdizado: cuartoDesverdizado
-            },
-            __v:props.loteSeleccionado.__v,
-            action: 'put_inventarios_frutaSinProcesar_desverdizado',
-          }
-          const response = await window.api.server2(request)
-          if (response.status === 200) {
-            messageModal("success", "Fruta puesta a desverdizar!")
-            props.obtenerFruta();
-          } else {
-            messageModal("error", `Error ${response.status}: ${response.message}`)
-          }
-        }
+      const canastillasInt = Number(formState.canastillas)
+      const propsCanastillasInt = loteSeleccionado.inventario ? loteSeleccionado.inventario : 0
+
+      if (propsCanastillasInt !== undefined && canastillasInt > propsCanastillasInt) {
+        throw new Error("Error en el numero de canastillas!")
+      }
+
+      const request = {
+        _id: loteSeleccionado._id,
+        desverdizado: formState,
+        action: 'put_inventarios_frutaSinProcesar_desverdizado',
+      }
+
+      const response = await window.api.server2(request);
+      if (response.status !== 200) {
+        throw new Error(`Code ${response.status}: ${response.message}`);
+      }
+      messageModal("success", "Fruta desverdizada con éxito");
+      resetForm();
+      onClose();
+
     } catch (e: unknown) {
       if (e instanceof Error) {
         messageModal("error", e.message)
+        onClose();
       }
     } finally {
-      props.closeDesverdizado();
-      props.handleInfo();
+      setLoading(false);
     }
   }
+
   return (
-    <div className="fondo-modal">
-      <div className="modal-container">
-        <div className='modal-header-warning'>
-          <h2>{props.loteSeleccionado.predio && props.loteSeleccionado.predio.PREDIO}</h2>
-        </div>
-        <div className='modal-container-body'>
-          <p>
-            Numero de canastillas en inventario: {props.loteSeleccionado.inventario && props.loteSeleccionado.inventario}
-          </p>
-          <input
-            type="number"
-            min="0"
-            step="1"
-            onChange={(e): void => setCanastillas(Number(e.target.value))}
-          />
-          <p>Cuarto Desverdizado</p>
-          <input
-            type="text"
-            className="border-2 border-gray-200 rounded-md p-2"
-            onChange={(e): void => setCuartoDesverdizado(e.target.value)}
-          />
-        </div>
-        <div className="modal-container-buttons">
-          <button onClick={vaciar} className='warning'>Desverdizar</button>
-          <button onClick={props.closeDesverdizado} className='cancel'>Cancelar</button>
-        </div>
+    <dialog open={open} className="dialog-container">
+      <div className="dialog-header">
+        <h3>Desverdizar fruta</h3>
+        <button className="close-button" aria-label="Cerrar" onClick={onClose}>×</button>
       </div>
-    </div>
+
+      <div className="dialog-body">
+        <FormSelect
+          name="_id"
+          value={formState._id}
+          label="Cuarto desverdizado"
+          onChange={handleChange}
+          error={formErrors._id}
+          data={cuartosDesverdizados.map((item) => ({ _id: item._id, name: item.nombre }))}
+        />
+
+        <FormInput
+          name="canastillas"
+          label="Canastillas"
+          type="text"
+          value={formState.canastillas}
+          onChange={handleChange}
+          error={formErrors.canastillas}
+        />
+      </div>
+      <div className="dialog-footer">
+        <button className="default-button-agree" disabled={loading} onClick={desverdizar}>Guardar</button>
+        <button className="default-button-error" onClick={onClose}>Cerrar</button>
+      </div>
+    </dialog>
 
   );
 }
