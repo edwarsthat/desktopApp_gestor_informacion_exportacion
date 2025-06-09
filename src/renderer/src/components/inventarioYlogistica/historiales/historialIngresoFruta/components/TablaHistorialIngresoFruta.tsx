@@ -35,7 +35,7 @@ export default function TablaHistorialIngresoFruta(props: propsType): JSX.Elemen
                             <td>{formatearFecha(lote.documento.fecha_creacion, true)}</td>
                             <td>{formatearFecha(lote.documento.fecha_ingreso_inventario, true)}</td>
                             <td>{lote.documento.tipoFruta}</td>
-                            <td>{lote.documento.GGN ? lote.documento.predio.GGN.code : ""}</td>
+                            <td>{lote.documento?.predio?.GGN?.code || ""}</td>
                             <td>{lote.documento.observaciones}</td>
                             <td>{lote.documento.placa}</td>
                             <td>{lote.user}</td>
