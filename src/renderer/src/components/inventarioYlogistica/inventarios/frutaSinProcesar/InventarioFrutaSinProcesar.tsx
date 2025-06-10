@@ -22,7 +22,7 @@ export default function InventarioFrutaSinProcesar(): JSX.Element {
   //states de los modales
   const [showVaciarModal, setShowVaciarModal] = useState<boolean>(false)
   const [showDirectoModal, setShowDirectoModal] = useState<boolean>(false)
-  const [showDesverdizadoModal, setShowDesverdizadoModal] = useState(false)
+  const [showDesverdizadoModal, setShowDesverdizadoModal] = useState<boolean>(false)
 
   //filtro
   useEffect(() => {
@@ -160,9 +160,8 @@ export default function InventarioFrutaSinProcesar(): JSX.Element {
       {showDesverdizadoModal &&
         createPortal(
           <Desverdizado
-            obtenerFruta={obtenerFruta}
-            handleInfo={handleInfo}
-            closeDesverdizado={closeDesverdizado}
+            open={showDesverdizadoModal}
+            onClose={():void => setShowDesverdizadoModal(false)}
             loteSeleccionado={loteSeleccionado}
           />,
           document.body

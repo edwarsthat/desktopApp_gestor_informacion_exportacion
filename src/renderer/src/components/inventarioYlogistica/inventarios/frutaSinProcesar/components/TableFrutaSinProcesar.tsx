@@ -41,8 +41,8 @@ export default function TableFrutaSinProcesar(props: propsType): JSX.Element {
         <table className='table-main'>
           <thead>
             <tr >
-              {header.map(item => (
-                <th key={item}>{item}</th>
+              {header.map((item,index) => (
+                <th key={item + index}>{item}</th>
               ))}
             </tr>
           </thead>
@@ -51,7 +51,7 @@ export default function TableFrutaSinProcesar(props: propsType): JSX.Element {
               <FilaTablaFrutaSinProcesar
                 lote={lote}
                 index={index}
-                key={index}
+                key={index + lote._id}
                 clickLote={props.clickLote}
               />
             ))}
