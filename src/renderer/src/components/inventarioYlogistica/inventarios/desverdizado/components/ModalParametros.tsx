@@ -1,80 +1,78 @@
 /* eslint-disable prettier/prettier */
-
-import { lotesType } from "@renderer/types/lotesType";
-import { useState } from "react";
-import useInventarioDesverdizado from "../hooks/useInventarioDesverdizado";
 import useAppContext from "@renderer/hooks/useAppContext";
+import { itemInventarioType } from "../validations/types";
+import useForm from "@renderer/hooks/useForm";
+import { formKeys, formSchema, formType, initForm } from "../validations/validations";
+import FormInput from "@renderer/components/UI/components/Forminput";
 
 type propsType = {
-    select: lotesType | undefined
+    select: itemInventarioType | undefined
+    open: boolean
+    onClose: () => void
 }
 
-export default function ModalParametros({select}: propsType): JSX.Element {
-    const { loading } = useAppContext();
-    const [temperatura, setTemperatura] = useState<string>('')
-    const [etileno, setEtileno] = useState<string>('')
-    const [dioxido, setDioxido] = useState<string>('')
-    const [humedad, setHumedad] = useState<string>('')
-    const { guardar } = useInventarioDesverdizado({ select, temperatura, etileno, dioxido, humedad })
+export default function ModalParametros({ select, open, onClose }: propsType): JSX.Element {
+    const { messageModal, setLoading, loading} = useAppContext();
+    const { formState, handleChange, formErrors, validateForm } = useForm<formType>(initForm)
 
+    const guardar = async (): Promise<void> => {
+        if (!formState) throw new Error("No se ha proporcionado el estado del formulario")
+        try {
+            setLoading(true)
+            const result = validateForm(formSchema)
+            if(!result) return
 
-    const closeModal = (): void => {
-        const dialogSetting = document.getElementById("modal_post_parametros_desverdizado") as HTMLDialogElement;
-        if (dialogSetting) {
-            dialogSetting.close();
+            if (select === undefined) throw new Error("No se ha seleccionado lote")
+
+            const parametros = {
+                temperatura: formState.temperatura,
+                etileno: formState.etileno,
+                carbono: formState.carbono,
+                humedad: formState.humedad,
+                fecha: new Date()
+            }
+            const request = {
+                _id: select.loteId,
+                data: parametros,
+                action: 'put_inventarios_frutaDesverdizando_parametros',
+
+            }
+            const response = await window.api.server2(request)
+            if (response.status !== 200)
+                throw new Error(`Code ${response.status}: ${response.message}`);
+            messageModal("success", "Guardado con exito!")
+        } catch (err) {
+            if (err instanceof Error) {
+                messageModal("error", err.message)
+            }
+            onClose()
+        } finally {
+            setLoading(false)
         }
     }
-
-    const handleGuardar = async (): Promise<void> => {
-        await guardar()
-        closeModal()
-        setTemperatura('')
-        setEtileno('')
-        setDioxido('')
-        setHumedad('')
-    }
     return (
-        <dialog id='modal_post_parametros_desverdizado' className='"dialog-container"'>
+        <dialog open={open} className="dialog-container">
             <div className="dialog-header">
                 <h3>Ingresar Parametros</h3>
-                <button className="close-button" aria-label="Cerrar" onClick={closeModal}>×</button>
+                <button className="close-button" aria-label="Cerrar" onClick={onClose}>×</button>
             </div>
             <div className="dialog-body">
-                <div className="form-field">
-                    <label>Temperatura C°</label>
-                    <input
+                {Object.entries(formKeys).map(([key, label]) => (
+                    <FormInput
+                        key={key}
+                        name={key}
+                        label={label}
+                        value={formState[key]}
+                        onChange={handleChange}
                         type="text"
-                        onChange={(e): void => setTemperatura(e.target.value)}
+                        error={formErrors[key]}
                     />
-                </div>
-                <div className="form-field">
-                    <label>Etileno (ppm)</label>
-                    <input
-                        type="text"
-                        onChange={(e): void => setEtileno(e.target.value)}
-
-                    />
-                </div>
-                <div className="form-field">
-                    <label>Dioxido de carbono (ppm)</label>
-                    <input
-                        type="text"
-                        onChange={(e): void => setDioxido(e.target.value)}
-
-                    />
-                </div>
-                <div className="form-field">
-                    <label>Humedad %</label>
-                    <input
-                        type="text"
-                        onChange={(e): void => setHumedad(e.target.value)}
-
-                    />
-                </div>
-                <div className="dialog-footer">
-                    <button className="default-button-agree" disabled={loading} onClick={handleGuardar}>Guardar</button>
-                    <button className="default-button-error" onClick={closeModal}>Cerrar</button>
-                </div>
+                )
+                )}
+            </div>
+            <div className="dialog-footer">
+                <button className="default-button-agree" disabled={loading} onClick={guardar}>Guardar</button>
+                <button className="default-button-error" onClick={onClose}>Cerrar</button>
             </div>
         </dialog>
     )

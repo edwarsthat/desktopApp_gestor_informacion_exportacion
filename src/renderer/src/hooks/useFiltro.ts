@@ -3,7 +3,7 @@
 import { useState } from "react"
 
 const initCurrentFilter = {
-            tipoFruta: '',
+        tipoFruta: '',
         fechaInicio: '',
         fechaFin: '',
         GGN: false,
@@ -12,6 +12,7 @@ const initCurrentFilter = {
         tipoFecha:'',
         EF: '',
         all: false,
+        cuartoDesverdizado: ''
 }
 
 type outType = {
@@ -31,6 +32,8 @@ type outType = {
     setTipoFecha: (e:string) => void
     EF: string
     setEF: (e:string) => void
+    cuartoDesverdizado: string
+    setCuartoDesverdizado: (e:string) => void
     all: boolean
     setAll: (e:boolean) =>  void
 }
@@ -43,7 +46,8 @@ export type FilterValues = {
     buscar: string;
     proveedor: string;
     tipoFecha: string;
-    EF: string
+    cuartoDesverdizado: string;
+    EF: string;
     all: boolean
 };
 
@@ -56,7 +60,9 @@ export function useFiltro(): outType {
     const [proveedor, setProveedor] = useState<string>('')
     const [tipoFecha, setTipoFecha] = useState<string>('')
     const [EF, setEF] = useState<string>('')
+    const [cuartoDesverdizado, setCuartoDesverdizado] = useState<string>('')
     const [all, setAll] = useState<boolean>(false)
+   
 
     return {
         fechaInicio,
@@ -76,7 +82,9 @@ export function useFiltro(): outType {
         EF,
         setEF,
         all,
-        setAll
+        setAll,
+        cuartoDesverdizado,
+        setCuartoDesverdizado
     }
 }
 

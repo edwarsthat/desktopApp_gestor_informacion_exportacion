@@ -2,20 +2,20 @@
 
 import useAppContext from "@renderer/hooks/useAppContext"
 import { FilterValues } from "@renderer/hooks/useFiltro"
-import { lotesType } from "@renderer/types/lotesType"
 import { useEffect, useState } from "react"
+import { itemInventarioType } from "../validations/types"
 
 type outType = {
     obtenerFruta: () => Promise<void>
-    data: lotesType[]
+    data: itemInventarioType[]
 }
 
 
 
 export function useDataInventarioDesverdizado( currentFilters : FilterValues): outType {
     const { messageModal, setLoading } = useAppContext();
-    const [data, setData] = useState<lotesType[]>([])
-    const [dataOriginal, setDataOgirinal] = useState<lotesType[]>([])
+    const [data, setData] = useState<itemInventarioType[]>([])
+    const [dataOriginal, setDataOgirinal] = useState<itemInventarioType[]>([])
 
     const obtenerFruta = async (): Promise<void> => {
         try {
@@ -38,13 +38,16 @@ export function useDataInventarioDesverdizado( currentFilters : FilterValues): o
     useEffect(() => {
         let dataFiltrada = dataOriginal
         if (currentFilters.GGN){
-            dataFiltrada = dataFiltrada.filter(lote => lote.GGN)
+            dataFiltrada = dataFiltrada.filter(lote => lote.GGN !== "")
         }
         if(currentFilters.buscar){
             dataFiltrada = dataFiltrada.filter(lote => (
                 lote.enf.toLowerCase().includes(currentFilters.buscar.toLowerCase()) ||
-                lote.predio.PREDIO.toLowerCase().includes(currentFilters.buscar.toLowerCase()) 
+                lote.lote.toLowerCase().includes(currentFilters.buscar.toLowerCase()) 
             ))
+        }
+        if(currentFilters.cuartoDesverdizado){
+            dataFiltrada = dataFiltrada.filter(lote => lote.cuartoId === currentFilters.cuartoDesverdizado)
         }
         setData(dataFiltrada)
     }, [currentFilters])

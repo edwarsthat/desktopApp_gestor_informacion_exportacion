@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import useAppContext from "@renderer/hooks/useAppContext";
 import { useEffect, useState } from 'react'
-import { lotesType } from "@renderer/types/lotesType";
 import TablaInventarioDesverdizado from "./components/TablaInventarioDesverdizado";
 import BotonesDesverdizado from "./components/BotonesDesverdizado";
 import ModalParametros from "./components/ModalParametros";
@@ -10,13 +9,15 @@ import { useDataInventarioDesverdizado } from "./hooks/useDataInventarioDesverdi
 import Filtros from "@renderer/components/UI/components/Filtros";
 import { useFiltroValue } from "@renderer/hooks/useFiltro";
 import "./css/style.css"
+import { itemInventarioType } from "./validations/types";
 
 
 export default function Desverdizado(): JSX.Element {
   const { eventoServidor, triggerServer } = useAppContext();
   const { setCurrentFilters, currentFilters } = useFiltroValue();
   const { obtenerFruta, data } = useDataInventarioDesverdizado(currentFilters);
-  const [select, setSelect] = useState<lotesType>()
+  const [select, setSelect] = useState<itemInventarioType>()
+  const [open, setOpen] = useState<boolean>(false)
 
   useEffect(() => {
     obtenerFruta()
@@ -25,14 +26,13 @@ export default function Desverdizado(): JSX.Element {
 
   useEffect(() => {
     if (
-      eventoServidor === 'enviar_desverdizado' ||
-      eventoServidor === 'vaciar_lote') {
+      eventoServidor === 'inventario_desverdizado') {
       obtenerFruta()
     }
   }, [triggerServer])
 
 
-  const handleSelect = (lote: lotesType): void => {
+  const handleSelect = (lote: itemInventarioType): void => {
     setSelect(lote)
   }
 
@@ -42,15 +42,17 @@ export default function Desverdizado(): JSX.Element {
       <h2>Fruta desverdizando</h2>
       <hr />
 
-      <Filtros 
+      <Filtros
         showGGN={true}
         ggnId="desverdizado"
         showBuscar={true}
+        showCuartodesverdizado={true}
         onFiltersChange={setCurrentFilters} />
 
-      <ModalParametros select={select} />
+      <ModalParametros select={select} open={open} onClose={():void => setOpen(false)} />
 
       <BotonesDesverdizado
+        setOpen={setOpen}
         select={select}
         data={data}
       />

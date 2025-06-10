@@ -29,7 +29,6 @@ export default function Desverdizado({
   }, [open])
 
   const desverdizar = async (): Promise<void> => {
-    console.log("Form:", formState);
     if (loteSeleccionado === undefined) throw new Error("Lote seleccionado no válido");
     try {
       setLoading(true)
@@ -50,6 +49,7 @@ export default function Desverdizado({
       }
 
       const response = await window.api.server2(request);
+      console.log("Response:", response);
       if (response.status !== 200) {
         throw new Error(`Code ${response.status}: ${response.message}`);
       }

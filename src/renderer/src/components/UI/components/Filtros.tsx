@@ -2,6 +2,7 @@
 import { obtener_proveedores2 } from '@renderer/functions/SystemRequest'
 import useAppContext from '@renderer/hooks/useAppContext'
 import { FilterValues, useFiltro } from '@renderer/hooks/useFiltro'
+import useGetCatalogData from '@renderer/hooks/useGetCatalogData'
 import { proveedoresType } from '@renderer/types/proveedoresType'
 import { useEffect, useState } from 'react'
 
@@ -16,6 +17,7 @@ type FiltrosProps = {
   showEF?: boolean
   showButton?: boolean
   showAll?: boolean
+  showCuartodesverdizado?: boolean // Nuevo prop para mostrar el checkbox de GGN
   onFiltersChange: (filters: FilterValues) => void
   findFunction?: () => Promise<void>
   ggnId?: string // Nuevo prop para el ID único del checkbox GGN
@@ -30,8 +32,9 @@ export default function Filtros({
   showBuscar = false,
   showProveedor = false,
   showTipoFecha = false,
-  showEF = false,  showButton = false,
+  showEF = false, showButton = false,
   showAll = false,
+  showCuartodesverdizado = false,
   findFunction,
   onFiltersChange,
   ggnId = 'defaultGGN',
@@ -41,6 +44,9 @@ export default function Filtros({
   const { messageModal } = useAppContext()
   const [tipoFrutaArr, setTipoFrutaArr] = useState<string[]>([])
   const [proveedores, setProveedores] = useState<proveedoresType[]>([])
+  const [cuartosDesverdizado, setCuartosDesverdizado] = useState<string>('')
+  const { obtenerCuartosDesverdizados, cuartosDesverdizados } = useGetCatalogData();
+
   const {
     tipoFruta, setTipoFruta,
     fechaInicio, setFechaInicio,
@@ -50,7 +56,8 @@ export default function Filtros({
     proveedor, setProveedor,
     tipoFecha, setTipoFecha,
     EF, setEF,
-    all, setAll
+    all, setAll,
+    cuartoDesverdizado, setCuartoDesverdizado
   } = useFiltro()
 
   //se obtienen los datos del servidor
@@ -81,6 +88,7 @@ export default function Filtros({
         }
       }
     }
+    obtenerCuartosDesverdizados()
     obtenerTipoFruta()
     obtenerProveedores()
   }, [])
@@ -96,6 +104,7 @@ export default function Filtros({
       proveedor,
       tipoFecha,
       EF,
+      cuartoDesverdizado,
       all
     }
     // Call the parent's callback
@@ -110,6 +119,7 @@ export default function Filtros({
     tipoFecha,
     EF,
     all,
+    cuartoDesverdizado,
     onFiltersChange
   ])
 
@@ -148,6 +158,21 @@ export default function Filtros({
             {proveedores.map((item) => (
               <option key={item._id} value={item._id}>
                 {item.PREDIO ?? ''}
+              </option>
+            ))}
+          </select>
+        )}
+        {showCuartodesverdizado && (
+          <select
+            aria-label="Selecciona un cuarto desverdizado"
+            onChange={(e): void => {
+              setCuartoDesverdizado(e.target.value)
+            }}
+          >
+            <option value="">Seleccione un predio</option>
+            {cuartosDesverdizados.map((item) => (
+              <option key={item._id} value={item._id}>
+                {item.nombre ?? ''}
               </option>
             ))}
           </select>
