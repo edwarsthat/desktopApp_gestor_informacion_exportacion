@@ -56,13 +56,11 @@ const styleNormalCell = {
 const mostrarKilose = (item) => {
    const peso = Number(item.tipoCaja.split("-")[1]);
 
-   if (peso >= 17.3) return "40LB";
-   if (peso >= 12) return "37LB";
-   if (peso >= 9) return "30LB";
+   if (peso >= 18) return "40LB";
+   if (peso >= 17) return "37LB";
+   if (peso >= 15) return "35LB";
+   if (peso >= 13) return "30LB";
    if (peso > 4 && peso < 5) return ("4,5Kg");
-
-
-
 }
 // const ICAalterno = (id, proveedores) => {
 //    console.log(id)

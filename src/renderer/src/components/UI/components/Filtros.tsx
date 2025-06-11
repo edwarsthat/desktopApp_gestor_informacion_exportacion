@@ -44,7 +44,6 @@ export default function Filtros({
   const { messageModal } = useAppContext()
   const [tipoFrutaArr, setTipoFrutaArr] = useState<string[]>([])
   const [proveedores, setProveedores] = useState<proveedoresType[]>([])
-  const [cuartosDesverdizado, setCuartosDesverdizado] = useState<string>('')
   const { obtenerCuartosDesverdizados, cuartosDesverdizados } = useGetCatalogData();
 
   const {
@@ -169,7 +168,7 @@ export default function Filtros({
               setCuartoDesverdizado(e.target.value)
             }}
           >
-            <option value="">Seleccione un predio</option>
+            <option value="">Seleccione cuarto desverdizado</option>
             {cuartosDesverdizados.map((item) => (
               <option key={item._id} value={item._id}>
                 {item.nombre ?? ''}

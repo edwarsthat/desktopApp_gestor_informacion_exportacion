@@ -30,7 +30,6 @@ export default function ModificarHistorialProceso(props: vaciadoType): JSX.Eleme
         throw new Error("Error en el numero de canastillas")
       }
       const request = requestModificarHistorial(Number(canastillas), props.propsModal)
-      console.log(request)
       validateRequestModificarRegistro(request)
       const response = await window.api.server2(request)
       if (response.status === 200) {

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { useState } from "react"
 import ProcesoData from "./components/ProcesoData"
-import CalidadData from "./components/CalidadData"
+// import CalidadData from "./components/CalidadData"
 import { IoMdMenu } from "react-icons/io";
 import "./css/styles.css"
 
@@ -28,7 +28,7 @@ export default function Lotes(): JSX.Element {
                 }
             </div>
             {seccion === 'Proceso' && <ProcesoData />}
-            {seccion === 'Calidad' && <CalidadData />}
+            {/* {seccion === 'Calidad' && <CalidadData />} */}
         </div>
     )
 }

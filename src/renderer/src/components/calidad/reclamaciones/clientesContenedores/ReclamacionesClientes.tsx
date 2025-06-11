@@ -11,7 +11,7 @@ import ModalReclamacionesCalidad from "./components/ModalReclamacionesCalidad";
 
 export default function ReclamacionesClientes(): JSX.Element {
     const headers = ["Fecha creacion", "Numero contenedor", "Cliente", ""]
-    const { setLoading } = useAppContext();
+    const { setLoading, messageModal } = useAppContext();
     const [page, setPage] = useState<number>(1);
     const [open, setOpen] = useState<boolean>(false);
     const [contenedorSelected, setContenedorSelected] = useState<contenedoresType | undefined>(undefined);
@@ -38,11 +38,40 @@ export default function ReclamacionesClientes(): JSX.Element {
         obtenerData()
     }, [page])
 
+    const copiarEnlace = (): void => {
+        const url = "https://operativo.celifrut.com/forms/reclamaciones_calidad";
+        navigator.clipboard.writeText(url).then(
+            () => messageModal("success", "¡Enlace copiado al portapapeles!"),
+
+        );
+    }
+
     return (
         <div>
             <div className="navBar"></div>
-            <h2>Reclamaciones calidad</h2>
-            <hr />
+            <h2>Reclamaciones calidad</h2>            <hr />
+            <div className="mb-2 flex justify-start align-center mt-6 ml-6">
+                <button 
+                    onClick={copiarEnlace}
+                    className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                    <svg 
+                        className="w-4 h-4 mr-2" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24" 
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            strokeWidth={2} 
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" 
+                        />
+                    </svg>
+                    Copiar formulario
+                </button>
+            </div>
             <div className="table-container">
                 <table className="table-main">
                     <thead>

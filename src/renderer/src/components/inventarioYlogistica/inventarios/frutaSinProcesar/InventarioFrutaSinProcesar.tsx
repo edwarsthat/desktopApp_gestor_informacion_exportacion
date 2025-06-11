@@ -92,7 +92,7 @@ export default function InventarioFrutaSinProcesar(): JSX.Element {
       eventoServidor === 'inspeccion_fruta' ||
       eventoServidor === 'derogar_lote' ||
       eventoServidor === 'calidad_interna' ||
-      eventoServidor === 'enviar_desverdizado'
+      eventoServidor === 'inventario_frutaSinProcesar' 
     ) {
       obtenerFruta()
     }

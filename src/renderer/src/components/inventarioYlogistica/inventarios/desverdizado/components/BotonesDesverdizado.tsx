@@ -9,10 +9,11 @@ type propsType = {
     select: itemInventarioType | undefined
     data: itemInventarioType[]
     setOpen: (open: boolean) => void
+    setOpenMover: (open: boolean) => void
 }
 
 export default function BotonesDesverdizado(props: propsType): JSX.Element {
-    const {  loading, setLoading, messageModal } = useAppContext()
+    const { loading, setLoading, messageModal } = useAppContext()
     //modal de confimacion
     const {
         setShowConfirmation, requestConfirm,
@@ -24,7 +25,7 @@ export default function BotonesDesverdizado(props: propsType): JSX.Element {
             setLoading(true)
             if (!props.select) throw new Error("Seleccione un lote")
             const request = {
-                _id: props.select._id,
+                _id: props.select.loteId,
                 cuarto: props.select.cuartoId,
                 action: "put_inventarios_frutaDesverdizado_finalizar"
             }
@@ -44,7 +45,7 @@ export default function BotonesDesverdizado(props: propsType): JSX.Element {
     return (
         <div className="inventario-desverdizado-botones-container ">
             <div >
-                <button onClick={():void =>props.setOpen(true)} className="vaciar" disabled={loading}>
+                <button onClick={(): void => props.setOpen(true)} className="vaciar" disabled={loading}>
                     Parametros
                 </button>
             </div>
@@ -57,24 +58,32 @@ export default function BotonesDesverdizado(props: propsType): JSX.Element {
                     Finalizar
                 </button>
             </div>
+            <div>
+                <button onClick={(): void => props.setOpenMover(true)} 
+                    className="add-record" disabled={loading} >
+                    Mover
+                </button>
+            </div>
+            <div></div>
 
             <div>
-                {props.select && <h3>{props.select.enf}</h3>}
+                <h3>{props.select ? props.select.enf : "|"}</h3>
             </div>
+
             <div>
-                {props.select && <h3>{props.select.lote}</h3>}
+                <h3>{props.select ? props.select.lote : '|'}</h3>
             </div>
             <div>
                 <h3>Canastillas Total:
                     {
-                        props.data.reduce((acu, item) => acu += Number(item.canastillas) , 0).toFixed(2)
+                        props.data.reduce((acu, item) => acu += Number(item.canastillas), 0).toFixed(2)
                     }
                 </h3>
             </div>
-                        <div>
+            <div>
                 <h3>Total:
                     {
-                        props.data.reduce((acu, item) => acu += Number(item.canastillas) * item.promedio , 0).toFixed(2)
+                        props.data.reduce((acu, item) => acu += Number(item.canastillas) * item.promedio, 0).toFixed(2)
                     } Kg
                 </h3>
             </div>
