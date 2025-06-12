@@ -22,7 +22,6 @@ type propsType = {
 }
 
 export default function useGetSysData({ proveedoresProp = 'all' }: propsType): outType {
-    const { messageModal } = useAppContext();
     const [proveedores, setProveedores] = useState<proveedoresType[]>([])
     const [tiposFruta, setTiposFruta] = useState<string[]>([])
     const [dataDefectos, setDataDefectos] = useState<object>({})
@@ -38,7 +37,7 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
             setProveedores(data)
         } catch (err) {
             if (err instanceof Error) {
-                messageModal("error", err.message)
+                console.error("error", err.message)
             }
         }
     }
@@ -48,7 +47,7 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
             setTiposFruta(response)
         } catch (err) {
             if (err instanceof Error)
-                messageModal("error", `Error obteniendo la fruta ${err.message} `)
+                console.error("error", err.message)
         }
     }
     const obtenerDefectos = async (): Promise<void> => {
@@ -63,7 +62,7 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
             setDataDefectos(response.data)
         } catch (err) {
             if (err instanceof Error) {
-                messageModal("error", err.message)
+                console.error("error", err.message)
             }
         }
     }
@@ -79,7 +78,7 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
             setClientesNacionales(response.data.clientes)
         } catch (err) {
             if (err instanceof Error) {
-                messageModal("error", err.message)
+                console.error("error", err.message)
             }
         }
     }

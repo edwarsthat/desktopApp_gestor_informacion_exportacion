@@ -11,6 +11,7 @@ export type contenedoresType = {
   insumosData: InsumosSchemaType
   inspeccion_mula: inspeccionMulasCriterios
   reclamacionCalidad: reclamacionCalidadType
+  entregaPrecinto: entregaPrecintoSchema
   __v?: number
 }
 
@@ -125,7 +126,7 @@ export type EF1Type = {
   fecha: string
   tipoFruta: string
   SISPAP?: boolean
-  GGN:boolean
+  GGN: boolean
 
 }
 
@@ -162,4 +163,15 @@ export type reclamacionCalidadType = {
   observaciones: string,
   archivosSubidos: string[],
   fecha: string
+}
+
+
+export type entregaPrecintoSchema = {
+  entrega: string,
+  recibe: string,
+  createdAt: string
+  fechaEntrega: string,
+  fotos: string[],
+  user: string,
+  observaciones: string
 }
