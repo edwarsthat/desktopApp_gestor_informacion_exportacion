@@ -54,7 +54,7 @@ export default function RegistroFrutaDescompuesta(): JSX.Element {
     return (
         <div className="componentContainer">
             <div className="navBar"></div>
-            <h2>Registros fruta descomuesta</h2>
+            <h2>Registros fruta descompuesta</h2>
             <hr />
             <div className="table-container">
                 <table className="table-main">
