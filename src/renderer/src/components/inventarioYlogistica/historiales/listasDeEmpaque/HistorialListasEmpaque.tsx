@@ -20,7 +20,7 @@ export default function HistorialListaEmpaque(): JSX.Element {
     } = useFetchPaginatedList<contenedoresType>({
         page,
         actionData: "get_inventarios_historiales_listasDeEmpaque",
-        actionNumberData: "get_inventarios_numero_registros_fruta_descompuesta"
+        actionNumberData: "get_inventarios_historiales_listasDeEmpaque_numeroRegistros"
     })
     const { proveedores } = useGetSysData({})
 
@@ -28,6 +28,7 @@ export default function HistorialListaEmpaque(): JSX.Element {
     const [contenedor, setContenedor] = useState<contenedoresType>()
 
     useEffect(() => {
+        console.log("asasdas")
         obtenerData()
         obtenerCantidadElementos()
     }, [page])

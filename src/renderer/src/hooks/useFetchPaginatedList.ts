@@ -46,6 +46,7 @@ export function useFetchPaginatedList<T>({ page, actionData, actionNumberData }:
                 action: actionNumberData
             }
             const response = await window.api.server2(request);
+            console.log("useFetchPaginatedList cantidad elementos", response)
             if (response.status !== 200)
                 throw new Error(`Code ${response.status}: ${response.message}`)
             setNumeroElementos(response.data)
