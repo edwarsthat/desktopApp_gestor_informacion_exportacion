@@ -22,6 +22,7 @@ vi.mock('@renderer/functions/fechas', () => ({
     })
 }));
 
+
 // Mock del contexto
 vi.mock('@renderer/hooks/useAppContext', () => ({
     default: (): { setLoading: (loading: boolean) => void } => ({

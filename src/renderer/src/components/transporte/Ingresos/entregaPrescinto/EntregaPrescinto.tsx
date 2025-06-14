@@ -131,10 +131,11 @@ export default function EntregaPrescinto(): JSX.Element {
 
                 ))}
                 <div className="form-group">
-                    <label className="form-label">
+                    <label className="form-label" htmlFor="fotos-entrega-precinto">
                         Fotos
                     </label>
                     <input
+                        id="fotos-entrega-precinto"
                         ref={fileInputRef}
                         multiple
                         type="file"
