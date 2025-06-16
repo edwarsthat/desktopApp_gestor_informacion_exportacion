@@ -4,7 +4,7 @@ import { contenedoresType, palletType } from "@renderer/types/contenedoresType";
 
 
 export function generateMockContenedor(overrides = {}): contenedoresType {
-    const randomInt = (min: number, max: number):number =>
+    const randomInt = (min: number, max: number): number =>
         Math.floor(Math.random() * (max - min + 1)) + min;
 
     const randomPick = <T>(arr: T[]): T =>
@@ -19,7 +19,7 @@ export function generateMockContenedor(overrides = {}): contenedoresType {
 
 
     // genera un array de N elementos
-    const generateArray = (length: number, generatorFn):palletType[] =>
+    const generateArray = (length: number, generatorFn): palletType[] =>
         Array.from({ length }, generatorFn);
 
     // Número random de pallets entre 5 y 50
@@ -54,11 +54,21 @@ export function generateMockContenedor(overrides = {}): contenedoresType {
         };
     });
 
+    const entregaPrecintoSchema = {
+        entrega: `Entrego aleatoria ${randomInt(1, 999)}`,
+        recibe: `Recibió aleatoria ${randomInt(1, 999)}`,
+        createdAt: String(new Date()),
+        fechaEntrega: String(new Date()),
+        fotos: ["https://example.com/foto1.jpg", "https://example.com/foto2.jpg"],
+        user: `User ${randomInt(1, 100)} `,
+        observaciones: `Observacion random ${randomInt(1, 100)} `
+    }
 
     const contenedor = {
         _id: `mock_id_${randomInt(1, 9999)}`,
         numeroContenedor: numero,
         pallets: pallets,
+        entregaPrecinto: entregaPrecintoSchema,
         infoContenedor: {
             clienteInfo: `mock_cliente_${randomInt(1, 100)
                 }`,

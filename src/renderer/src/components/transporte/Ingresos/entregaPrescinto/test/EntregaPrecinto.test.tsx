@@ -30,6 +30,8 @@ vi.mock('@renderer/hooks/useAppContext', () => ({
     }))
 }));
 
+
+
 describe('EntregaPrescinto', () => {
     afterEach(() => {
         vi.clearAllMocks();
