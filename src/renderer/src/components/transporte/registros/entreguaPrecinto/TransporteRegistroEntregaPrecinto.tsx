@@ -68,7 +68,6 @@ export default function TransporteRegistroEntregaPrecinto(): JSX.Element {
                                     <td>{cont.entregaPrecinto?.recibe ?? "-"}</td>
                                     <td>{formatearFecha(cont.entregaPrecinto?.fechaEntrega) ?? "-"}</td>
                                     <td>{cont.entregaPrecinto?.observaciones ?? "-"}</td>
-
                                     <td>
                                         <div
                                             onClick={(): void => {
