@@ -38,7 +38,7 @@ describe('EntregaPrescinto', () => {
     });
     it('debería renderizarse correctamente', () => {
         render(<EntregaPrescinto />);
-        expect(screen.getByText('Entrega precinto')).toBeInTheDocument();
+        expect(screen.getByText('Entrega documentos y precinto')).toBeInTheDocument();
     });
     it('debería mostrar los contenedores en el select', async () => {
         // Creamos datos mock aleatorios
@@ -93,7 +93,7 @@ describe('EntregaPrescinto', () => {
         fireEvent.click(guardarBtn);
 
         // Espera a que aparezca el error de las fotos
-        expect(await screen.findByText(/Porfavor ingrese de 1 a 3 fotos como maximo/i)).toBeInTheDocument()
+        expect(await screen.findByText(/Por favor ingrese de 1 a 3 fotos como maximo/i)).toBeInTheDocument()
     });
     it("deberia guardar correctamente y msotrar mensaje de éxito", async () => {
         const mockContenedores = [

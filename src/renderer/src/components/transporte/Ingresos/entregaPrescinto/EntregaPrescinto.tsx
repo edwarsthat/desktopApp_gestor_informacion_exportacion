@@ -45,7 +45,7 @@ export default function EntregaPrescinto(): JSX.Element {
         try {
             setLoading(true)
             if (fotos.length < 1 || fotos.length > 3) {
-                setFotosError("Porfavor ingrese de 1 a 3 fotos como maximo");
+                setFotosError("Por favor ingrese de 1 a 3 fotos como maximo");
                 return;
             } else if (!fotos.every(file => file.type.startsWith("image/"))) {
                 setFotosError("Solo se permiten archivos de imagen (jpg, png, etc).");
@@ -72,7 +72,7 @@ export default function EntregaPrescinto(): JSX.Element {
             if (response.status !== 200) {
                 throw new Error(`Code ${response.status}: ${response.message}`);
             }
-            messageModal("success", "Entrega de prescinto guardada correctamente");
+            messageModal("success", "Entrega de precinto guardada correctamente");
             if (fileInputRef.current) fileInputRef.current.value = "";
             setFotos([]);
             resetForm();
@@ -97,7 +97,7 @@ export default function EntregaPrescinto(): JSX.Element {
     return (
         <div>
             <div className="navBar"></div>
-            <h2>Entrega precinto</h2>
+            <h2>Entrega documentos y precinto</h2>
             <hr />
             <form className="form-container" onSubmit={guardarData} >
                 <FormSelect

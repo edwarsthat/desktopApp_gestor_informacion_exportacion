@@ -35,6 +35,16 @@ export default function ModalFotosEntregaPrecinto({
         return foto.startsWith("data:image") ? foto : `data:image/jpeg;base64,${foto}`;
     };
 
+    // Función para descargar imagen
+    const descargarImagen = (imagenUrl: string, nombreArchivo: string): void => {
+        const link = document.createElement('a');
+        link.href = imagenUrl;
+        link.download = nombreArchivo;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     useEffect(() => {
         let activo = true;
         // Al abrir, limpiar las fotos viejas
@@ -118,6 +128,13 @@ export default function ModalFotosEntregaPrecinto({
                                                     aria-label="Ver imagen completa"
                                                 >
                                                     👁️
+                                                </button>
+                                                <button
+                                                    className="image-action-btn download-btn"
+                                                    onClick={(): void => descargarImagen(imagenUrl, `entrega_precinto_${contenedorSeleccionado?.numeroContenedor}_foto_${idx + 1}.jpg`)}
+                                                    aria-label="Descargar imagen"
+                                                >
+                                                    📥
                                                 </button>
                                                 <div className="image-overlay">
                                                     <h4>Foto {idx + 1}</h4>

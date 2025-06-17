@@ -530,6 +530,11 @@ dialog::backdrop {
   transform: scale(1.1);
 }
 
+/* Botón de descarga - posicionado debajo del botón principal */
+.image-action-btn.download-btn {
+  top: 56px; /* 12px + 36px + 8px de separación */
+}
+
 /* Badge de estado */
 .image-badge {
   position: absolute;
