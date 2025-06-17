@@ -10,7 +10,7 @@ import ModalFotosEntregaPrecinto from "./components/ModalFotosEntregaPrecinto";
 import BotonesPasarPaginas from "@renderer/components/UI/BotonesPasarPaginas";
 
 export default function TransporteRegistroEntregaPrecinto(): JSX.Element {
-    const headers = ["Contenedor", "Cliente", "Entregó", "Recibió", "Fecha entrega", "Observaciones", ""]
+    const headers = ["Contenedor", "Cliente", "Entregó", "Recibió", "Fecha y hora de entrega", "Observaciones", ""]
     const { setLoading } = useAppContext();
     const [page, setPage] = useState<number>(1)
     const [open, setOpen] = useState<boolean>(false);
@@ -66,7 +66,7 @@ export default function TransporteRegistroEntregaPrecinto(): JSX.Element {
                                     <td>{typeof cont.infoContenedor?.clienteInfo === 'object' && (cont.infoContenedor?.clienteInfo?.CLIENTE ?? "-")}</td>
                                     <td>{cont.entregaPrecinto?.entrega ?? "-"}</td>
                                     <td>{cont.entregaPrecinto?.recibe ?? "-"}</td>
-                                    <td>{formatearFecha(cont.entregaPrecinto?.fechaEntrega) ?? "-"}</td>
+                                    <td>{formatearFecha(cont.entregaPrecinto?.fechaEntrega, true) ?? "-"}</td>
                                     <td>{cont.entregaPrecinto?.observaciones ?? "-"}</td>
                                     <td>
                                         <div

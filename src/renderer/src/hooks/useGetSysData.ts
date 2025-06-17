@@ -3,7 +3,6 @@
 import { obtener_proveedores2 } from "@renderer/functions/SystemRequest"
 import { proveedoresType } from "@renderer/types/proveedoresType"
 import { useState } from "react"
-import useAppContext from "./useAppContext"
 import { clientesNacionalesType } from "@renderer/types/clientesType"
 
 type outType = {
