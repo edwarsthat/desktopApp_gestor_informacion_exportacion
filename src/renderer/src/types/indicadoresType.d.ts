@@ -3,17 +3,24 @@
 export type indicadoresType = {
     _id: string
     fecha_creacion: string,
-    kilos_procesados: number
-    kilos_vaciados: string
-    kilos_exportacion: frutaExportacionType,
-    meta_kilos_procesados: string
-    meta_kilos_procesados_hora: string
-    total_horas_hombre: string
-    tipo_fruta: string[]
-    kilos_meta_hora: string
-    duracion_turno_horas: string
+    kilos_procesados: kilosProcesadosSchema,
+    kilos_vaciados: kilosProcesadosSchema,
+    kilos_exportacion: KilosExportacionSchema,
+    meta_kilos_procesados: number,
+    meta_kilos_procesados_hora: number,
+    total_horas_hombre: number,
+    kilos_meta_hora: number,
+    duracion_turno_horas: number,
 }
 
-type frutaExportacionType = {
+export type kilosProcesadosSchema = {
     [key: string]: number
 }
+
+export type KilosExportacionSchema = {
+    [tipoFruta: string]: {
+        [calidad: string]: {
+            [calibre: string]: number;
+        };
+    };
+};

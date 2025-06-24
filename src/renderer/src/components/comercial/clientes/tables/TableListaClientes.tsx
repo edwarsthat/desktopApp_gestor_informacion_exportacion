@@ -14,7 +14,7 @@ type propsType = {
 
 export default function TableListaClientes(props: propsType): JSX.Element {
     const { messageModal, setLoading } = useAppContext()
-    const headers = ["Codigo", "Cliente", "Correo", "DIrección", "Pais destino", "Telefono", "ID", "estado", "Acciones"]
+    const headers = ["Codigo", "Cliente", "Correo", "Dirección", "Pais destino", "Telefono", "ID", "estado", "Acciones"]
     const [showConfirmacion, setShowConfirmacion] = useState<boolean>(false)
     const [confirm, setConfirm] = useState<boolean>(false)
     const [message, setMessage] = useState<string>('')

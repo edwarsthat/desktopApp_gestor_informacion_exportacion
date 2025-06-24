@@ -70,7 +70,6 @@ export default function ModalFotosEntregaPrecinto({
                 if (response.status !== 200) {
                     throw new Error(`Code ${response.status}: ${response.message}`);
                 }
-                console.log(response)
                 if (activo) setFotos(response.data || []);
             } catch (err) {
                 if (err instanceof Error) {

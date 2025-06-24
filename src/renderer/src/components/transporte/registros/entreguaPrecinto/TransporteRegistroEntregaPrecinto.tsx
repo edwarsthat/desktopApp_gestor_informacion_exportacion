@@ -10,7 +10,7 @@ import ModalFotosEntregaPrecinto from "./components/ModalFotosEntregaPrecinto";
 import BotonesPasarPaginas from "@renderer/components/UI/BotonesPasarPaginas";
 
 export default function TransporteRegistroEntregaPrecinto(): JSX.Element {
-    const headers = ["Contenedor", "Cliente", "Entregó", "Recibió", "Fecha y hora de entrega", "Precinto", "Placa", "Trailer", "Observaciones", ""]
+    const headers = ["Contenedor", "Cliente", "Entregó", "Recibió", "Fecha y hora de entrega", "Precinto", "Unidad de transporte", "Unidad de carga", "Observaciones", ""]
     const { setLoading } = useAppContext();
     const [page, setPage] = useState<number>(1)
     const [open, setOpen] = useState<boolean>(false);

@@ -1,28 +1,32 @@
 /* eslint-disable prettier/prettier */
 
-import { formatearFecha } from "@renderer/functions/fechas"
-import { indicadoresType } from "@renderer/types/indicadoresType"
-import { convertir_fecha_a_mes, convertir_fecha_a_semana, eficiencia_operativa, promedio, total_eficiencia_operativa } from "../function"
-import GraficoBarrasEficienciaOperativa from "../graficos/GraficoBarrasEficienciaOperativa"
+import { FilterValues } from "@renderer/hooks/useFiltro";
+import { indicadoresType } from "@renderer/types/indicadoresType";
 
 type propsType = {
-    data: indicadoresType[]
-    agrupado: string
+    data: indicadoresType[],
+    currentFilters: FilterValues
 }
 
-const headers = [
-    "Fecha",
-    "Tipo Fruta",
-    "Horas hombre",
-    "Kilos Procesados",
-    "Meta Kilos Procesar",
-    "Total"
-]
+// const headers = [
+//     "Fecha",
+//     "Tipo Fruta",
+//     "Horas hombre",
+//     "Kilos Procesados",
+//     "Meta Kilos Procesar",
+//     "Total"
+// ]
 
-export default function EficienciaOperativaComponent(props:propsType): JSX.Element {
+export default function EficienciaOperativaComponent({
+    data,
+    currentFilters
+}: propsType): JSX.Element {
+
+
     return (
-        <div className="indicadores-opearciones-eficiencia_operativa-comntainer">
-            <div className="item1">
+        <div className="indicadores-opearciones-eficienci|a_operativa-comntainer">
+            <h1>Indicador</h1>
+            {/* <div className="item1">
                 <div className="table-container">
                     <table className="table-main">
                         <thead>
@@ -67,7 +71,7 @@ export default function EficienciaOperativaComponent(props:propsType): JSX.Eleme
             </div>
             <div className="item3">
                 <GraficoBarrasEficienciaOperativa agrupacion={props.agrupado} data={props.data} />
-            </div>
+            </div> */}
         </div>
     )
 }

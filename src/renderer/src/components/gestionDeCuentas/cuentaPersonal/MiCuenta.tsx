@@ -116,11 +116,10 @@ export default function MiCuenta(): JSX.Element {
                             <p>{
                                 info.fechaNacimiento ?
                                     new Date(info.fechaNacimiento).toLocaleDateString()
-                                    : 'N/A'
-                            }</p>
+                                    : 'N/A'                            }</p>
                         </div>
                         <div>
-                            <h3>Direccion:</h3>
+                            <h3>Dirección:</h3>
                             <p>{info.direccion}</p>
                         </div>
                         <div></div>

@@ -50,7 +50,7 @@ export const agruparRegistros = (indicadores: indicadoresType[] | undefined, agr
 
                 if (indice !== -1) {
                     weekObj[week] += 1;
-                    result[indice].kilos_procesador = (result[indice].kilos_procesador || 0) + (indicador.kilos_procesador || 0);
+                    result[indice].kilos_vaciados = (result[indice].kilos_vaciados || 0) + (indicador.kilos_vaciados || 0);
                     result[indice].meta_kilos_procesados = (result[indice].meta_kilos_procesados || 0) + (indicador.meta_kilos_procesados || 0);
                     result[indice].total_horas_hombre = (result[indice].total_horas_hombre || 0) + (indicador.total_horas_hombre || 0);
 
@@ -161,6 +161,8 @@ export const agruparRegistros = (indicadores: indicadoresType[] | undefined, agr
 
     return indicadores
 }
+
+
 
 export const convertir_fecha_a_semana = (fecha: string): string => {
     const fechaObj = new Date(fecha);

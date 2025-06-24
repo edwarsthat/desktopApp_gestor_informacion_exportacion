@@ -141,11 +141,10 @@ export default function ModalInfoContenedor(props: propsType): JSX.Element {
             }
         } finally {
             modificarCliente()
-        }
-    }
+        }    }
     if (props.contenedor === undefined) {
         return (
-            <div>No hay informacion del contenedor</div>
+            <div>No hay información del contenedor</div>
         )
     }
     const handleVentana = (id, name): void => {

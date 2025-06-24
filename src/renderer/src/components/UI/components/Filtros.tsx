@@ -17,11 +17,12 @@ type FiltrosProps = {
   showEF?: boolean
   showButton?: boolean
   showAll?: boolean
-  showCuartodesverdizado?: boolean // Nuevo prop para mostrar el checkbox de GGN
+  showCuartodesverdizado?: boolean
+  showDivisionTiempo?: boolean
   onFiltersChange: (filters: FilterValues) => void
   findFunction?: () => Promise<void>
-  ggnId?: string // Nuevo prop para el ID único del checkbox GGN
-  allId?: string // Nuevo prop para el ID único del checkbox All
+  ggnId?: string
+  allId?: string
 }
 
 export default function Filtros({
@@ -32,9 +33,11 @@ export default function Filtros({
   showBuscar = false,
   showProveedor = false,
   showTipoFecha = false,
-  showEF = false, showButton = false,
+  showEF = false,
+  showButton = false,
   showAll = false,
   showCuartodesverdizado = false,
+  showDivisionTiempo = false,
   findFunction,
   onFiltersChange,
   ggnId = 'defaultGGN',
@@ -56,7 +59,8 @@ export default function Filtros({
     tipoFecha, setTipoFecha,
     EF, setEF,
     all, setAll,
-    cuartoDesverdizado, setCuartoDesverdizado
+    cuartoDesverdizado, setCuartoDesverdizado,
+    divisionTiempo, setDivisionTiempo
   } = useFiltro()
 
   //se obtienen los datos del servidor
@@ -104,6 +108,7 @@ export default function Filtros({
       tipoFecha,
       EF,
       cuartoDesverdizado,
+      divisionTiempo,
       all
     }
     // Call the parent's callback
@@ -119,14 +124,17 @@ export default function Filtros({
     EF,
     all,
     cuartoDesverdizado,
+    divisionTiempo,
     onFiltersChange
   ])
 
-  const handleClick = async (): Promise<void> => {
-    if (findFunction) {
-      await findFunction()
-    }
+const handleClick = async ():Promise<void> => {
+  if (typeof findFunction === "function") {
+    await findFunction();
+  } else {
+    alert("findFunction no es función!");
   }
+};
 
   return (
     <div className="filtroContainer">
@@ -192,6 +200,20 @@ export default function Filtros({
             <label htmlFor={`ggn-checkbox-${ggnId}`}>Fruta GGN</label>
           </div>
         )}
+        {showDivisionTiempo && (
+          <select
+            aria-label="Division de tiempo"
+            onChange={(e): void => {
+              setDivisionTiempo(e.target.value)
+            }}
+          >
+            <option value="">División tiempo</option>
+            <option value="dia">Día</option>
+            <option value="semana">Semana</option>
+            <option value="mes">Mes</option>
+            <option value="anio">Año</option>
+          </select>
+        )}
         {showTipoFecha && (
           <select
             aria-label="Selecciona un predio"
@@ -240,9 +262,9 @@ export default function Filtros({
       </div>
       <div style={{ display: "flex", justifyContent: 'flex-end' }}>
         {showButton &&
-          <button onClick={handleClick}>
-            Buscar
-          </button>}
+<button onClick={handleClick} disabled={typeof findFunction !== 'function'}>
+  Buscar
+</button>}
       </div>
     </div>
   )

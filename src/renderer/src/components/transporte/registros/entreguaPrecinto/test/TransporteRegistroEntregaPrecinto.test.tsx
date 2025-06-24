@@ -51,8 +51,8 @@ describe("Registro entrega precinto", () => {
         expect(screen.getByText('Recibió')).toBeInTheDocument();
         expect(screen.getByText('Fecha y hora de entrega')).toBeInTheDocument();
         expect(screen.getByText('Precinto')).toBeInTheDocument();
-        expect(screen.getByText('Placa')).toBeInTheDocument();
-        expect(screen.getByText('Trailer')).toBeInTheDocument();
+        expect(screen.getByText('Unidad de transporte')).toBeInTheDocument();
+        expect(screen.getByText('Unidad de carga')).toBeInTheDocument();
         expect(screen.getByText('Observaciones')).toBeInTheDocument();
     });
     it('debería renderizar las filas de la tabla con los datos mock', () => {

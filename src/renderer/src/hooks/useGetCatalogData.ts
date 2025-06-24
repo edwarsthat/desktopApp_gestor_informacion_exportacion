@@ -22,7 +22,6 @@ export default function useGetCatalogData(): outType {
             if(response.status !== 200) {
                 throw new Error(`Code ${response.status}: ${response.message}`)
             }
-            console.log("response.data", response.data)
             setCuartosDesverdizados(response.data)
         } catch (err) {
             if (err instanceof Error)

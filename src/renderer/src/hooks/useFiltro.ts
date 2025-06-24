@@ -10,6 +10,7 @@ const initCurrentFilter = {
         buscar: '',
         proveedor: '',
         tipoFecha:'',
+        divisionTiempo: "",
         EF: '',
         all: false,
         cuartoDesverdizado: ''
@@ -34,6 +35,8 @@ type outType = {
     setEF: (e:string) => void
     cuartoDesverdizado: string
     setCuartoDesverdizado: (e:string) => void
+    divisionTiempo: string
+    setDivisionTiempo: (e:string) => void
     all: boolean
     setAll: (e:boolean) =>  void
 }
@@ -47,6 +50,7 @@ export type FilterValues = {
     proveedor: string;
     tipoFecha: string;
     cuartoDesverdizado: string;
+    divisionTiempo: string;
     EF: string;
     all: boolean
 };
@@ -61,6 +65,7 @@ export function useFiltro(): outType {
     const [tipoFecha, setTipoFecha] = useState<string>('')
     const [EF, setEF] = useState<string>('')
     const [cuartoDesverdizado, setCuartoDesverdizado] = useState<string>('')
+    const [divisionTiempo, setDivisionTiempo] = useState<string>('')
     const [all, setAll] = useState<boolean>(false)
    
 
@@ -84,7 +89,9 @@ export function useFiltro(): outType {
         all,
         setAll,
         cuartoDesverdizado,
-        setCuartoDesverdizado
+        setCuartoDesverdizado,
+        divisionTiempo,
+        setDivisionTiempo
     }
 }
 
