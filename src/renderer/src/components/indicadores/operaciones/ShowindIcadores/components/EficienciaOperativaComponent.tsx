@@ -1,21 +1,34 @@
 /* eslint-disable prettier/prettier */
 
 import { FilterValues } from "@renderer/hooks/useFiltro";
-import { indicadoresType } from "@renderer/types/indicadoresType";
+import { IndicadorKilosProcesados } from "../validations/types";
+import { formatearFecha } from "@renderer/functions/fechas";
+import GraficoBarrasEficienciaOperativa from "../graficos/GraficoBarrasEficienciaOperativa";
+import { promedio } from "../function";
+import { getISOWeek } from "date-fns";
 
 type propsType = {
-    data: indicadoresType[],
+    data: IndicadorKilosProcesados[],
     currentFilters: FilterValues
 }
 
-// const headers = [
-//     "Fecha",
-//     "Tipo Fruta",
-//     "Horas hombre",
-//     "Kilos Procesados",
-//     "Meta Kilos Procesar",
-//     "Total"
-// ]
+const headers = [
+    "Fecha",
+    "Meta Kilos/Hora",
+    "Duración Turno",
+    "Meta Kilos Turno",
+    "Kilos Procesados (Kg)",
+    "Kilos Procesados (Hora)"
+]
+
+const headersSemana = [
+    "Semana",
+    "Promedio Meta Kilos/Hora",
+    "Promedio Duración Turno",
+    "Promedio Meta Kilos Turno",
+    "Promedio Kilos Procesados (Kg)",
+    "Promedio Kilos Procesados (Hora)"
+]
 
 export default function EficienciaOperativaComponent({
     data,
@@ -24,32 +37,32 @@ export default function EficienciaOperativaComponent({
 
 
     return (
-        <div className="indicadores-opearciones-eficienci|a_operativa-comntainer">
-            <h1>Indicador</h1>
-            {/* <div className="item1">
+        <div className="indicadores-operaciones-eficiencia-operativa-container">
+            <div className="item1">
                 <div className="table-container">
                     <table className="table-main">
                         <thead>
                             <tr>
-                                {headers.map(item => <th key={item}>{item}</th>)}
+                                { currentFilters.divisionTiempo === "dia" && headers.map(item => <th key={item}>{item}</th>)}
+                                { currentFilters.divisionTiempo === "semana" && headersSemana.map(item => <th key={item}>{item}</th>)}
+                                { currentFilters.divisionTiempo === "mes" && headersSemana.map(item => <th key={item}>{item}</th>)}
                             </tr>
                         </thead>
                         <tbody>
-                            {props.data.map((item, index) => (
+                            {data && data.map((item, index) => (
                                 <tr key={index} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
-                                    {props.agrupado === '' || props.agrupado === 'dia' && <td>{formatearFecha(item.fecha_creacion)}</td>}
-                                    {props.agrupado === 'semana' && <td>{convertir_fecha_a_semana(item.fecha_creacion)}</td>}
-                                    {props.agrupado === 'mes' && <td>{convertir_fecha_a_mes(item.fecha_creacion)}</td>}
-                                    <td>{item.tipo_fruta.reduce((acu, item) => acu += item + ' ', '')}</td>
-                                    <td>{item.total_horas_hombre?.toFixed(2) ?? ''}</td>
-                                    <td>{item.kilos_procesador?.toFixed(2) ?? ''}</td>
-                                    <td>{item.meta_kilos_procesados?.toFixed(2) ?? ''}</td>
-                                    <td>{eficiencia_operativa(
-                                        item.kilos_procesador,
-                                        item.meta_kilos_procesados,
-                                        item.total_horas_hombre
-                                    ).toFixed(2)}%</td>
+                                    {currentFilters.divisionTiempo === '' || currentFilters.divisionTiempo === 'dia' && <td>{formatearFecha(item.fecha)}</td>}
+                                    {currentFilters.divisionTiempo === '' ||
+                                        currentFilters.divisionTiempo === 'semana' && <td>{getISOWeek(new Date(item.fecha))}</td>}
+                                    {currentFilters.divisionTiempo === '' ||
+                                        currentFilters.divisionTiempo === 'mes' && <td>{(new Date(item.fecha).getMonth() + 1)}</td>}
+                                    <td>{item.meta_kilos_hora?.toFixed(2) || 0}</td>
+                                    <td>{item.duracion_turno_horas?.toFixed(2) || 0}</td>
+                                    <td>{item.meta_kilos_turno?.toFixed(2) || 0}</td>
+                                    <td>{item.kilos_vaciados?.toFixed(2) || 0}</td>
+                                    <td>{item.kilos_hora?.toFixed(2) || 0}</td>
                                 </tr>
+
                             ))}
                         </tbody>
                     </table>
@@ -57,21 +70,22 @@ export default function EficienciaOperativaComponent({
             </div>
             <div className="item2">
                 <div>
-                    <h3>Sumatoria Kilos procesados:</h3>
-                    <h3>{props.data.reduce((acu, item) => acu += item.kilos_procesador, 0).toFixed(2)}</h3>
+                    <h3>Sumatoria Kilos Procesados:</h3>
+                    <h3>{data && data.reduce((acu, item) => acu += item.kilos_vaciados, 0)?.toFixed(2) || 0}</h3>
                 </div>
                 <div>
-                    <h3>Promedio kilos procesados</h3>
-                    <h3>{promedio(props.data, "kilos_procesador").toFixed(2)}</h3>
+                    <h3>Promedio Kilos Procesados</h3>
+                    <h3>{promedio(data, "kilos_vaciados")?.toFixed(2) || 0}</h3>
                 </div>
                 <div>
-                    <h3>Total eficiencia operativa</h3>
-                    <h3>{total_eficiencia_operativa(props.data).toFixed(2)}%</h3>
+                    <h3>Promedio Kilos Procesados por Hora</h3>
+                    <h3>{promedio(data, "kilos_hora")?.toFixed(2) || 0}</h3>
+
                 </div>
             </div>
             <div className="item3">
-                <GraficoBarrasEficienciaOperativa agrupacion={props.agrupado} data={props.data} />
-            </div> */}
+                <GraficoBarrasEficienciaOperativa agrupacion={currentFilters.divisionTiempo} data={data} />
+            </div>
         </div>
     )
 }

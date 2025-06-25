@@ -5,10 +5,7 @@ export type indicadoresType = {
     fecha_creacion: string,
     kilos_procesados: kilosProcesadosSchema,
     kilos_vaciados: kilosProcesadosSchema,
-    kilos_exportacion: KilosExportacionSchema,
-    meta_kilos_procesados: number,
-    meta_kilos_procesados_hora: number,
-    total_horas_hombre: number,
+    kilos_exportacion: kilosExportacionSchema,
     kilos_meta_hora: number,
     duracion_turno_horas: number,
 }

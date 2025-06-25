@@ -207,7 +207,7 @@ const handleClick = async ():Promise<void> => {
               setDivisionTiempo(e.target.value)
             }}
           >
-            <option value="">División tiempo</option>
+            <option value="">Periodo</option>
             <option value="dia">Día</option>
             <option value="semana">Semana</option>
             <option value="mes">Mes</option>

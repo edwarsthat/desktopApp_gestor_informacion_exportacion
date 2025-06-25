@@ -4,6 +4,7 @@ import { volanteCalidadType } from "@renderer/types/formulariosCalidad";
 import { indicadoresType } from "@renderer/types/indicadoresType";
 import { lotesType } from "@renderer/types/lotesType";
 import { getISOWeek } from "date-fns";
+import { IndicadorKilosProcesados } from "./validations/types";
 
 export const eficiencia_operativa = (
     kilos_procesados: number,
@@ -21,91 +22,132 @@ export const eficiencia_operativa = (
     return eficiencia * 100;
 }
 
-export const agruparRegistros = (indicadores: indicadoresType[] | undefined, agrupacion: string): indicadoresType[] => {
+const indicadorToIndicadoresKilosProcesados = (indicadores: indicadoresType): IndicadorKilosProcesados => {
+    if (!indicadores) return {
+        kilos_vaciados: 0,
+        kilos_hora: 0,
+        fecha: new Date().toISOString(),
+        duracion_turno_horas: 0,
+        meta_kilos_turno: 0,
+        meta_kilos_hora: 0,
+        eficiencia_procesado_hora: 0,
+        eficiencia_procesado_turno: 0
+    };
+
+    const kilos_vaciados_total = Object.values(indicadores.kilos_vaciados || {}).reduce((acu, item) => acu + (typeof item === 'number' ? item : 0), 0);
+
+    const kilos_hora = indicadores.duracion_turno_horas > 0
+        ? kilos_vaciados_total / indicadores.duracion_turno_horas
+        : 0;
+    const metaKilosTurno =
+        (typeof indicadores.kilos_meta_hora === 'number' && typeof indicadores.duracion_turno_horas === 'number')
+            ? indicadores.kilos_meta_hora * indicadores.duracion_turno_horas
+            : 0;
+    const eficiencia_proceso_hora = (kilos_hora / (indicadores.kilos_meta_hora || 1)) * 100;
+    const eficiencia_proceso_turno = (kilos_vaciados_total / (metaKilosTurno || 1)) * 100;
+
+    return {
+        kilos_vaciados: kilos_vaciados_total,
+        kilos_hora: kilos_hora || 0,
+        fecha: indicadores.fecha_creacion || new Date().toISOString(),
+        duracion_turno_horas: indicadores.duracion_turno_horas || 0,
+        meta_kilos_turno: metaKilosTurno || 0,
+        meta_kilos_hora: indicadores.kilos_meta_hora || 0,
+        eficiencia_procesado_hora: eficiencia_proceso_hora || 0,
+        eficiencia_procesado_turno: eficiencia_proceso_turno || 0
+    }
+} 
+
+const sumarVaciado = (result: IndicadorKilosProcesados[], indice, indicador: indicadoresType): void => {
+
+    const kilos_vaciados_total = Object.values(indicador.kilos_vaciados || {}).reduce((acu, item) => acu + (typeof item === 'number' ? item : 0), 0);
+
+    const kilos_hora = indicador.duracion_turno_horas > 0
+        ? kilos_vaciados_total / indicador.duracion_turno_horas
+        : 0;
+    const metaKilosTurno =
+        (typeof indicador.kilos_meta_hora === 'number' && typeof indicador.duracion_turno_horas === 'number')
+            ? indicador.kilos_meta_hora * indicador.duracion_turno_horas
+            : 0;
+    const eficiencia_proceso_hora = (kilos_hora / (indicador.kilos_meta_hora || 1)) * 100;
+    const eficiencia_proceso_turno = (kilos_vaciados_total / (metaKilosTurno || 1)) * 100;
+
+    result[indice].kilos_vaciados = (result[indice].kilos_vaciados || 0) + (kilos_vaciados_total || 0)
+    result[indice].kilos_hora = (result[indice].kilos_hora || 0) + kilos_hora
+    result[indice].fecha = indicador.fecha_creacion
+    result[indice].duracion_turno_horas = (result[indice].duracion_turno_horas || 0) + (indicador.duracion_turno_horas || 0)
+    result[indice].meta_kilos_hora = (result[indice].meta_kilos_hora || 0) + (indicador.kilos_meta_hora || 0)
+    result[indice].meta_kilos_turno = (result[indice].meta_kilos_turno || 0) + metaKilosTurno
+    result[indice].eficiencia_procesado_hora = (result[indice].eficiencia_procesado_hora || 0) + eficiencia_proceso_hora
+    result[indice].eficiencia_procesado_turno = (result[indice].eficiencia_procesado_turno || 0) + eficiencia_proceso_turno;
+}
+
+
+export const agruparRegistrosKilospRocesados = (indicadores: indicadoresType[] | undefined, agrupacion: string): IndicadorKilosProcesados[] => {
     if (indicadores === undefined || indicadores.length === 0) return [];
-    const result: indicadoresType[] = []
-    if (agrupacion === "" || agrupacion === 'dia') return indicadores;
+    const result: IndicadorKilosProcesados[] = []
+    if (agrupacion === "" || agrupacion === 'dia') return indicadores.map(indicador => indicadorToIndicadoresKilosProcesados(indicador));
 
     else if (agrupacion === 'semana') {
         const weekObj = {}
 
-        indicadores.forEach(indicador => {
+        for (const indicador of indicadores) {
             const fecha = new Date(indicador.fecha_creacion);
-            const week = getISOWeek(fecha)
+            const week = `${fecha.getFullYear()}-${getISOWeek(fecha)}`;
 
             if (result.length === 0) {
                 const copiaIndicador = structuredClone(indicador);
-                result.push(copiaIndicador);
+                result.push(indicadorToIndicadoresKilosProcesados(copiaIndicador));
                 weekObj[week] = 1;
             } else {
                 const indice = result.findIndex(item => {
-                    const fecha_result = new Date(item.fecha_creacion);
-                    const week_result = getISOWeek(fecha_result)
-                    if (week_result === week) {
-                        return true
-                    } else {
-                        return false
-                    }
-                })
+                    const fecha_result = new Date(item.fecha);
+                    const week_result = `${fecha_result.getFullYear()}-${getISOWeek(fecha_result)}`;
+                    return week_result === week;
+                });
 
                 if (indice !== -1) {
                     weekObj[week] += 1;
-                    result[indice].kilos_vaciados = (result[indice].kilos_vaciados || 0) + (indicador.kilos_vaciados || 0);
-                    result[indice].meta_kilos_procesados = (result[indice].meta_kilos_procesados || 0) + (indicador.meta_kilos_procesados || 0);
-                    result[indice].total_horas_hombre = (result[indice].total_horas_hombre || 0) + (indicador.total_horas_hombre || 0);
-
-                    if (indicador.kilos_exportacion && Object.keys(indicador.kilos_exportacion).length > 0) {
-                        if (!result[indice].kilos_exportacion) {
-                            result[indice].kilos_exportacion = {}
-                        }
-                        Object.entries(indicador.kilos_exportacion).forEach(([key, value]) => {
-                            if (!Object.prototype.hasOwnProperty.call(result[indice].kilos_exportacion, key)) {
-                                result[indice].kilos_exportacion[key] = value
-                            } else {
-                                result[indice].kilos_exportacion[key] += value
-                            }
-                        })
-                    }
-
-                    // Unir los dos arrays
-                    const arrayUnido = result[indice].tipo_fruta.concat(indicador.tipo_fruta);
-                    const arraySinDuplicados = [...new Set(arrayUnido)];
-                    result[indice].tipo_fruta = arraySinDuplicados;
-
+                    sumarVaciado(result, indice, indicador);
                 } else {
                     weekObj[week] = 1;
-                    result.push(indicador)
+                    result.push(indicadorToIndicadoresKilosProcesados(indicador));
                 }
-
             }
+        }
 
-        })
+        return result.map(item => {
+            const fecha_result = new Date(item.fecha);
+            const weekKey = `${fecha_result.getFullYear()}-${getISOWeek(fecha_result)}`;
+            const divisor = weekObj[weekKey] || 1;
 
-        const final = result.map(item => {
-            const fecha_result = new Date(item.fecha_creacion);
-            const week_result = getISOWeek(fecha_result)
-            item.kilos_procesador = item.kilos_procesador / weekObj[week_result]
-            item.meta_kilos_procesados = item.meta_kilos_procesados / weekObj[week_result]
-            item.total_horas_hombre = item.total_horas_hombre / weekObj[week_result]
+            item.kilos_vaciados /= divisor;
+            item.kilos_hora /= divisor;
+            item.duracion_turno_horas /= divisor;
+            item.meta_kilos_turno /= divisor;
+            item.meta_kilos_hora /= divisor;
 
-            return item
-        })
+            return item;
+        });
 
-        return final
-    } else if (agrupacion === 'mes') {
+    }
+
+    else if (agrupacion === 'mes') {
         const monthObj = {}
-        indicadores.forEach(indicador => {
+
+        for (const indicador of indicadores) {
+
             const fecha = new Date(indicador.fecha_creacion);
-            const month = fecha.getMonth();
+            const month = `${fecha.getFullYear()}-${fecha.getMonth()}`;
 
             if (result.length === 0) {
                 const copiaIndicador = structuredClone(indicador);
-                result.push(copiaIndicador);
+                result.push(indicadorToIndicadoresKilosProcesados(copiaIndicador));
                 monthObj[month] = 1;
             } else {
                 const indice = result.findIndex(item => {
-                    const fecha_result = new Date(item.fecha_creacion);
-                    const month_result = fecha_result.getMonth();
+                    const fecha_result = new Date(item.fecha);
+                    const month_result = `${fecha.getFullYear()}-${fecha_result.getMonth()}`;
                     if (month_result === month) {
                         return true
                     } else {
@@ -115,53 +157,34 @@ export const agruparRegistros = (indicadores: indicadoresType[] | undefined, agr
 
                 if (indice !== -1) {
                     monthObj[month] += 1;
-                    result[indice].kilos_procesador = (result[indice].kilos_procesador || 0) + (indicador.kilos_procesador || 0);
-                    result[indice].meta_kilos_procesados = (result[indice].meta_kilos_procesados || 0) + (indicador.meta_kilos_procesados || 0);
-                    result[indice].total_horas_hombre = (result[indice].total_horas_hombre || 0) + (indicador.total_horas_hombre || 0);
-
-                    if (indicador.kilos_exportacion && Object.keys(indicador.kilos_exportacion).length > 0) {
-                        if (!result[indice].kilos_exportacion) {
-                            result[indice].kilos_exportacion = {}
-                        }
-                        Object.entries(indicador.kilos_exportacion).forEach(([key, value]) => {
-                            if (!Object.prototype.hasOwnProperty.call(result[indice].kilos_exportacion, key)) {
-                                result[indice].kilos_exportacion[key] = value
-                            } else {
-                                result[indice].kilos_exportacion[key] += value
-                            }
-                        })
-                    }
-
-                    // Unir los dos arrays
-                    const arrayUnido = result[indice].tipo_fruta.concat(indicador.tipo_fruta);
-                    const arraySinDuplicados = [...new Set(arrayUnido)];
-                    result[indice].tipo_fruta = arraySinDuplicados;
+                    sumarVaciado(result, indice, indicador);
 
                 } else {
                     monthObj[month] = 1;
-                    result.push(indicador)
+                    result.push(indicadorToIndicadoresKilosProcesados(indicador));
+
                 }
 
             }
-        })
+        }
 
-        const final = result.map(item => {
-            const fecha_result = new Date(item.fecha_creacion);
-            const month_result = fecha_result.getMonth();
-            item.kilos_procesador = item.kilos_procesador / monthObj[month_result]
-            item.meta_kilos_procesados = item.meta_kilos_procesados / monthObj[month_result]
-            item.total_horas_hombre = item.total_horas_hombre / monthObj[month_result]
+        return result.map(item => {
+            const fecha_result = new Date(item.fecha);
+            const month_result = `${fecha_result.getFullYear()}-${fecha_result.getMonth()}`;
+            const divisor = monthObj[month_result] || 1;
 
-            return item
-        })
+            item.kilos_vaciados /= divisor;
+            item.kilos_hora /= divisor;
+            item.duracion_turno_horas /= divisor;
+            item.meta_kilos_turno /= divisor;
+            item.meta_kilos_hora /= divisor;
 
-        return final
-
+            return item;
+        });
     }
 
-    return indicadores
+    return indicadores.map(indicador => indicadorToIndicadoresKilosProcesados(indicador));
 }
-
 
 
 export const convertir_fecha_a_semana = (fecha: string): string => {
@@ -199,11 +222,11 @@ export const total_eficiencia_operativa = (data): number => {
     return eficiencia_operativa_data
 }
 
-export const kilos_exportacion = (data: indicadoresType): number => {
-    if (!data.kilos_exportacion) return 0
-    const total = Object.values(data.kilos_exportacion).reduce((acu, item) => acu += item, 0)
-    return total
-}
+// export const kilos_exportacion = (data: indicadoresType): number => {
+//     if (!data.kilos_exportacion) return 0
+//     const total = Object.values(data.kilos_exportacion).reduce((acu, item) => acu += item, 0)
+//     return total
+// }
 
 export const porcentage_exportacion = (kilos_exp, kilos_proc): number => {
     if (kilos_proc === 0) return 0
@@ -211,18 +234,18 @@ export const porcentage_exportacion = (kilos_exp, kilos_proc): number => {
     return (kilos_exp * 100) / kilos_proc
 }
 
-export const sumatoria_kilos_exportacion = (data: indicadoresType[]): number => {
-    if (data.length <= 0) return 0
-    const total = data.reduce((acu, item) => acu += kilos_exportacion(item), 0)
-    return total
-}
+// export const sumatoria_kilos_exportacion = (data: indicadoresType[]): number => {
+//     if (data.length <= 0) return 0
+//     const total = data.reduce((acu, item) => acu += kilos_exportacion(item), 0)
+//     return total
+// }
 
-export const total_eficeincia_fruta = (data: indicadoresType[]): number => {
-    if (data.length < 1) return 0
-    const kilos_procesados = promedio(data, "kilos_procesador")
-    const total_kilos_exp = sumatoria_kilos_exportacion(data)
-    return (total_kilos_exp * 100) / kilos_procesados
-}
+// export const total_eficeincia_fruta = (data: indicadoresType[]): number => {
+//     if (data.length < 1) return 0
+//     const kilos_procesados = promedio(data, "kilos_procesador")
+//     const total_kilos_exp = sumatoria_kilos_exportacion(data)
+//     return (total_kilos_exp * 100) / kilos_procesados
+// }
 
 export type outTypeLoteIndicadores = {
     fecha_ingreso: string
@@ -400,15 +423,15 @@ export const agrupar_volante_calidad = (data: volanteCalidadType[] | undefined, 
             }
         })
         return result
-    } else if (agrupacion === 'semana'){
-        
+    } else if (agrupacion === 'semana') {
+
         data.forEach(item => {
             const fecha = new Date(item.fecha);
             const week = getISOWeek(fecha)
             const year = fecha.getFullYear()
 
 
-            if(result.length <= 0){
+            if (result.length <= 0) {
                 const copiaIndicador = structuredClone(item);
                 result.push(copiaIndicador);
             } else {
@@ -417,14 +440,14 @@ export const agrupar_volante_calidad = (data: volanteCalidadType[] | undefined, 
                     const week_result = getISOWeek(fecha_result);
                     const year_result = fecha_result.getFullYear()
 
-                    if(week_result === week && year === year_result){
+                    if (week_result === week && year === year_result) {
                         return true
                     } else {
                         return false
                     }
                 })
 
-                if(indice !== -1){
+                if (indice !== -1) {
                     result[indice].defectos += (item.defectos ?? 0)
                     result[indice].unidades += (item.unidades ?? 0)
                 } else {
@@ -436,14 +459,14 @@ export const agrupar_volante_calidad = (data: volanteCalidadType[] | undefined, 
 
         return result
 
-    } else if ( agrupacion === 'mes'){
+    } else if (agrupacion === 'mes') {
 
         data.forEach(item => {
             const fecha = new Date(item.fecha);
             const mes = fecha.getMonth();
             const year = fecha.getFullYear();
 
-            if(result.length <= 0){
+            if (result.length <= 0) {
                 const copiaItem = structuredClone(item);
                 result.push(copiaItem)
             } else {
@@ -452,13 +475,13 @@ export const agrupar_volante_calidad = (data: volanteCalidadType[] | undefined, 
                     const mes_result = fecha_result.getMonth();
                     const year_result = fecha_result.getFullYear();
 
-                    if(mes_result === mes && year_result === year){
+                    if (mes_result === mes && year_result === year) {
                         return true
                     } else {
                         return false
                     }
                 })
-                if(indice !== -1){
+                if (indice !== -1) {
                     result[indice].defectos += (item.defectos ?? 0)
                     result[indice].unidades += (item.unidades ?? 0)
                 } else {
@@ -473,7 +496,7 @@ export const agrupar_volante_calidad = (data: volanteCalidadType[] | undefined, 
     return data
 }
 
-export const resultado_volante_calidad = (unidades_revisadas: number, novedades:number):number => {
-    if(unidades_revisadas === 0) return -1
+export const resultado_volante_calidad = (unidades_revisadas: number, novedades: number): number => {
+    if (unidades_revisadas === 0) return -1
     return (novedades * 100) / unidades_revisadas
 }
