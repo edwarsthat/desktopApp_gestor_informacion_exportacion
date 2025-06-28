@@ -4,7 +4,7 @@ import { volanteCalidadType } from "@renderer/types/formulariosCalidad";
 import { indicadoresType } from "@renderer/types/indicadoresType";
 import { lotesType } from "@renderer/types/lotesType";
 import { getISOWeek } from "date-fns";
-import { IndicadorKilosProcesados } from "./validations/types";
+import { IndicadoresKilosProcesadosExcelView, IndicadorKilosProcesados } from "./validations/types";
 
 export const eficiencia_operativa = (
     kilos_procesados: number,
@@ -21,7 +21,6 @@ export const eficiencia_operativa = (
 
     return eficiencia * 100;
 }
-
 const indicadorToIndicadoresKilosProcesados = (indicadores: indicadoresType): IndicadorKilosProcesados => {
     if (!indicadores) return {
         kilos_vaciados: 0,
@@ -56,8 +55,7 @@ const indicadorToIndicadoresKilosProcesados = (indicadores: indicadoresType): In
         eficiencia_procesado_hora: eficiencia_proceso_hora || 0,
         eficiencia_procesado_turno: eficiencia_proceso_turno || 0
     }
-} 
-
+}
 const sumarVaciado = (result: IndicadorKilosProcesados[], indice, indicador: indicadoresType): void => {
 
     const kilos_vaciados_total = Object.values(indicador.kilos_vaciados || {}).reduce((acu, item) => acu + (typeof item === 'number' ? item : 0), 0);
@@ -81,8 +79,6 @@ const sumarVaciado = (result: IndicadorKilosProcesados[], indice, indicador: ind
     result[indice].eficiencia_procesado_hora = (result[indice].eficiencia_procesado_hora || 0) + eficiencia_proceso_hora
     result[indice].eficiencia_procesado_turno = (result[indice].eficiencia_procesado_turno || 0) + eficiencia_proceso_turno;
 }
-
-
 export const agruparRegistrosKilospRocesados = (indicadores: indicadoresType[] | undefined, agrupacion: string): IndicadorKilosProcesados[] => {
     if (indicadores === undefined || indicadores.length === 0) return [];
     const result: IndicadorKilosProcesados[] = []
@@ -185,21 +181,17 @@ export const agruparRegistrosKilospRocesados = (indicadores: indicadoresType[] |
 
     return indicadores.map(indicador => indicadorToIndicadoresKilosProcesados(indicador));
 }
-
-
 export const convertir_fecha_a_semana = (fecha: string): string => {
     const fechaObj = new Date(fecha);
     const week = getISOWeek(fechaObj);
     const year = fechaObj.getFullYear();
     return week + "-" + year
 }
-
 export const convertir_fecha_a_mes = (fecha: string): string => {
     const fechaObj = new Date(fecha); // Suponiendo que tienes tu objeto Date
     const nombreMes = fechaObj.toLocaleString('es-ES', { month: 'long' });
     return nombreMes
 }
-
 export const promedio = (data, key): number => {
     const len = data.length;
     if (len <= 0) return 0;
@@ -207,7 +199,6 @@ export const promedio = (data, key): number => {
     const sum = data.reduce((acu, item) => acu += item[key], 0)
     return sum / len;
 }
-
 export const total_eficiencia_operativa = (data): number => {
     const kilos_procesados = promedio(data, "kilos_procesador")
     const meta_kilos = promedio(data, "meta_kilos_procesados")
@@ -221,38 +212,16 @@ export const total_eficiencia_operativa = (data): number => {
 
     return eficiencia_operativa_data
 }
-
-// export const kilos_exportacion = (data: indicadoresType): number => {
-//     if (!data.kilos_exportacion) return 0
-//     const total = Object.values(data.kilos_exportacion).reduce((acu, item) => acu += item, 0)
-//     return total
-// }
-
 export const porcentage_exportacion = (kilos_exp, kilos_proc): number => {
     if (kilos_proc === 0) return 0
 
     return (kilos_exp * 100) / kilos_proc
 }
-
-// export const sumatoria_kilos_exportacion = (data: indicadoresType[]): number => {
-//     if (data.length <= 0) return 0
-//     const total = data.reduce((acu, item) => acu += kilos_exportacion(item), 0)
-//     return total
-// }
-
-// export const total_eficeincia_fruta = (data: indicadoresType[]): number => {
-//     if (data.length < 1) return 0
-//     const kilos_procesados = promedio(data, "kilos_procesador")
-//     const total_kilos_exp = sumatoria_kilos_exportacion(data)
-//     return (total_kilos_exp * 100) / kilos_procesados
-// }
-
 export type outTypeLoteIndicadores = {
     fecha_ingreso: string
     fecha_fin: string
     total_dias: number
 }
-
 export const agrupar_lotes = (lotes: lotesType[] | undefined, agrupacion: string): outTypeLoteIndicadores[] => {
     if (lotes === undefined || lotes.length === 0) return [];
     const result: outTypeLoteIndicadores[] = []
@@ -375,14 +344,12 @@ export const agrupar_lotes = (lotes: lotesType[] | undefined, agrupacion: string
     }
     return []
 }
-
 export const porcentage_ciclo_predio = (data: outTypeLoteIndicadores): number | string => {
     if (!data) return 0
     if (data.total_dias === 0) return 0
 
     return (24 / data.total_dias) * 100
 }
-
 export const agrupar_volante_calidad = (data: volanteCalidadType[] | undefined, agrupacion: string): volanteCalidadType[] => {
     if (data === undefined || data.length === 0) return [];
     const result: volanteCalidadType[] = []
@@ -495,8 +462,34 @@ export const agrupar_volante_calidad = (data: volanteCalidadType[] | undefined, 
     }
     return data
 }
-
 export const resultado_volante_calidad = (unidades_revisadas: number, novedades: number): number => {
     if (unidades_revisadas === 0) return -1
     return (novedades * 100) / unidades_revisadas
 }
+export const arreglar_datos_excel_eficiencia = (data: IndicadorKilosProcesados[]): IndicadoresKilosProcesadosExcelView[] => {
+    const out: IndicadoresKilosProcesadosExcelView[] = [];
+    for (const item of data) {
+        out.push({
+            Fecha: item.fecha,
+            "Duración Turno (Horas)": Number(item.duracion_turno_horas ?? 0),
+            "Eficiencia Kilos Hora": typeof item.eficiencia_procesado_hora === "number"
+                ? item.eficiencia_procesado_hora / 100
+                : 0,
+        });
+    }
+    return out;
+};
+export const arreglar_datos_excel_kilos_hora = (data: IndicadorKilosProcesados[]): IndicadoresKilosProcesadosExcelView[] => {
+    const out: IndicadoresKilosProcesadosExcelView[] = [];
+    for (const item of data) {
+        out.push({
+            Fecha: item.fecha,
+            "Duración Turno (Horas)": Number(item.duracion_turno_horas ?? 0),
+            "Meta Kilos/Hora": typeof item.eficiencia_procesado_hora === "number" ? item.eficiencia_procesado_hora : 0,
+            "Meta Kilos Turno": typeof item.meta_kilos_turno === "number" ? item.meta_kilos_turno : 0,
+            "Kilos Procesados": typeof item.kilos_vaciados === "number" ? item.kilos_vaciados : 0,
+        });
+    }
+    return out;
+};
+

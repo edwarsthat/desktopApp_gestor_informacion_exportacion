@@ -14,7 +14,8 @@ var electron_vite_config_default = defineConfig({
           index: resolve(__electron_vite_injected_dirname, "src/main/index.ts"),
           imprimir: resolve(__electron_vite_injected_dirname, "src/main/imprimir.js"),
           imprimirPallet: resolve(__electron_vite_injected_dirname, "src/main/imprimirPallet.js"),
-          crearDocumentos: resolve(__electron_vite_injected_dirname, "src/main/crearDocumentos.js")
+          crearDocumentos: resolve(__electron_vite_injected_dirname, "src/main/crearDocumentos.js"),
+          crearExcel: resolve(__electron_vite_injected_dirname, "src/main/crearDocumentos.js")
         }
       }
     }

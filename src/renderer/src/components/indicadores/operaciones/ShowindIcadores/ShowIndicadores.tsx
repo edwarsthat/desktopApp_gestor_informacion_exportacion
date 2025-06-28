@@ -2,12 +2,12 @@
 
 import Filtros from "@renderer/components/UI/components/Filtros";
 import { useFiltroValue } from "@renderer/hooks/useFiltro"
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import EficienciaOperativaComponent from "./components/EficienciaOperativaComponent";
 import useAppContext from "@renderer/hooks/useAppContext";
 import { validateFrutapRocesadaHora } from "./validations/requestValidations";
 import { z } from "zod";
-import { agruparRegistrosKilospRocesados } from "./function";
+import { agruparRegistrosKilospRocesados, arreglar_datos_excel_eficiencia, arreglar_datos_excel_kilos_hora } from "./function";
 import { IndicadorKilosProcesados } from "./validations/types";
 import './styles.css';
 import { indicadoresType } from "@renderer/types/indicadoresType";
@@ -21,7 +21,29 @@ export default function ShowIndicadores(): JSX.Element {
     const [data, setData] = useState<IndicadorKilosProcesados[]>([]);
     const [dataOriginal, setDataOriginal] = useState<indicadoresType[]>([]);
     const [tipoIndicador, setTipoIndicador] = useState<string>('');
+    const dataRef = useRef(data);
+    const tipoIndicadorRef = useRef(tipoIndicador);
 
+    useEffect(() => {
+        dataRef.current = data;
+        tipoIndicadorRef.current = tipoIndicador;
+    }, [data, tipoIndicador]);
+
+    useEffect(() => {
+        window.api.solicitarDatosTabla(() => {
+            let dataExcel
+            switch (tipoIndicadorRef.current) {
+                case 'kilo-hora':
+                    dataExcel = arreglar_datos_excel_kilos_hora(dataRef.current)
+                    break;
+                case 'eficiencia-kilos-hora':
+                    dataExcel = arreglar_datos_excel_eficiencia(dataRef.current)
+                    break;
+
+            }
+            window.api.enviarDatosTabla(dataExcel);
+        });
+    }, []);
 
     const buscar = async (): Promise<void> => {
         try {
@@ -68,16 +90,16 @@ export default function ShowIndicadores(): JSX.Element {
         <div >
             <div >
                 <div className="navBar"></div>
-                { tipoIndicador === '' && <h2>Indicadores Operativos</h2>}
-                { tipoIndicador === 'kilo-hora' && <h2>Kilogramos por Hora vs Meta</h2>}
-                { tipoIndicador === 'eficiencia-kilos-hora' && <h2>Eficiencia Kilogramos por Hora</h2>}
+                {tipoIndicador === '' && <h2>Indicadores Operativos</h2>}
+                {tipoIndicador === 'kilo-hora' && <h2>Kilogramos por Hora vs Meta</h2>}
+                {tipoIndicador === 'eficiencia-kilos-hora' && <h2>Eficiencia Kilogramos por Hora</h2>}
 
                 <hr />
 
                 {/* Select adicional */}
                 <div className="select-indicador-container">
                     <label htmlFor="select-indicador">Tipo de Indicador:</label>
-                    <select id="select-indicador" className="select-indicador" onChange={(e) :void => setTipoIndicador(e.target.value)} value={tipoIndicador}>
+                    <select id="select-indicador" className="select-indicador" onChange={(e): void => setTipoIndicador(e.target.value)} value={tipoIndicador}>
                         <option value="">Seleccionar Tipo de Indicador</option>
                         <option value="kilo-hora">Kilogramos por Hora vs Meta</option>
                         <option value="eficiencia-kilos-hora">Eficiencia Operativa</option>
@@ -93,12 +115,12 @@ export default function ShowIndicadores(): JSX.Element {
                     findFunction={buscar}
                     ggnId="indicadoresGGN"
                     onFiltersChange={setCurrentFilters}
-                    />
+                />
             </div>
 
             <div className="show-indicadores-content">
-                {tipoIndicador === 'kilo-hora' &&<EficienciaOperativaComponent  currentFilters={currentFilters} data={data} /> }
-                {tipoIndicador === 'eficiencia-kilos-hora' &&<EficienciaKilosHora  currentFilters={currentFilters} data={data} /> }
+                {tipoIndicador === 'kilo-hora' && <EficienciaOperativaComponent currentFilters={currentFilters} data={data} />}
+                {tipoIndicador === 'eficiencia-kilos-hora' && <EficienciaKilosHora currentFilters={currentFilters} data={data} />}
             </div>
         </div>
     )

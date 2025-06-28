@@ -10,3 +10,7 @@ export type IndicadorKilosProcesados = {
     eficiencia_procesado_turno: number;
     eficiencia_procesado_hora: number;
 }
+
+export type IndicadoresKilosProcesadosExcelView = {
+    [key: string]: string | number;
+}

@@ -34,7 +34,6 @@ export default function HistorialIngresoFruta(): JSX.Element {
 
   useEffect(() => {
     obtenerData()
-    console.log(data)
   }, [page])
 
   useEffect(() => {

@@ -14,7 +14,8 @@ export default defineConfig({
           index: resolve(__dirname, 'src/main/index.ts'),
           imprimir: resolve(__dirname, 'src/main/imprimir.js'),
           imprimirPallet: resolve(__dirname, 'src/main/imprimirPallet.js'),
-          crearDocumentos: resolve(__dirname, 'src/main/crearDocumentos.js')
+          crearDocumentos: resolve(__dirname, 'src/main/crearDocumentos.js'),
+          crearExcel: resolve(__dirname, 'src/main/controllers/crearExcel.js')
         }
       }
     }

@@ -18,6 +18,11 @@ export interface Api {
   updateProgress: (data, callback) => any
   obtenerFruta: () => Promise<any>
 
+  //proceso para descargar excel
+  mostrarMenuTabla: () => Promise<any>
+  solicitarDatosTabla: (callback) => void
+  enviarDatosTabla: (data: descarteType[]) => void
+
   //request al servidor
   user2: (datos) => Promise<serverResponse>
   forgotPassword: (datos) => Promise<serverResponse>

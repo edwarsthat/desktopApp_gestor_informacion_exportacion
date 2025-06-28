@@ -34,6 +34,7 @@ const api = {
       return callback(...args)
     })
   },
+
   reload: (callback) => {
     ipcRenderer.on("reload", (_event, value) => { callback(value) })
   },
@@ -45,6 +46,18 @@ const api = {
     return response
   },
 
+  //para el proceso de descarga de excel
+  mostrarMenuTabla: () => {
+    ipcRenderer.send('mostrarMenuTabla');
+  },
+  solicitarDatosTabla: (callback) => {
+    ipcRenderer.on('solicitarDatosTabla', callback);
+  },
+  enviarDatosTabla: (datos) => {
+    ipcRenderer.send('datosTablaParaExcel', datos);
+  },
+
+  
   //#region request al servidor
   user2: async (datos): Promise<unknown> => {
     const response = await ipcRenderer.invoke('user2', datos)

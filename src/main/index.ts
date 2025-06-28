@@ -75,28 +75,27 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
-  const ctxMenu = new Menu()
+  // const ctxMenu = new Menu()
 
-  ctxMenu.append(new MenuItem({
-    label: "🔄 Actualizar",
-    click: function (): void {
-      mainWindow.webContents.send('reload', "message")
-      return;
-    }
-  }));
+  // ctxMenu.append(new MenuItem({
+  //   label: "🔄 Actualizar",
+  //   click: function (): void {
+  //     mainWindow.webContents.send('reload', "message")
+  //     return;
+  //   }
+  // }));
 
-  ctxMenu.append(new MenuItem({
-    label: "Descargar",
-    click: function (): void {
-      mainWindow.webContents.send('Descargar', "Descargar")
-      return;
-    }
-  }));
+  // ctxMenu.append(new MenuItem({
+  //   label: "📥 Descargar",
+  //   click: function (): void {
+  //     mainWindow.webContents.send('Descargar', "Descargar")
+  //     return;
+  //   }
+  // }));
 
 
   mainWindow.webContents.on("context-menu", function (_, params) {
-
-    ctxMenu.popup(params)
+    // ctxMenu.popup(params)
   })
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -149,22 +148,20 @@ function createWindow(): void {
 
     console.log("nuevo manejador de eventos =>", data.data)
 
-    if(data.action === 'add_lote'){
+    if (data.action === 'add_lote') {
       if (data.data && data.data.PREDIO) {
         new Notification({
           title: 'Predio Nuevo',
           body: data.data.enf + " - " + data.data.PREDIO
         }).show()
       }
-    } else if(data.action === 'vaciar_lote'){
+    } else if (data.action === 'vaciar_lote') {
       console.log(data.data)
     }
   })
 
 
 }
-
-
 
 function createLoginWindow(): void {
   const { width, height } = require('electron').screen.getPrimaryDisplay().workAreaSize
@@ -217,6 +214,16 @@ function createDownloadWindow(): void {
 
   downloadWindow.loadFile(join(__dirname, '../renderer/downloadWindow.html'))
 }
+
+// Crea el menú específico de la tabla
+const ctxMenuTabla = new Menu();
+ctxMenuTabla.append(new MenuItem({
+  label: "📄 Descargar Excel",
+  click: (): void => {
+    // Cuando se selecciona, le pides los datos al renderer
+    mainWindow.webContents.send('solicitarDatosTabla');
+  }
+}));
 
 //#region  cuando esta lista la app
 // This method will be called when Electron has finished
@@ -283,11 +290,9 @@ ipcMain.handle('obtenerTheme', async () => {
     return `${e}`
   }
 })
-
 ipcMain.handle('version', async () => {
   return app.getVersion();
 })
-
 ipcMain.handle('obtenerCuenta', async () => {
   try {
     return { user: user, permisos: permisos, cargo: cargo, rol: rol }
@@ -295,10 +300,9 @@ ipcMain.handle('obtenerCuenta', async () => {
     return `${e}`
   }
 })
-
 ipcMain.handle('reporteFallo', async () => {
   const win = new BrowserWindow({
-    width:800,
+    width: 800,
     height: 600,
     autoHideMenuBar: false,
     icon: appIcon,
@@ -313,7 +317,7 @@ ipcMain.handle('reporteFallo', async () => {
 })
 ipcMain.handle('sugerenciaMejora', async () => {
   const win = new BrowserWindow({
-    width:800,
+    width: 800,
     height: 600,
     autoHideMenuBar: false,
     icon: appIcon,
@@ -326,12 +330,11 @@ ipcMain.handle('sugerenciaMejora', async () => {
   view.setBounds({ x: 0, y: 0, width: 800, height: 600 })
   view.webContents.loadURL('https://forms.office.com/Pages/ResponsePage.aspx?id=KE_oZH36ZkOQP6vYejM5G-SWkSkw5QdKgoAC2bVgIKlUNlRIV1QwN0syT1BQWEtKTVQzQUVVQ1dZUC4u')
 })
-
 ipcMain.handle('openExternalLink', async (event, url) => {
   event.preventDefault()
   console.log(url)
   const win = new BrowserWindow({
-    width:900,
+    width: 900,
     height: 700,
     autoHideMenuBar: false,
     icon: appIcon,
@@ -342,10 +345,35 @@ ipcMain.handle('openExternalLink', async (event, url) => {
   view.setBounds({ x: 0, y: 0, width: 900, height: 700 })
   view.webContents.loadURL(url)
 })
+ipcMain.on('mostrarMenuTabla', () => {
+  // Solo aquí muestras el menú contextual personalizado para la tabla
+  ctxMenuTabla.popup({ window: mainWindow });
+});
+ipcMain.on('datosTablaParaExcel', async (event, datosTabla) => {
+  // Aquí lanzas el proceso hijo para crear el Excel
+  // Ejemplo con utilityProcess o child_process
+  const { filePath } = await dialog.showSaveDialog({
+    title: 'Guardar archivo Excel',
+    defaultPath: `data.xlsx`,
+    filters: [{ name: 'Excel', extensions: ['xlsx'] }],
+  });
+  if (!filePath) return; // usuario canceló
 
-// const socket = io('ws://192.168.0.172:3000/', {
-//   rejectUnauthorized: false
-// })
+  const child = utilityProcess.fork(join(__dirname, 'crearExcel.js'));
+  // const request = JSON.stringify({ data: datosTabla, path: filePath, })
+  // child.postMessage(request);
+  child.postMessage({ data: datosTabla, path: filePath });
+
+  child.on('message', (msg) => {
+    if (msg.ok) {
+      console.log('Excel creado en:', msg.ruta);
+      mainWindow.webContents.send('excelCreado', { ruta: msg.ruta });
+    } else {
+      console.error('Error al crear el Excel:', msg.error);
+      mainWindow.webContents.send('excelError', { error: msg.error });
+    }
+  });
+});
 
 //#region llamadas al servidor
 let lastProgress = 0;
@@ -384,7 +412,7 @@ updater.autoUpdater.on('update-downloaded', async (info) => {
   };
 
   const response = await dialog.showMessageBox(mainWindow, dialogOpts);
-  console.log(response)
+
   if (response.response === 0) {
     updater.autoUpdater.quitAndInstall();
     downloadWindow.close()
@@ -399,7 +427,7 @@ ipcMain.handle('user2', async (event, datos) => {
   try {
     event.defaultPrevented
     const responseJSON = await net.fetch(mode === 'development' ? `${uri}login2` : `${uri}login2`, {
-    // const responseJSON = await net.fetch(mode === 'development' ? `${uri}:3010/login2` : `${uri}login2`, {
+      // const responseJSON = await net.fetch(mode === 'development' ? `${uri}:3010/login2` : `${uri}login2`, {
 
       method: "POST",
       headers: {
@@ -504,7 +532,7 @@ ipcMain.handle('user2', async (event, datos) => {
 //comunicacion con el servidor
 ipcMain.handle('server2', async (event, data) => {
   try {
-    
+
     event.preventDefault()
     const request = { data: data, token: accessToken }
     const response: { status: number, data: object, token: string } = await new Promise((resolve) => {
@@ -525,7 +553,7 @@ ipcMain.handle('server2', async (event, data) => {
 ipcMain.handle('forgotPassword', async (event, data) => {
   try {
     event.defaultPrevented
-    console.log("forgot pass",data)
+    console.log("forgot pass", data)
     const responseJSON = await net.fetch(`${uri}password`, {
       method: "POST",
       headers: {
