@@ -2,10 +2,8 @@
 
 import { FilterValues } from "@renderer/hooks/useFiltro";
 import { IndicadorKilosProcesados } from "../validations/types";
-import { formatearFecha } from "@renderer/functions/fechas";
 import GraficoBarrasEficienciaOperativa from "../graficos/GraficoBarrasEficienciaOperativa";
 import { promedio } from "../function";
-import { getISOWeek } from "date-fns";
 import { TABLE_KILOS_HORA } from "../constants/table";
 
 type propsType = {

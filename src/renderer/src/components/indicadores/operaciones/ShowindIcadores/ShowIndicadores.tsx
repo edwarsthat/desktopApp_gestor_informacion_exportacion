@@ -7,20 +7,38 @@ import EficienciaOperativaComponent from "./components/EficienciaOperativaCompon
 import useAppContext from "@renderer/hooks/useAppContext";
 import { validateFrutapRocesadaHora } from "./validations/requestValidations";
 import { z } from "zod";
-import { agruparRegistrosKilospRocesados, arreglar_datos_excel_eficiencia, arreglar_datos_excel_kilos_hora } from "./function";
-import { IndicadorKilosProcesados } from "./validations/types";
+import { agruparRegistrosKilosExportacion, agruparRegistrosKilospRocesados, arreglar_datos_excel_eficiencia, arreglar_datos_excel_kilos_hora, obtener_filtros_exportaciones } from "./function";
+import { filtrosExportacionesType, IndicadorKilosProcesados, filtroExportacionesSelectType, itemExportacionType } from "./validations/types";
 import './styles.css';
 import { indicadoresType } from "@renderer/types/indicadoresType";
 import EficienciaKilosHora from "./components/EficienciaKilosHora";
+import FiltrosExportaciones from "./components/FiltrosExportaciones";
+import ExportacionDiaria from "./components/ExportacionDiaria";
 
 
 
 export default function ShowIndicadores(): JSX.Element {
     const { setLoading, messageModal } = useAppContext();
     const { setCurrentFilters, currentFilters } = useFiltroValue();
+
+    // kilos procesados
     const [data, setData] = useState<IndicadorKilosProcesados[]>([]);
     const [dataOriginal, setDataOriginal] = useState<indicadoresType[]>([]);
     const [tipoIndicador, setTipoIndicador] = useState<string>('');
+
+    const [dataExportacion, setDataExportacion] = useState<itemExportacionType[]>([]);
+
+    const [selectFiltroExportacion, setSelectFiltroExportacion] = useState<filtroExportacionesSelectType>({
+        tipoFruta: false,
+        calidad: false,
+        calibre: false
+    });
+    const [filtrosExportacion, setFiltrosExportacion] = useState<filtrosExportacionesType>({
+        tipoFruta: [],
+        calidad: [],
+        calibre: []
+    })
+
     const dataRef = useRef(data);
     const tipoIndicadorRef = useRef(tipoIndicador);
 
@@ -45,6 +63,8 @@ export default function ShowIndicadores(): JSX.Element {
         });
     }, []);
 
+
+
     const buscar = async (): Promise<void> => {
         try {
             setLoading(true);
@@ -62,6 +82,13 @@ export default function ShowIndicadores(): JSX.Element {
             const dataFiltrada = agruparRegistrosKilospRocesados(response.data, currentFilters.divisionTiempo);
             setData(dataFiltrada);
             setDataOriginal(response.data);
+
+            const dataExportacionAgrupada = agruparRegistrosKilosExportacion(response.data, currentFilters.divisionTiempo);
+            console.log(dataExportacionAgrupada)
+            setDataExportacion(dataExportacionAgrupada)
+
+            const dataFiltro = obtener_filtros_exportaciones(response.data)
+            setFiltrosExportacion(dataFiltro)
         } catch (err) {
             // Manejar errores de validación de Zod
             if (err instanceof z.ZodError) {
@@ -93,6 +120,7 @@ export default function ShowIndicadores(): JSX.Element {
                 {tipoIndicador === '' && <h2>Indicadores Operativos</h2>}
                 {tipoIndicador === 'kilo-hora' && <h2>Kilogramos por Hora vs Meta</h2>}
                 {tipoIndicador === 'eficiencia-kilos-hora' && <h2>Eficiencia Kilogramos por Hora</h2>}
+                {tipoIndicador === 'exportacion-dia' && <h2>Total Exportacion Diaria</h2>}
 
                 <hr />
 
@@ -103,7 +131,7 @@ export default function ShowIndicadores(): JSX.Element {
                         <option value="">Seleccionar Tipo de Indicador</option>
                         <option value="kilo-hora">Kilogramos por Hora vs Meta</option>
                         <option value="eficiencia-kilos-hora">Eficiencia Operativa</option>
-
+                        <option value="exportacion-dia">Total Exportacion Diaria</option>
                     </select>
                 </div>
 
@@ -116,11 +144,21 @@ export default function ShowIndicadores(): JSX.Element {
                     ggnId="indicadoresGGN"
                     onFiltersChange={setCurrentFilters}
                 />
+
+                {tipoIndicador === "exportacion-dia" && (
+                    <FiltrosExportaciones
+                        filtrosExportacion={filtrosExportacion}
+                        selectFiltroExportacion={selectFiltroExportacion}
+                        setSelectFiltroExportacion={setSelectFiltroExportacion}
+                    />
+                )}
             </div>
+
 
             <div className="show-indicadores-content">
                 {tipoIndicador === 'kilo-hora' && <EficienciaOperativaComponent currentFilters={currentFilters} data={data} />}
                 {tipoIndicador === 'eficiencia-kilos-hora' && <EficienciaKilosHora currentFilters={currentFilters} data={data} />}
+                {tipoIndicador === 'exportacion-dia' && <ExportacionDiaria data={dataExportacion}/>}
             </div>
         </div>
     )

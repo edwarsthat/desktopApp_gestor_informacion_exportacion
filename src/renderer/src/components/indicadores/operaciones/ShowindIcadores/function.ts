@@ -4,7 +4,7 @@ import { volanteCalidadType } from "@renderer/types/formulariosCalidad";
 import { indicadoresType } from "@renderer/types/indicadoresType";
 import { lotesType } from "@renderer/types/lotesType";
 import { getISOWeek } from "date-fns";
-import { IndicadoresKilosProcesadosExcelView, IndicadorKilosProcesados } from "./validations/types";
+import { filtrosExportacionesType, IndicadoresKilosProcesadosExcelView, IndicadorKilosProcesados, itemExportacionType } from "./validations/types";
 
 export const eficiencia_operativa = (
     kilos_procesados: number,
@@ -492,4 +492,142 @@ export const arreglar_datos_excel_kilos_hora = (data: IndicadorKilosProcesados[]
     }
     return out;
 };
+export const obtener_filtros_exportaciones = (data: indicadoresType[]): filtrosExportacionesType => {
 
+    const result: filtrosExportacionesType = {
+        tipoFruta: [],
+        calidad: [],
+        calibre: []
+    }
+    const tipoFrutaSet = new Set<string>();
+    const calidadSet = new Set<string>();
+    const calibreSet = new Set<string>();
+
+    for (const item of data) {
+        if (!item.kilos_exportacion) continue;
+        const tipoFruta = Object.keys(item.kilos_exportacion || {});
+        tipoFruta.forEach(tipo => tipoFrutaSet.add(tipo));
+        for (const tipoFruta of Object.keys(item.kilos_exportacion)) {
+            const calidad = Object.keys(item.kilos_exportacion[tipoFruta] || {});
+            calidad.forEach(tipo => calidadSet.add(tipo));
+            for (const calidad of Object.keys(item.kilos_exportacion[tipoFruta] || {})) {
+                const calibre = Object.keys(item.kilos_exportacion[tipoFruta][calidad] || {});
+                calibre.forEach(tipo => calibreSet.add(tipo));
+            }
+        }
+    }
+
+    result.tipoFruta = [...tipoFrutaSet];
+    result.calidad = [...calidadSet];
+    result.calibre = [...calibreSet];
+
+    return result
+
+}
+export const agruparRegistrosKilosExportacion = (indicadores: indicadoresType[], agrupacion: string): itemExportacionType[] => {
+    if (indicadores === undefined || indicadores.length === 0) return [];
+    const result: itemExportacionType[] = []
+    if (agrupacion === "" || agrupacion === 'dia') {
+        return indicadores.map(indicador => ({
+            kilos_exportacion: indicador.kilos_exportacion,
+            kilos_procesados: indicador.kilos_vaciados,
+            fecha: indicador.fecha_creacion
+        }));
+    }
+    else if (agrupacion === 'semana') {
+        for (const indicador of indicadores) {
+            if (!indicador.kilos_exportacion) continue;
+            const fechaItem = new Date(indicador.fecha_creacion)
+            const week = `${fechaItem.getFullYear()}-${getISOWeek(fechaItem)}`;
+
+            if (result.length === 0) {
+                result.push({
+                    kilos_exportacion: indicador.kilos_exportacion,
+                    kilos_procesados: indicador.kilos_vaciados,
+                    fecha: week
+                });
+            } else {
+                const indice = result.findIndex(item => {
+                    return item.fecha === week;
+                });
+                if (indice !== -1) {
+                    for (const tipoFruta of Object.keys(indicador.kilos_exportacion || {})) {
+
+                        if (!result[indice].kilos_exportacion[tipoFruta]) {
+                            result[indice].kilos_exportacion[tipoFruta] = {};
+                        }
+                        if (!result[indice].kilos_procesados[tipoFruta]) {
+                            result[indice].kilos_procesados[tipoFruta] = 0;
+                        }
+                        result[indice].kilos_procesados[tipoFruta] += (indicador.kilos_vaciados[tipoFruta] || 0);
+
+                        for (const calidad of Object.keys(indicador.kilos_exportacion[tipoFruta] || {})) {
+                            if (!result[indice].kilos_exportacion[tipoFruta][calidad]) {
+                                result[indice].kilos_exportacion[tipoFruta][calidad] = {};
+                            }
+                            for (const calibre of Object.keys(indicador.kilos_exportacion[tipoFruta][calidad] || {})) {
+                                result[indice].kilos_exportacion[tipoFruta][calidad][calibre] =
+                                    Number(result[indice].kilos_exportacion[tipoFruta][calidad][calibre] || 0) +
+                                    Number(indicador.kilos_exportacion[tipoFruta][calidad][calibre] || 0);
+                            }
+                        }
+                    }
+                } else {
+                    result.push({
+                        kilos_exportacion: indicador.kilos_exportacion,
+                        kilos_procesados: indicador.kilos_vaciados,
+                        fecha: week
+                    });
+                }
+            }
+        }
+    }
+    else if (agrupacion === 'mes') {
+        for (const indicador of indicadores) {
+            if (!indicador.kilos_exportacion) continue;
+            const fechaItem = new Date(indicador.fecha_creacion)
+            const mes = `${fechaItem.getFullYear()}-${fechaItem.getMonth() + 1}`;
+
+            if (result.length === 0) {
+                result.push({
+                    kilos_exportacion: indicador.kilos_exportacion,
+                    kilos_procesados: indicador.kilos_vaciados,
+                    fecha: mes
+                });
+            } else {
+                const indice = result.findIndex(item => {
+                    return item.fecha === mes;
+                });
+                if (indice !== -1) {
+                    for (const tipoFruta of Object.keys(indicador.kilos_exportacion || {})) {
+                        if (!result[indice].kilos_exportacion[tipoFruta]) {
+                            result[indice].kilos_exportacion[tipoFruta] = {};
+                        }
+                        if (!result[indice].kilos_procesados[tipoFruta]) {
+                            result[indice].kilos_procesados[tipoFruta] = 0;
+                        }
+                        result[indice].kilos_procesados[tipoFruta] += (indicador.kilos_vaciados[tipoFruta] || 0);
+
+                        for (const calidad of Object.keys(indicador.kilos_exportacion[tipoFruta] || {})) {
+                            if (!result[indice].kilos_exportacion[tipoFruta][calidad]) {
+                                result[indice].kilos_exportacion[tipoFruta][calidad] = {};
+                            }
+                            for (const calibre of Object.keys(indicador.kilos_exportacion[tipoFruta][calidad] || {})) {
+                                result[indice].kilos_exportacion[tipoFruta][calidad][calibre] =
+                                    Number(result[indice].kilos_exportacion[tipoFruta][calidad][calibre] || 0) +
+                                    Number(indicador.kilos_exportacion[tipoFruta][calidad][calibre] || 0);
+                            }
+                        }
+                    }
+                } else {
+                    result.push({
+                        kilos_exportacion: indicador.kilos_exportacion,
+                        kilos_procesados: indicador.kilos_vaciados,
+                        fecha: mes
+                    });
+                }
+            }
+        }
+    }
+    return result
+}

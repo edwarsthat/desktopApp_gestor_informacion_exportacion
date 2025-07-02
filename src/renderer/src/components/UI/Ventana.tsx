@@ -76,6 +76,7 @@ import HabilitarInstancias from "../sistema/habilitarInstanancias/HabilitarInsta
 import ReclamacionesClientes from "../calidad/reclamaciones/clientesContenedores/ReclamacionesClientes"
 import EntregaPrescinto from "../transporte/Ingresos/entregaPrescinto/EntregaPrescinto"
 import TransporteRegistroEntregaPrecinto from "../transporte/registros/entreguaPrecinto/TransporteRegistroEntregaPrecinto"
+import RegistroIndicadorExportacionProceso from "../indicadores/operaciones/RegistroExportacionProceso/RegistroIndicadorExportacionProceso"
 
 
 type propsType = {
@@ -294,6 +295,9 @@ export default function Ventana(props: propsType): JSX.Element {
                     </div>
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "6793dfb319615dcbaf5b7a47" ? 'block' : 'none' }}>
                         {activas.includes('6793dfb319615dcbaf5b7a47') && <ShowIndicadores />}
+                    </div>
+                    <div className="componentContainer" style={{ display: props.pestañaActiva === "686548e53a30d3a485152968" ? 'block' : 'none' }}>
+                        {activas.includes('686548e53a30d3a485152968') && <RegistroIndicadorExportacionProceso />}
                     </div>
 
                     {/* !Comercial */}
