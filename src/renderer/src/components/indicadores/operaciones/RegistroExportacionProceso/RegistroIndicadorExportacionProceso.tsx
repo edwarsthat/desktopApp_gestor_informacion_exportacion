@@ -33,6 +33,12 @@ export default function RegistroIndicadorExportacionProceso(): JSX.Element {
     const safeService = (fn: () => number): number => {
         try { return fn() ?? 0 } catch { return 0 }
     };
+
+    const formatNumero = (num: number | undefined, decimales = 2): string =>
+        typeof num === "number"
+            ? new Intl.NumberFormat("es-CO", { minimumFractionDigits: decimales, maximumFractionDigits: decimales }).format(num)
+            : "0";
+
     return (
         <div>
             <div className="navBar"></div>
@@ -52,16 +58,17 @@ export default function RegistroIndicadorExportacionProceso(): JSX.Element {
 
                             const procesado_kilos = safeService(() => total_procesado(registro));
                             const exportacion_kilos = safeService(() => total_exportacion(registro));
+                            console.log(exportacion_kilos, 'registro')
                             const porcentaje_exportacion = procesado_kilos > 0
                                 ? (exportacion_kilos / procesado_kilos) * 100
                                 : 0;
-                                
+
                             return (
                                 <tr key={registro._id} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
                                     <td>{formatearFecha(registro.fecha_creacion)}</td>
-                                    <td>{procesado_kilos?.toFixed(2) || 0}</td>
-                                    <td>{exportacion_kilos?.toFixed(2) || 0}</td>
-                                    <td>{porcentaje_exportacion?.toFixed(2) || 0}%</td>
+                                    <td>{formatNumero(procesado_kilos)}</td>
+                                    <td>{formatNumero(exportacion_kilos)}</td>
+                                    <td>{formatNumero(porcentaje_exportacion)}%</td>
                                 </tr>
                             )
                         })}

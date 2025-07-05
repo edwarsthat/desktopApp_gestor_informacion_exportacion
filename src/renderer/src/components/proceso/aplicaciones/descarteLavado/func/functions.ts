@@ -37,27 +37,30 @@ export const labels = {
     hojas: 'Hojas',
 };
 
-const datosSalida = {
-    descarteGeneral: 0,
-    pareja: 0,
-    balin: 0,
-    descompuesta: 0,
-    piel: 0,
-    hojas: 0,
-};
-
 export const sumarDatos = (datos: FormState, lote: datosPredioType): object => {
     let mult;
     switch (lote.tipoFruta) {
         case 'Naranja':
+        case 'Mandarina':
             mult = 19;
             break;
         case 'Limon':
             mult = 20;
             break;
+        default:
+            mult = 1;
     }
-    Object.keys(datosSalida).map(item => {
-        datosSalida[item] = (Number(datos[item].canastillas) * mult) + Number(datos[item].kilos);
+    const salida = {
+        descarteGeneral: 0,
+        pareja: 0,
+        balin: 0,
+        descompuesta: 0,
+        piel: 0,
+        hojas: 0,
+    };
+    ;
+    Object.keys(datos).forEach(item => {
+        salida[item] = (Number(datos[item].canastillas) * mult) + Number(datos[item].kilos);
     });
-    return datosSalida;
+    return salida;
 };

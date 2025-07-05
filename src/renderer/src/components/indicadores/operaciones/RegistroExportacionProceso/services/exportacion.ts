@@ -10,24 +10,15 @@ export const total_procesado = (registro: indicadoresType): number => {
 }
 
 export const total_exportacion = (registro: indicadoresType): number => {
-    if (registro.kilos_exportacion && Object.keys(registro.kilos_exportacion).length > 0) {
-        const result = 0
-        for (const key in registro.kilos_exportacion) {
-            if (Object.prototype.hasOwnProperty.call(registro.kilos_exportacion, key)) {
-                for (const key2 in registro.kilos_exportacion[key]) {
-                    if (Object.prototype.hasOwnProperty.call(registro.kilos_exportacion[key], key2)) {
-                        for (const key3 in registro.kilos_exportacion[key][key2]) {
-                            if (Object.prototype.hasOwnProperty.call(registro.kilos_exportacion[key][key2], key3)) {
-                                const kilos = registro.kilos_exportacion[key][key2][key3];
-                                if (kilos) {
-                                    return result + Number(kilos);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return 0
-}
+    if (!registro.kilos_exportacion) return 0;
+
+    return Object.values(registro.kilos_exportacion as Record<string, Record<string, Record<string, number | string>>>)
+        .flatMap(tipoFruta =>
+            Object.values(tipoFruta as Record<string, Record<string, number | string>>)
+                .flatMap(calidad =>
+                    Object.values(calidad as Record<string, number | string>)
+                        .map(Number)
+                )
+        )
+        .reduce((sum, kilos) => sum + (isNaN(kilos) ? 0 : kilos), 0);
+};

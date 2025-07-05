@@ -94,9 +94,9 @@ function createWindow(): void {
   // }));
 
 
-  mainWindow.webContents.on("context-menu", function (_, params) {
-    // ctxMenu.popup(params)
-  })
+  // mainWindow.webContents.on("context-menu", function (_, params) {
+  //   // ctxMenu.popup(params)
+  // })
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
@@ -349,7 +349,7 @@ ipcMain.on('mostrarMenuTabla', () => {
   // Solo aquí muestras el menú contextual personalizado para la tabla
   ctxMenuTabla.popup({ window: mainWindow });
 });
-ipcMain.on('datosTablaParaExcel', async (event, datosTabla) => {
+ipcMain.on('datosTablaParaExcel', async (_, datosTabla) => {
   // Aquí lanzas el proceso hijo para crear el Excel
   // Ejemplo con utilityProcess o child_process
   const { filePath } = await dialog.showSaveDialog({

@@ -7,7 +7,7 @@ import EficienciaOperativaComponent from "./components/EficienciaOperativaCompon
 import useAppContext from "@renderer/hooks/useAppContext";
 import { validateFrutapRocesadaHora } from "./validations/requestValidations";
 import { z } from "zod";
-import { agruparRegistrosKilosExportacion, agruparRegistrosKilospRocesados, arreglar_datos_excel_eficiencia, arreglar_datos_excel_kilos_hora, obtener_filtros_exportaciones } from "./function";
+import { agruparRegistrosKilosExportacion, agruparRegistrosKilospRocesados, arreglar_datos_excel_eficiencia, arreglar_datos_excel_kilos_hora, filtrar_calibre, filtrar_calidad, filtrar_tipoFruta, obtener_filtros_exportaciones } from "./function";
 import { filtrosExportacionesType, IndicadorKilosProcesados, filtroExportacionesSelectType, itemExportacionType } from "./validations/types";
 import './styles.css';
 import { indicadoresType } from "@renderer/types/indicadoresType";
@@ -26,7 +26,12 @@ export default function ShowIndicadores(): JSX.Element {
     const [dataOriginal, setDataOriginal] = useState<indicadoresType[]>([]);
     const [tipoIndicador, setTipoIndicador] = useState<string>('');
 
+    //exportacion
     const [dataExportacion, setDataExportacion] = useState<itemExportacionType[]>([]);
+    const [dataExportacionOriginal, setDataExportacionOriginal] = useState<itemExportacionType[]>([]);
+    const [filtrosTipoFruta, setFiltrosTipoFruta] = useState<string[]>([]);
+    const [filtrosCalidad, setFiltrosCalidad] = useState<string[]>([]);
+    const [filtrosCalibre, setFiltrosCalibre] = useState<string[]>([]);
 
     const [selectFiltroExportacion, setSelectFiltroExportacion] = useState<filtroExportacionesSelectType>({
         tipoFruta: false,
@@ -63,7 +68,9 @@ export default function ShowIndicadores(): JSX.Element {
         });
     }, []);
 
-
+    useEffect(() => {
+        console.log("Filtros Tipo Fruta:", filtrosTipoFruta);
+    }, [filtrosTipoFruta])
 
     const buscar = async (): Promise<void> => {
         try {
@@ -84,8 +91,8 @@ export default function ShowIndicadores(): JSX.Element {
             setDataOriginal(response.data);
 
             const dataExportacionAgrupada = agruparRegistrosKilosExportacion(response.data, currentFilters.divisionTiempo);
-            console.log(dataExportacionAgrupada)
             setDataExportacion(dataExportacionAgrupada)
+            setDataExportacionOriginal(dataExportacionAgrupada)
 
             const dataFiltro = obtener_filtros_exportaciones(response.data)
             setFiltrosExportacion(dataFiltro)
@@ -112,6 +119,21 @@ export default function ShowIndicadores(): JSX.Element {
         const dataFiltrada = agruparRegistrosKilospRocesados(dataOriginal, currentFilters.divisionTiempo);
         setData(dataFiltrada);
     }, [currentFilters]);
+
+    useEffect(() => {
+        let datosFiltrados = structuredClone(dataExportacionOriginal);
+        if (filtrosTipoFruta.length > 0) {
+            datosFiltrados = filtrar_tipoFruta(datosFiltrados, filtrosTipoFruta)
+        }
+        if (filtrosCalidad.length > 0) {
+            datosFiltrados = filtrar_calidad(datosFiltrados, filtrosCalidad)
+        }
+        if (filtrosCalibre.length > 0) {
+            datosFiltrados = filtrar_calibre(datosFiltrados, filtrosCalibre)
+        }
+        setDataExportacion(datosFiltrados);
+
+    }, [filtrosTipoFruta, filtrosCalidad, filtrosCalibre])
 
     return (
         <div >
@@ -147,6 +169,12 @@ export default function ShowIndicadores(): JSX.Element {
 
                 {tipoIndicador === "exportacion-dia" && (
                     <FiltrosExportaciones
+                        filtrosTipoFruta={filtrosTipoFruta}
+                        setFiltrosTipoFruta={setFiltrosTipoFruta}
+                        filtrosCalidad={filtrosCalidad}
+                        setFiltrosCalidad={setFiltrosCalidad}
+                        filtrosCalibre={filtrosCalibre}
+                        setFiltrosCalibre={setFiltrosCalibre}
                         filtrosExportacion={filtrosExportacion}
                         selectFiltroExportacion={selectFiltroExportacion}
                         setSelectFiltroExportacion={setSelectFiltroExportacion}
@@ -158,7 +186,16 @@ export default function ShowIndicadores(): JSX.Element {
             <div className="show-indicadores-content">
                 {tipoIndicador === 'kilo-hora' && <EficienciaOperativaComponent currentFilters={currentFilters} data={data} />}
                 {tipoIndicador === 'eficiencia-kilos-hora' && <EficienciaKilosHora currentFilters={currentFilters} data={data} />}
-                {tipoIndicador === 'exportacion-dia' && <ExportacionDiaria data={dataExportacion}/>}
+                {tipoIndicador === 'exportacion-dia' &&
+                    <ExportacionDiaria
+                        dataOriginal={dataExportacionOriginal}
+                        data={dataExportacion}
+                        currentFilters={currentFilters}
+                        filtrosTipoFruta={filtrosTipoFruta}
+                        filtrosCalidad={filtrosCalidad}
+                        filtrosCalibre={filtrosCalibre}
+                    />
+                }
             </div>
         </div>
     )

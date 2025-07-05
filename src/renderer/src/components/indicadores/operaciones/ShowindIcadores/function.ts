@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 import { volanteCalidadType } from "@renderer/types/formulariosCalidad";
-import { indicadoresType } from "@renderer/types/indicadoresType";
+import { indicadoresType, KilosExportacionSchema } from "@renderer/types/indicadoresType";
 import { lotesType } from "@renderer/types/lotesType";
 import { getISOWeek } from "date-fns";
 import { filtrosExportacionesType, IndicadoresKilosProcesadosExcelView, IndicadorKilosProcesados, itemExportacionType } from "./validations/types";
@@ -492,6 +492,8 @@ export const arreglar_datos_excel_kilos_hora = (data: IndicadorKilosProcesados[]
     }
     return out;
 };
+
+//exportaciones
 export const obtener_filtros_exportaciones = (data: indicadoresType[]): filtrosExportacionesType => {
 
     const result: filtrosExportacionesType = {
@@ -630,4 +632,186 @@ export const agruparRegistrosKilosExportacion = (indicadores: indicadoresType[],
         }
     }
     return result
+}
+export const total_procesado = (registro: itemExportacionType, filtroTipoFruta:string[] = []): number => {
+    if (registro.kilos_procesados && Object.keys(registro.kilos_procesados).length > 0 && filtroTipoFruta.length === 0) {
+        return Object.values(registro.kilos_procesados).reduce((acc, kilos) => acc + kilos, 0);
+    } else if (registro.kilos_procesados && Object.keys(registro.kilos_procesados).length > 0 && filtroTipoFruta.length > 0) {
+        return filtroTipoFruta.reduce((acc, tipoFruta) => acc += registro.kilos_procesados[tipoFruta] || 0, 0)
+    }
+    return 0
+}
+export const total_exportacion = (registro: itemExportacionType): number => {
+    if (!registro.kilos_exportacion) return 0;
+
+    return Object.values(registro.kilos_exportacion as Record<string, Record<string, Record<string, number | string>>>)
+        .flatMap(tipoFruta =>
+            Object.values(tipoFruta as Record<string, Record<string, number | string>>)
+                .flatMap(calidad =>
+                    Object.values(calidad as Record<string, number | string>)
+                        .map(Number)
+                )
+        )
+        .reduce((sum, kilos) => sum + (isNaN(kilos) ? 0 : kilos), 0);
+};
+export const filtrar_tipoFruta = (indicadores: itemExportacionType[], tipoFruta: string[]): itemExportacionType[] => {
+    if (indicadores === undefined || indicadores.length === 0) return [];
+
+    for (const indicador of indicadores) {
+        Object.keys(indicador.kilos_exportacion || {}).forEach(tipo => {
+            if (!tipoFruta.includes(tipo)) {
+                delete indicador.kilos_exportacion[tipo];
+            }
+        })
+    }
+    return indicadores
+}
+export const filtrar_calidad = (indicadores: itemExportacionType[], calidad: string[]): itemExportacionType[] => {
+    if (indicadores === undefined || indicadores.length === 0) return [];
+    const result: itemExportacionType[] = [...indicadores];
+    for (const indicador of indicadores) {
+        for (const tipoFruta of Object.keys(indicador.kilos_exportacion || {})) {
+            Object.keys(indicador.kilos_exportacion[tipoFruta] || {}).forEach(calidadItem => {
+                if (!calidad.includes(calidadItem)) {
+                    delete indicador.kilos_exportacion[tipoFruta][calidadItem];
+                }
+            })
+        }
+    }
+    return result
+}
+export const filtrar_calibre = (indicadores: itemExportacionType[], calidad: string[]): itemExportacionType[] => {
+    if (indicadores === undefined || indicadores.length === 0) return [];
+    const result: itemExportacionType[] = [...indicadores];
+    for (const indicador of indicadores) {
+        for (const tipoFruta of Object.keys(indicador.kilos_exportacion || {})) {
+            for (const calidadItem of Object.keys(indicador.kilos_exportacion[tipoFruta] || {})) {
+                Object.keys(indicador.kilos_exportacion[tipoFruta][calidadItem] || {}).forEach(calibre => {
+                    if (!calidad.includes(calibre)) {
+                        delete indicador.kilos_exportacion[tipoFruta][calidadItem][calibre];
+                    }
+                })
+            }
+        }
+    }
+    return result
+}
+export const sumar_tipoFruta = (indicadores: itemExportacionType[], tipoFruta: string): number => {
+    let total = 0;
+    for (const indicador of indicadores) {
+        if (!(indicador.kilos_exportacion && indicador.kilos_exportacion[tipoFruta])) continue;
+
+        for (const calidad of Object.keys(indicador.kilos_exportacion[tipoFruta] || {})) {
+            for (const calibre of Object.keys(indicador.kilos_exportacion[tipoFruta][calidad] || {})) {
+                const kilos = indicador.kilos_exportacion[tipoFruta][calidad][calibre];
+                if (typeof kilos === 'number') {
+                    total += kilos;
+                } else if (typeof kilos === 'string' && !isNaN(Number(kilos))) {
+                    total += Number(kilos);
+                }
+            }
+        }
+    }
+    return total
+}
+export const sumar_calidad_tipoFruta = (indicadores: itemExportacionType[], tiposFruta: string[], calidad: string): number => {
+    let total = 0
+    for (const indicador of indicadores) {
+        for (const tipoFruta of tiposFruta) {
+            if (!indicador.kilos_exportacion || !indicador.kilos_exportacion[tipoFruta]) continue;
+            if (!indicador.kilos_exportacion[tipoFruta][calidad]) continue;
+
+            for (const calibre of Object.keys(indicador.kilos_exportacion[tipoFruta][calidad] || {})) {
+                const kilos = indicador.kilos_exportacion[tipoFruta][calidad][calibre];
+                if (typeof kilos === 'number') {
+                    total += kilos;
+                } else if (typeof kilos === 'string' && !isNaN(Number(kilos))) {
+                    total += Number(kilos);
+                }
+            }
+        }
+    }
+    return total
+}
+export const sumar_calibre_tipoFruta = (indicadores: itemExportacionType[], tiposFruta: string[], calidades: string[], calibre: string): number => {
+    let total = 0
+    for (const indicador of indicadores) {
+        for (const tipoFruta of tiposFruta) {
+            if (!indicador.kilos_exportacion || !indicador.kilos_exportacion[tipoFruta]) continue;
+            for (const calidad of calidades) {
+                if (!indicador.kilos_exportacion[tipoFruta][calidad]) continue;
+                if (!indicador.kilos_exportacion[tipoFruta][calidad][calibre]) continue;
+
+                const kilos = indicador.kilos_exportacion[tipoFruta][calidad][calibre];
+                if (typeof kilos === 'number') {
+                    total += kilos;
+                } else if (typeof kilos === 'string' && !isNaN(Number(kilos))) {
+                    total += Number(kilos);
+                }
+
+            }
+        }
+    }
+    return total
+}
+export const obtener_arbol_exportacion = (indicadores: itemExportacionType[]): KilosExportacionSchema => {
+    const arbol = {}
+
+    for (const indicador of indicadores) {
+        if (!indicador.kilos_exportacion) continue;
+
+        for (const tipoFruta of Object.keys(indicador.kilos_exportacion)) {
+            if (!indicador.kilos_exportacion[tipoFruta]) continue;
+            if (!arbol[tipoFruta]) {
+                arbol[tipoFruta] = {}
+            }
+
+            for (const calidad of Object.keys(indicador.kilos_exportacion[tipoFruta])) {
+                if (!indicador.kilos_exportacion[tipoFruta][calidad]) continue;
+                if (!arbol[tipoFruta][calidad]) {
+                    arbol[tipoFruta][calidad] = {}
+                }
+                for (const calibre of Object.keys(indicador.kilos_exportacion[tipoFruta][calidad])) {
+                    if (!indicador.kilos_exportacion[tipoFruta][calidad][calibre]) continue;
+                    if (!arbol[tipoFruta][calidad][calibre]) {
+                        arbol[tipoFruta][calidad][calibre] = 0
+                    }
+                    arbol[tipoFruta][calidad][calibre] += Number(indicador.kilos_exportacion[tipoFruta][calidad][calibre])
+                }
+            }
+        }
+    }
+    return arbol
+}
+export const sumar_arbol_tipoFruta = (arbol: KilosExportacionSchema, tipoFruta: string): number => {
+    if (!arbol[tipoFruta]) return 0;
+    let total = 0
+    for (const calidad of Object.keys(arbol[tipoFruta] || {})) {
+        if (!arbol[tipoFruta][calidad]) continue;
+        for (const calibre of Object.keys(arbol[tipoFruta][calidad] || {})) {
+            const kilos = arbol[tipoFruta][calidad][calibre];
+            if (typeof kilos === 'number') {
+                total += kilos;
+            } else if (typeof kilos === 'string' && !isNaN(Number(kilos))) {
+                total += Number(kilos);
+            }
+        }
+    }
+    return total
+
+}
+export const sumar_arbol_calidad_tipoFruta = (arbol: KilosExportacionSchema, tipoFruta: string, calidad: string): number => {
+    if (!arbol[tipoFruta] || !arbol[tipoFruta][calidad]) return 0;
+
+    let total = 0;
+
+    for (const calibre of Object.keys(arbol[tipoFruta][calidad] || {})) {
+        const kilos = arbol[tipoFruta][calidad][calibre];
+        if (typeof kilos === 'number') {
+            total += kilos;
+        } else if (typeof kilos === 'string' && !isNaN(Number(kilos))) {
+            total += Number(kilos);
+        }
+    }
+    return total
 }

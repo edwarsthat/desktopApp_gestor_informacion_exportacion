@@ -4,7 +4,7 @@ import { elementoDefectoType } from "../types/clasificacionTypes";
 
 type propsType = {
     setDataArray: React.Dispatch<React.SetStateAction<elementoDefectoType[]>>
-    dataFormulario: Record<string, {name:string}> | undefined
+    dataFormulario: Record<string, { name: string }> | undefined
 }
 
 export default function IngresoDatos(props: propsType): JSX.Element {
@@ -25,17 +25,17 @@ export default function IngresoDatos(props: propsType): JSX.Element {
     if (!props.dataFormulario) {
         return (
             <div className="container-add-defecto">
-            <select placeholder="Defecto" onChange={(e): void => setDefecto(e.target.value)} className="defaultSelect">
-                <option value={''}>Cargando datos...</option>
-            </select>
-            <input className="defaultSelect" type="number" placeholder="Unidades" onChange={(e): void => setLavado(e.target.value)} value={lavado} />
-            <button onClick={handleAgregar} className="defaulButtonAgree">Agregar</button>
-        </div>
+                <select onChange={(e): void => setDefecto(e.target.value)} className="defaultSelect">
+                    <option value={''}>Cargando datos...</option>
+                </select>
+                <input className="defaultSelect" type="number" placeholder="Unidades" onChange={(e): void => setLavado(e.target.value)} value={lavado} />
+                <button onClick={handleAgregar} className="defaulButtonAgree">Agregar</button>
+            </div>
         )
     }
     return (
         <div className="container-add-defecto">
-            <select placeholder="Defecto" onChange={(e): void => setDefecto(e.target.value)} className="defaultSelect">
+            <select onChange={(e): void => setDefecto(e.target.value)} className="defaultSelect">
                 <option value={''}></option>
                 {Object.keys(props.dataFormulario).map(key => (
                     <option key={key} value={key}>{

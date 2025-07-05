@@ -33,6 +33,8 @@ export default function ListaOrdenVaceo(props: propsType): JSX.Element {
       }
       const req = requestVaciar(props.lotesOrdenVaceo[0])
       const response = await window.api.server2(req);
+      console.log("response", response);
+
       if (response.status !== 200) {
         throw new Error(response.message);
       }
@@ -91,7 +93,7 @@ export default function ListaOrdenVaceo(props: propsType): JSX.Element {
         <button
           disabled={loading}
           className="defaulButtonAgree"
-          onClick={():void => requestConfirm(vaciar, "¿Seguro desea vacear el lote?")}>
+          onClick={(): void => requestConfirm(vaciar, "¿Seguro desea vacear el lote?")}>
           Vaciar
         </button>
       </div>

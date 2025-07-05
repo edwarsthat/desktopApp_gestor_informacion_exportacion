@@ -48,9 +48,6 @@ export function generateMockIndicadorProceso(overrides: Partial<indicadoresType>
         kilos_procesados: generateKilosProcesadosSchema(),
         kilos_vaciados: generateKilosProcesadosSchema(),
         kilos_exportacion: generateKilosExportacionSchema(),
-        meta_kilos_procesados: randomInt(1000, 10000),
-        meta_kilos_procesados_hora: randomInt(100, 2000),
-        total_horas_hombre: randomInt(5, 15),
         kilos_meta_hora: randomInt(100, 5000),
         duracion_turno_horas: randomFloat(4, 12, 1),
         ...overrides

@@ -37,7 +37,7 @@ export default function IngresoDatos(props: propsType): JSX.Element {
     }
     return (
         <div className="container-add-defecto">
-            <select placeholder="Defecto" onChange={(e): void => setDefecto(e.target.value)} className="defaultSelect">
+            <select onChange={(e): void => setDefecto(e.target.value)} className="defaultSelect">
                 <option value={''}>Defecto</option>
                 {Object.keys(props.dataDefectos)
                     .filter(key => !props.dataArray.some(item => item.defecto === key))
