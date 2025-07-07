@@ -128,16 +128,19 @@ export function buildKilosHoraChartConfig(
 }
 
 export function buildExportacionChartConfig(
-    data: itemExportacionType[], filtrosTipoFruta: string[], filtrosCalidad: string[], filtrosCalibre: string[]
+    dataOriginal: itemExportacionType[], data: itemExportacionType[], filtrosTipoFruta: string[], filtrosCalidad: string[], filtrosCalibre: string[]
 ): ChartConfiguration<'pie'> {
     // Sumatoria total de kilos procesados y exportados
-    const total_exportacion_original = data.reduce((sum, item) => sum + (total_exportacion(item) || 0), 0);
+    // console.log("dataOriginal:", data);
+
+    // const total_kilosProcesados_fruta = filtrosTipoFruta.map(clave => sumar_tipoFruta(dataOriginal, clave)).reduce((acu, item) => acu += item, 0) 
+
+    const total_exportacion_original = filtrosTipoFruta.map(clave => sumar_tipoFruta(dataOriginal, clave)).reduce((acu, item) => acu += item, 0);
+
+    const total_kilosProcesados_fruta = dataOriginal.reduce((sum, item) => sum + (total_procesado(item, filtrosTipoFruta) || 0), 0);
     const total_exportacion_kilos = data.reduce((sum, item) => sum + (total_exportacion(item) || 0), 0);
+    const descarte = Math.max(total_kilosProcesados_fruta - total_exportacion_kilos, 0);
 
-    const total_procesado_kilos = data.reduce((sum, item) => sum + (total_procesado(item, filtrosTipoFruta) || 0), 0);
-
-    const descarte = Math.max(total_procesado_kilos - total_exportacion_original, 0);
-    const otros = Math.max(total_exportacion_original - total_exportacion_kilos, 0);
 
     let totales: number[] = []
     let claves: string[] = [];
@@ -149,31 +152,58 @@ export function buildExportacionChartConfig(
     }
     else if (filtrosTipoFruta.length > 0 && filtrosCalidad.length === 0 && filtrosCalibre.length === 0) {
         totales = filtrosTipoFruta.map(clave => sumar_tipoFruta(data, clave));
-        totales.push(otros >= 0 ? otros : 0);
         totales.push(descarte)
-        claves = [...filtrosTipoFruta, 'otros', 'Descarte'];
+        claves = [...filtrosTipoFruta, 'Descarte'];
     }
+
+
     else if (filtrosCalidad.length > 0 && filtrosCalibre.length === 0) {
+        const descarte = Math.max(total_kilosProcesados_fruta - total_exportacion_original, 0);
         totales = filtrosCalidad.map(clave => sumar_calidad_tipoFruta(data, filtrosTipoFruta, clave));
+        const otros = Math.max(total_exportacion_original - totales.reduce((item, acu) => acu += item, 0), 0);
+
         totales.push(otros >= 0 ? otros : 0);
         totales.push(descarte)
         claves = [...filtrosCalidad, 'Otros', 'Descarte'];
     }
     else if (filtrosCalibre.length > 0) {
+        const descarte = Math.max(total_kilosProcesados_fruta - total_exportacion_original, 0);
         totales = filtrosCalibre.map(clave => sumar_calibre_tipoFruta(data, filtrosTipoFruta, filtrosCalidad, clave));
+        const otros = Math.max(total_exportacion_original - totales.reduce((item, acu) => acu += item, 0), 0);
+
+
         totales.push(otros >= 0 ? otros : 0);
         totales.push(descarte)
         claves = [...filtrosCalibre, 'Otros', 'Descarte'];
     }
-    const colores = [
-        'rgba(34, 197, 94, 0.8)',
-        'rgba(239, 68, 68, 0.8)',
-        'rgba(59, 130, 246, 0.8)',
-        'rgba(250, 204, 21, 0.8)',
-        'rgba(168, 85, 247, 0.8)'
+    const DEFAULT_COLORS = [
+        'rgba(168, 85, 247, 0.8)',   // morado
+        'rgba(59, 130, 246, 0.8)',   // azul
+        'rgba(236, 72, 153, 0.8)',   // rosa fuerte
+        'rgba(107, 114, 128, 0.8)',  // gris pizarra
+        'rgba(180, 83, 9, 0.8)',     // marrón/cobre
+        'rgba(132, 204, 22, 0.8)',   // lima (verde más claro, diferente al de Limon)
+        'rgba(232, 121, 249, 0.8)',  // fucsia claro
+        'rgba(56, 189, 248, 0.8)',   // celeste
+        'rgba(20, 184, 166, 0.8)',   // aqua oscuro
+        'rgba(202, 138, 4, 0.8)',    // mostaza/miel
+        'rgba(101, 163, 13, 0.8)',   // oliva oscuro
+        'rgba(14, 165, 233, 0.8)',   // azul cielo brillante
+        'rgba(244, 63, 94, 0.8)',    // rosado intenso
+        'rgba(71, 85, 105, 0.8)',    // azul grisáceo
+        'rgba(245, 158, 11, 0.8)',   // dorado/ámbar
     ];
-    const borderColors = colores.map(c => c.replace('0.8', '1'));
-    const hoverColors = colores.map(c => c.replace('0.8', '0.95'));
+    const COLOR_MAP: Record<string, string> = {
+        'Descarte': 'rgba(239, 68, 68, 0.8)', // rojo
+        'Limon': 'rgba(34, 197, 94, 0.8)',    // verde
+        'Naranja': 'rgba(251, 146, 60, 0.8)', // naranja
+        'otros': 'rgba(94, 234, 212, 0.8)', // turquesa
+    };
+    const backgroundColors = claves.map((clave, idx) =>
+        COLOR_MAP[clave] || DEFAULT_COLORS[idx % DEFAULT_COLORS.length]
+    );
+    const borderColors = backgroundColors.map(c => c.replace('0.8', '1'));
+    const hoverColors = backgroundColors.map(c => c.replace('0.8', '0.95'));
     return {
         type: 'pie',
 
@@ -182,11 +212,11 @@ export function buildExportacionChartConfig(
             datasets: [{
                 label: 'Distribución',
                 data: totales,
-                backgroundColor: colores.slice(0, claves.length),
-                borderColor: borderColors.slice(0, claves.length),
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
                 borderWidth: 2,
-                hoverBackgroundColor: hoverColors.slice(0, claves.length),
-                hoverBorderColor: borderColors.slice(0, claves.length),
+                hoverBackgroundColor: hoverColors,
+                hoverBorderColor: borderColors,
                 hoverBorderWidth: 3
             }]
         },

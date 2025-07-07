@@ -23,17 +23,11 @@ export default function ExportacionDiaria({
     const agrupacion = currentFilters.divisionTiempo || 'dia'; // fallback
     const columns = TABLE_COLUMNS_EXPORTACION[agrupacion] || TABLE_COLUMNS_EXPORTACION['dia'];
 
-
-
     return (
         <div className="exportacion-diaria-container">
             <div className="exportacion-diaria-tabla">
                 <div className="table-container">
-                    <table className="table-main"
-                        onContextMenu={(e): void => {
-                            e.preventDefault();
-                            window.api.mostrarMenuTabla();
-                        }}>
+                    <table className="table-main">
                         <thead>
                             <tr>
                                 {columns.map(col => (
@@ -45,7 +39,7 @@ export default function ExportacionDiaria({
                             {data && data.map((item, index) => (
                                 <tr key={index} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
                                     {columns.map(col => (
-                                        <td key={col.header}>{col.value(item)}</td>
+                                        <td key={col.header}>{col.value(item, filtrosTipoFruta)}</td>
                                     ))}
                                 </tr>
                             ))}

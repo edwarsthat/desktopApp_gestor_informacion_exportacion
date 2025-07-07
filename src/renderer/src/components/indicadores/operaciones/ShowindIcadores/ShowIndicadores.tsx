@@ -85,6 +85,7 @@ export default function ShowIndicadores(): JSX.Element {
             if (response.status !== 200) {
                 throw new Error(`Code ${response.status}: ${response.message}`);
             }
+            console.log(response)
 
             const dataFiltrada = agruparRegistrosKilospRocesados(response.data, currentFilters.divisionTiempo);
             setData(dataFiltrada);
@@ -118,10 +119,14 @@ export default function ShowIndicadores(): JSX.Element {
     useEffect(() => {
         const dataFiltrada = agruparRegistrosKilospRocesados(dataOriginal, currentFilters.divisionTiempo);
         setData(dataFiltrada);
+
+        const exportacionFiltrada = agruparRegistrosKilosExportacion(dataOriginal, currentFilters.divisionTiempo);
+        setDataExportacion(exportacionFiltrada);
     }, [currentFilters]);
 
     useEffect(() => {
         let datosFiltrados = structuredClone(dataExportacionOriginal);
+
         if (filtrosTipoFruta.length > 0) {
             datosFiltrados = filtrar_tipoFruta(datosFiltrados, filtrosTipoFruta)
         }

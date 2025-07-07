@@ -50,7 +50,68 @@ export default function ResumenExportaciones({
         }).format(num);
     };
 
-
+    // Función para obtener el emoji de la fruta según su nombre
+    // Soporta: aguacate/hass, limón, naranja, mandarina, manzana, banana/plátano,
+    // piña, mango, papaya, maracuyá, fresa, uva, fuerte (variedad de aguacate)
+    const obtenerEmojiTipoFruta = (tipoFruta: string): string => {
+        const frutaLower = tipoFruta.toLowerCase();
+        
+        // Aguacate / Hass
+        if (frutaLower.includes('aguacate') || frutaLower.includes('hass')) {
+            return '🥑';
+        }
+        // Limón
+        if (frutaLower.includes('limon') || frutaLower.includes('limón')) {
+            return '🍋';
+        }
+        // Naranja
+        if (frutaLower.includes('naranja')) {
+            return '🍊';
+        }
+        // Mandarina
+        if (frutaLower.includes('mandarina')) {
+            return '🍊';
+        }
+        // Manzana
+        if (frutaLower.includes('manzana')) {
+            return '🍎';
+        }
+        // Banana/Plátano
+        if (frutaLower.includes('banana') || frutaLower.includes('platano') || frutaLower.includes('plátano')) {
+            return '🍌';
+        }
+        // Piña
+        if (frutaLower.includes('piña') || frutaLower.includes('pina')) {
+            return '🍍';
+        }
+        // Mango
+        if (frutaLower.includes('mango')) {
+            return '🥭';
+        }
+        // Papaya
+        if (frutaLower.includes('papaya')) {
+            return '🧡';
+        }
+        // Maracuyá
+        if (frutaLower.includes('maracuya') || frutaLower.includes('maracuyá')) {
+            return '💜';
+        }
+        // Fresa
+        if (frutaLower.includes('fresa')) {
+            return '🍓';
+        }
+        // Uva
+        if (frutaLower.includes('uva')) {
+            return '🍇';
+        }
+        // Fuerte (variedad de aguacate)
+        if (frutaLower.includes('fuerte')) {
+            return '🥑';
+        }
+        
+        // Por defecto, usar un emoji genérico de fruta
+        return '🌱';
+    };
 
     return (
         <div className="resumen-exportaciones-container">
@@ -89,7 +150,7 @@ export default function ResumenExportaciones({
                         <div key={`tipo-${tipoIndex}`} className="json-fruta-group">
                             <div className="json-level json-level-1">
                             <div className="json-line">
-                                <span className="json-icon">🍎</span>
+                                <span className="json-icon">{obtenerEmojiTipoFruta(tipoFruta)}</span>
                                 <span className="json-key">{tipoFruta}:</span>
                                 <span className="json-value">{formatNumero(sumar_arbol_tipoFruta(arbolExportacion, tipoFruta))} kg</span>
                             </div>

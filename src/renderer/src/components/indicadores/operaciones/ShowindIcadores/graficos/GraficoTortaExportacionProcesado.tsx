@@ -17,7 +17,7 @@ type propsType = {
 
 
 export default function GraficoTortaExportacionProcesado({
-    data, agrupacion, filtrosTipoFruta, filtrosCalidad, filtrosCalibre
+    data, agrupacion, filtrosTipoFruta, filtrosCalidad, filtrosCalibre, dataOriginal
 }: propsType): JSX.Element {
     const chartRef = useRef<Chart | null>(null);
 
@@ -31,7 +31,7 @@ export default function GraficoTortaExportacionProcesado({
         chartRef.current?.destroy();
 
         // Usa el generador de config
-        const config = buildExportacionChartConfig(data, filtrosTipoFruta, filtrosCalidad, filtrosCalibre);
+        const config = buildExportacionChartConfig( dataOriginal, data, filtrosTipoFruta, filtrosCalidad, filtrosCalibre);
 
         chartRef.current = new Chart(ctx, config);
 
