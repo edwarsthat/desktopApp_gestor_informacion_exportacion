@@ -77,6 +77,7 @@ import ReclamacionesClientes from "../calidad/reclamaciones/clientesContenedores
 import EntregaPrescinto from "../transporte/Ingresos/entregaPrescinto/EntregaPrescinto"
 import TransporteRegistroEntregaPrecinto from "../transporte/registros/entreguaPrecinto/TransporteRegistroEntregaPrecinto"
 import RegistroIndicadorExportacionProceso from "../indicadores/operaciones/RegistroExportacionProceso/RegistroIndicadorExportacionProceso"
+import IngresoEf8 from "../inventarioYlogistica/ingresos/ingresoEF8/IngresoEf8"
 
 
 type propsType = {
@@ -108,6 +109,9 @@ export default function Ventana(props: propsType): JSX.Element {
                     {/* ingreso */}
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "66b66fe277549ed0672a901e" ? 'block' : 'none' }}>
                         {activas.includes("66b66fe277549ed0672a901e") && <IngresoFruta />}
+                    </div>
+                    <div className="componentContainer" style={{ display: props.pestañaActiva === "686d4e5f3086d22452dedc09" ? 'block' : 'none' }}>
+                        {activas.includes("686d4e5f3086d22452dedc09") && <IngresoEf8 />}
                     </div>
                     {/* inventrario */}
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "66b66e8d77549ed0672a9015" ? 'block' : 'none' }}>
