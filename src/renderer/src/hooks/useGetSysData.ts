@@ -14,6 +14,8 @@ type outType = {
     obtenerDefectos: () => Promise<void>
     clientesNacionales: clientesNacionalesType[]
     obtenerClientesNacionales: () => Promise<void>
+    ef8: string
+    obtenerEf8: () => Promise<void>
 }
 
 type propsType = {
@@ -25,6 +27,7 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
     const [tiposFruta, setTiposFruta] = useState<string[]>([])
     const [dataDefectos, setDataDefectos] = useState<object>({})
     const [clientesNacionales, setClientesNacionales] = useState<clientesNacionalesType[]>([])
+    const [ef8, setEf8] = useState<string>("")
 
     const obtenerPredios = async (): Promise<void> => {
         try {
@@ -81,7 +84,22 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
             }
         }
     }
-
+    const obtenerEf8 = async (): Promise<void> => {
+        try {
+            const request = {
+                action: "get_data_EF8"
+            }
+            const response = await window.api.server2(request)
+            if (response.status !== 200) {
+                throw new Error(`Code ${response.status}: ${response.message}`)
+            }
+            setEf8(response.data)
+        } catch (err) {
+            if (err instanceof Error) {
+                console.error("error", err.message)
+            }
+        }
+    }
     return {
         proveedores,
         obtenerPredios,
@@ -90,6 +108,8 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
         dataDefectos,
         obtenerDefectos,
         clientesNacionales,
-        obtenerClientesNacionales
+        obtenerClientesNacionales,
+        ef8,
+        obtenerEf8
     }
 }
