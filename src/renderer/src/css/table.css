@@ -10,6 +10,54 @@
     padding-bottom: 50px;
     scrollbar-width: thin;
     scrollbar-color: #bbb #f1f1f1;
+    
+    /* Asegurar que el scroll funcione correctamente */
+    display: block;
+    
+    /* Forzar el scroll cuando sea necesario */
+    contain: layout;
+    
+    /* Solución específica para el problema de scroll vertical */
+    min-height: 400px; /* Altura mínima para forzar scroll cuando sea necesario */
+    
+    /* Asegurar que el scroll sea siempre accesible */
+    scrollbar-gutter: stable;
+}
+
+/* Asegurar que el scroll vertical funcione en pantallas grandes */
+@media (min-width: 1200px) {
+    .table-container {
+        overflow-y: scroll !important;
+        /* Forzar una altura específica para pantallas grandes */
+        height: 58vh;
+        min-height: 400px;
+    }
+}
+
+/* Para pantallas medianas */
+@media (min-width: 768px) and (max-width: 1199px) {
+    .table-container {
+        overflow-y: auto;
+        height: 55vh;
+        min-height: 350px;
+    }
+}
+
+/* Para pantallas pequeñas */
+@media (max-width: 767px) {
+    .table-container {
+        overflow-y: auto;
+        height: 50vh;
+        min-height: 300px;
+    }
+}
+
+/* Mejorar la visibilidad del scroll en dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+    .table-container::-webkit-scrollbar {
+        width: 14px;
+        height: 14px;
+    }
 }
 
 .table-main {
@@ -25,9 +73,7 @@
     color: black;
     border-radius: 8px;
     box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
-
 }
-
 .table-main thead {
     background-color: var(--color-Celifrut);
     border-collapse: collapse;
@@ -259,4 +305,19 @@
 
 .table-main .total_row{
     background-color: #C8C8C8;
+}
+
+/* Regla de respaldo para asegurar scroll vertical en todas las situaciones */
+.table-container[data-has-scroll="true"] {
+    overflow-y: scroll !important;
+}
+
+/* Forzar scroll cuando el contenido exceda la altura del contenedor */
+.table-container:has(.table-main) {
+    overflow-y: auto !important;
+}
+
+/* Fallback para navegadores que no soportan :has() */
+.table-container.force-scroll {
+    overflow-y: scroll !important;
 }

@@ -32,7 +32,7 @@ export default function TablaInformeCalidad(props: propsType): JSX.Element {
                             </td>
                             <td>{item.predio && item.predio.PREDIO}</td>
                             <td>{item.tipoFruta}</td>
-                            <td>{format(item.fechaIngreso ? new Date(item.fechaIngreso) : new Date(), 'dd/MM/yyyy HH:mm', { locale: es })}</td>
+                            <td>{format(item.fecha_creacion ? new Date(item.fecha_creacion) : new Date(), 'dd/MM/yyyy HH:mm', { locale: es })}</td>
                             <td>
                                 <div>
                                     {item.calidad && Object.prototype.hasOwnProperty.call(item.calidad, 'calidadInterna') ?
@@ -49,6 +49,20 @@ export default function TablaInformeCalidad(props: propsType): JSX.Element {
                                 <div >
                                     {item.calidad && Object.prototype.hasOwnProperty.call(item.calidad, 'fotosCalidad') ?
                                         format(item.calidad.fotosCalidad?.fechaIngreso ? new Date(item.calidad.fotosCalidad?.fechaIngreso) : new Date(), 'dd/MM/yyyy HH:mm', { locale: es })
+                                        : <FcCancel />}
+                                </div>
+                            </td>
+                            <td >
+                                <div >
+                                    {item.aprobacionProduccion ?
+                                        format(item?.fecha_finalizado_proceso ? new Date(item?.fecha_finalizado_proceso) : new Date(), 'dd/MM/yyyy HH:mm', { locale: es })
+                                        : <FcCancel />}
+                                </div>
+                            </td>
+                            <td >
+                                <div >
+                                    {item.aprobacionComercial ?
+                                        format(item?.fecha_aprobacion_comercial ? new Date(item?.fecha_aprobacion_comercial) : new Date(), 'dd/MM/yyyy HH:mm', { locale: es })
                                         : <FcCancel />}
                                 </div>
                             </td>

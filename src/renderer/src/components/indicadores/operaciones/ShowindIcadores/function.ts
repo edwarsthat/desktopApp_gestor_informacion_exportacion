@@ -4,7 +4,7 @@ import { volanteCalidadType } from "@renderer/types/formulariosCalidad";
 import { indicadoresType, KilosExportacionSchema } from "@renderer/types/indicadoresType";
 import { lotesType } from "@renderer/types/lotesType";
 import { getISOWeek } from "date-fns";
-import { filtrosExportacionesType, IndicadoresKilosProcesadosExcelView, IndicadorKilosProcesados, itemExportacionType } from "./validations/types";
+import { filtrosExportacionesType, IndicadoresKilosProcesadosExcelView, IndicadorKilosProcesados, itemExportacionExcelType, itemExportacionType } from "./validations/types";
 
 export const eficiencia_operativa = (
     kilos_procesados: number,
@@ -490,6 +490,18 @@ export const arreglar_datos_excel_kilos_hora = (data: IndicadorKilosProcesados[]
             "Kilos Procesados": typeof item.kilos_vaciados === "number" ? item.kilos_vaciados : 0,
         });
     }
+    return out;
+};
+export const arreglar_datos_excel_exportaciones = (data: itemExportacionType[], filtroTipoFruta:string[]): itemExportacionExcelType[] => {
+    const out: itemExportacionExcelType[] = [];
+    for (const item of data) {
+        out.push({
+            fecha: item.fecha,
+            kilos_exportacion: total_procesado(item, filtroTipoFruta),
+            kilos_procesados: total_exportacion(item),
+            porcentaje_exportacion: ((total_exportacion(item) / total_procesado(item, filtroTipoFruta)) * 100) || 0,
+        });
+    }   
     return out;
 };
 

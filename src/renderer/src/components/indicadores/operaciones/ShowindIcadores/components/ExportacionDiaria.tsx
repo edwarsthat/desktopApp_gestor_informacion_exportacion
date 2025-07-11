@@ -27,7 +27,12 @@ export default function ExportacionDiaria({
         <div className="exportacion-diaria-container">
             <div className="exportacion-diaria-tabla">
                 <div className="table-container">
-                    <table className="table-main">
+                    <table className="table-main"
+                        onContextMenu={(e): void => {
+                            e.preventDefault();
+                            window.api.mostrarMenuTabla();
+                        }}
+                    >
                         <thead>
                             <tr>
                                 {columns.map(col => (
@@ -48,17 +53,17 @@ export default function ExportacionDiaria({
                 </div>
             </div>
             <div className="exportacion-diaria-grafico">
-                <GraficoTortaExportacionProcesado 
+                <GraficoTortaExportacionProcesado
                     filtrosCalidad={filtrosCalidad}
                     filtrosCalibre={filtrosCalibre}
                     filtrosTipoFruta={filtrosTipoFruta}
-                    agrupacion={currentFilters.divisionTiempo} 
+                    agrupacion={currentFilters.divisionTiempo}
                     dataOriginal={dataOriginal}
                     data={data} />
             </div>
             <div className="exportacion-diaria-resumen">
-                <ResumenExportaciones 
-                    data={data} 
+                <ResumenExportaciones
+                    data={data}
                     filtrosCalidad={filtrosCalidad}
                     filtrosCalibre={filtrosCalibre}
                     filtrosTipoFruta={filtrosTipoFruta}

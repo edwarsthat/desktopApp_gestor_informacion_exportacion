@@ -4,12 +4,15 @@ import { obtener_proveedores2 } from "@renderer/functions/SystemRequest"
 import { proveedoresType } from "@renderer/types/proveedoresType"
 import { useState } from "react"
 import { clientesNacionalesType } from "@renderer/types/clientesType"
+import { tiposFrutasType } from "@renderer/types/tiposFrutas"
 
 type outType = {
     proveedores: proveedoresType[]
     obtenerPredios: () => Promise<void>
     tiposFruta: string[]
     obtenerTipoFruta: () => Promise<void>
+    tiposFruta2: tiposFrutasType[]
+    obtenerTipoFruta2: () => Promise<void>
     dataDefectos: object
     obtenerDefectos: () => Promise<void>
     clientesNacionales: clientesNacionalesType[]
@@ -25,6 +28,7 @@ type propsType = {
 export default function useGetSysData({ proveedoresProp = 'all' }: propsType): outType {
     const [proveedores, setProveedores] = useState<proveedoresType[]>([])
     const [tiposFruta, setTiposFruta] = useState<string[]>([])
+    const [tiposFruta2, setTiposFruta2] = useState<tiposFrutasType[]>([])
     const [dataDefectos, setDataDefectos] = useState<object>({})
     const [clientesNacionales, setClientesNacionales] = useState<clientesNacionalesType[]>([])
     const [ef8, setEf8] = useState<string>("")
@@ -47,6 +51,16 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
         try {
             const response = await window.api.obtenerFruta()
             setTiposFruta(response)
+        } catch (err) {
+            if (err instanceof Error)
+                console.error("error", err.message)
+        }
+    }
+    const obtenerTipoFruta2 = async (): Promise<void> => {
+        try {
+            const response = await window.api.obtenerFruta2()
+            console.log("tipoFruta response", response)
+            setTiposFruta2(response)
         } catch (err) {
             if (err instanceof Error)
                 console.error("error", err.message)
@@ -105,6 +119,8 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
         obtenerPredios,
         tiposFruta,
         obtenerTipoFruta,
+        tiposFruta2,
+        obtenerTipoFruta2,
         dataDefectos,
         obtenerDefectos,
         clientesNacionales,

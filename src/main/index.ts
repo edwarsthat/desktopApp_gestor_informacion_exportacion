@@ -32,6 +32,7 @@ let downloadWindow
 let mainWindow
 let accessToken = '';
 let cacheFrutas
+let cacheFrutas2
 
 const mode = import.meta.env.MODE
 
@@ -439,7 +440,7 @@ ipcMain.handle('user2', async (event, datos) => {
       })
     })
     const response = await responseJSON.json();
-    console.log(response)
+    // console.log(response)
     if (response.status === 200) {
 
       accessToken = response.accesToken;
@@ -459,7 +460,7 @@ ipcMain.handle('user2', async (event, datos) => {
           .fetch(`${uri}/sistema/check_desktopApp/${version}`, { method: 'GET' })
           .then((response) => response.json())
           .then(async (data) => {
-            console.log(data)
+            // console.log(data)
             if (data) {
               // updater.autoUpdater.checkForUpdatesAndNotify()
               const check = await updater.autoUpdater.checkForUpdates();
@@ -517,6 +518,14 @@ ipcMain.handle('user2', async (event, datos) => {
       const frutasResponse = await frutaResponse.json();
       cacheFrutas = frutasResponse.data
 
+      const frutaResponse2 = await net.fetch(`${uri}dataSys/get_data_tipoFruta2`, {
+        method: 'GET',
+        headers: { Authorization: `${accessToken}` }
+      })
+
+      const frutasResponse2 = await frutaResponse2.json();
+      cacheFrutas2 = frutasResponse2.data
+      console.log("cacheFrutas2", cacheFrutas2)
       return response
     }
     return response
@@ -708,3 +717,6 @@ ipcMain.handle("obtenerFruta", async () => {
   return cacheFrutas
 })
 
+ipcMain.handle("obtenerFruta2", async () => {
+  return cacheFrutas2
+})

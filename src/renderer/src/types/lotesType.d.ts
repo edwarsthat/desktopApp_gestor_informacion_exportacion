@@ -30,6 +30,7 @@ export type lotesType = {
     fecha_salida_patio: string,
     fecha_ingreso_inventario: string,
     fecha_estimada_llegada: string
+    fecha_aprobacion_comercial: string,
     fechaProceso: string;
     fecha_finalizado_proceso: string;
     flag_is_favorita: boolean;

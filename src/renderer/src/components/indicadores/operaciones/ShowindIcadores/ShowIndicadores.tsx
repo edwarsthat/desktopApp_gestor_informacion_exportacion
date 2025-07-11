@@ -7,7 +7,7 @@ import EficienciaOperativaComponent from "./components/EficienciaOperativaCompon
 import useAppContext from "@renderer/hooks/useAppContext";
 import { validateFrutapRocesadaHora } from "./validations/requestValidations";
 import { z } from "zod";
-import { agruparRegistrosKilosExportacion, agruparRegistrosKilospRocesados, arreglar_datos_excel_eficiencia, arreglar_datos_excel_kilos_hora, filtrar_calibre, filtrar_calidad, filtrar_tipoFruta, obtener_filtros_exportaciones } from "./function";
+import { agruparRegistrosKilosExportacion, agruparRegistrosKilospRocesados, arreglar_datos_excel_eficiencia, arreglar_datos_excel_exportaciones, arreglar_datos_excel_kilos_hora, filtrar_calibre, filtrar_calidad, filtrar_tipoFruta, obtener_filtros_exportaciones } from "./function";
 import { filtrosExportacionesType, IndicadorKilosProcesados, filtroExportacionesSelectType, itemExportacionType } from "./validations/types";
 import './styles.css';
 import { indicadoresType } from "@renderer/types/indicadoresType";
@@ -45,12 +45,16 @@ export default function ShowIndicadores(): JSX.Element {
     })
 
     const dataRef = useRef(data);
+    const exportRef = useRef(dataExportacion);
     const tipoIndicadorRef = useRef(tipoIndicador);
+    const filtrosTipoFrutaRef = useRef(filtrosTipoFruta);
 
     useEffect(() => {
         dataRef.current = data;
         tipoIndicadorRef.current = tipoIndicador;
-    }, [data, tipoIndicador]);
+        exportRef.current = dataExportacion;
+        filtrosTipoFrutaRef.current = filtrosTipoFruta;
+    }, [data, tipoIndicador, dataExportacion]);
 
     useEffect(() => {
         window.api.solicitarDatosTabla(() => {
@@ -62,8 +66,11 @@ export default function ShowIndicadores(): JSX.Element {
                 case 'eficiencia-kilos-hora':
                     dataExcel = arreglar_datos_excel_eficiencia(dataRef.current)
                     break;
-
+                case 'exportacion-dia':
+                    dataExcel = arreglar_datos_excel_exportaciones(exportRef.current, filtrosTipoFrutaRef.current);
+                    break;
             }
+            console.log("Datos a enviar para Excel:", dataExcel);
             window.api.enviarDatosTabla(dataExcel);
         });
     }, []);
@@ -85,7 +92,6 @@ export default function ShowIndicadores(): JSX.Element {
             if (response.status !== 200) {
                 throw new Error(`Code ${response.status}: ${response.message}`);
             }
-            console.log(response)
 
             const dataFiltrada = agruparRegistrosKilospRocesados(response.data, currentFilters.divisionTiempo);
             setData(dataFiltrada);

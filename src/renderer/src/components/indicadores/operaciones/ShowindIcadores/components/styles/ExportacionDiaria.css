@@ -23,16 +23,18 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    padding-bottom: 25rem;
 }
 
 /* Contenedor de la tabla con scroll */
-.exportacion-diaria-tabla .table-container {
+/* .exportacion-diaria-tabla .table-container {
     flex: 1;
     overflow-y: auto;
     overflow-x: auto;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-}
+
+} */
 
 /* Gráfica - Área superior derecha */
 .exportacion-diaria-grafico {
@@ -52,9 +54,10 @@
     grid-area: resumen;
     width: 100%;
     padding: 1rem 0;
+    margin-bottom: 50rem;
 }
 
-/* Mejoras para la tabla */
+/* Mejoras para la tabla
 .exportacion-diaria-tabla .table-container table {
     width: 100%;
     border-collapse: collapse;
@@ -80,7 +83,7 @@
 .exportacion-diaria-tabla .table-container tr:hover {
     background-color: var(--hover-color, rgba(0, 0, 0, 0.05));
     transition: background-color 0.2s ease;
-}
+} */
 
 /* Contenedor del gráfico */
 .indicadores-operativos-eficiencia-operativa-grafica-barras-container {

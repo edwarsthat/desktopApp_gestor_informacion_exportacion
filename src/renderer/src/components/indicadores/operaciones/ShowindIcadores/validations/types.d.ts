@@ -34,3 +34,10 @@ export type itemExportacionType = {
     kilos_exportacion: KilosExportacionSchema
     kilos_procesados: kilosProcesadosSchema;
 }
+
+export type itemExportacionExcelType = {
+    fecha: string;
+    kilos_exportacion: number;
+    kilos_procesados: number;
+    porcentaje_exportacion: number;
+}

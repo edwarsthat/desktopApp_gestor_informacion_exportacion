@@ -18,7 +18,6 @@ import { dataInformeInit, dataInformeType, obtenerPorcentage, totalLote, totalPr
 type propsType = {
     handleVolverTabla: () => void
     loteSeleccionado: lotesType | undefined
-    captureComponent: () => void
     obtenerDatosDelServidor: () => void
     no_pagar_balin: (lote: lotesType) => void
 }
@@ -75,7 +74,6 @@ export default function ViewInformeData(props: propsType): JSX.Element {
             }
         }
     }
-
     const finalizar_informe_comercial = async (): Promise<void> => {
         try {
             const request = {
@@ -94,7 +92,6 @@ export default function ViewInformeData(props: propsType): JSX.Element {
             }
         }
     }
-
     const openContextMenu = (e): void => {
         e.preventDefault();
 
@@ -133,7 +130,6 @@ export default function ViewInformeData(props: propsType): JSX.Element {
 
         }
     };
-
     const handleClickNoPagarBalin = (): void => {
         if (!props.loteSeleccionado) return
         props.loteSeleccionado.flag_balin_free = !props.loteSeleccionado.flag_balin_free;
@@ -158,15 +154,20 @@ export default function ViewInformeData(props: propsType): JSX.Element {
                     <button className="defaulButtonAgree" onClick={props.handleVolverTabla}>
                         Regresar
                     </button>
-                    {props.loteSeleccionado && props.loteSeleccionado.aprobacionProduccion ?
-                        <button className="defaulButtonAgree" onClick={finalizar_informe_comercial}>
-                            Aprobación Comercial
-                        </button>
-                        :
-                        <button className="defaulButtonAgree" onClick={finalizar_informe_proveedor}>
-                            Aprobación Producción
-                        </button>
-                    }
+                    
+                    {props.loteSeleccionado &&
+                        props.loteSeleccionado.deshidratacion < 3 &&
+                        props.loteSeleccionado.deshidratacion > -1 && (
+                            props.loteSeleccionado.aprobacionProduccion ? (
+                                <button className="defaulButtonAgree" onClick={finalizar_informe_comercial}>
+                                    Aprobación Comercial
+                                </button>
+                            ) : (
+                                <button className="defaulButtonAgree" onClick={finalizar_informe_proveedor}>
+                                    Aprobación Producción
+                                </button>
+                            )
+                        )}
 
                 </div>
                 <div className='informe-calidad-modificar-div'>
@@ -195,7 +196,7 @@ export default function ViewInformeData(props: propsType): JSX.Element {
                 <div className="container-informe-calidad-lote" id="viewInformeDataContainer">
                     <div className="container-informe-calidad-lote-header ">
                         <h2>Informe de calidad para el productor</h2>
-                        <img src={logo}/>
+                        <img src={logo} />
                     </div>
                     <hr />
                     <ViewInformeDatosGenerales
@@ -267,9 +268,6 @@ export default function ViewInformeData(props: propsType): JSX.Element {
 
                 </div>}
 
-            <div className='informe-calidad-lote-div'>
-                <button className='defaulButtonAgree' onClick={props.captureComponent}>Generar informe</button>
-            </div>
             <ModificarPrecios
                 loteSeleccionado={props.loteSeleccionado} />
         </div>
