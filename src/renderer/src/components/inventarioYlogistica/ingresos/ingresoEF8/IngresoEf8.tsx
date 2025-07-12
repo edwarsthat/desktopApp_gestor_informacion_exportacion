@@ -48,8 +48,9 @@ export default function IngresoEf8(): JSX.Element {
             if (response.status !== 200) {
                 throw new Error(`Code ${response.status}: ${response.message}`)
             }
-            messageModal('success', response.message)
+            messageModal('success', `Ingreso guardado correctamente`)
             resetForm()
+            obtenerEf8()
         } catch (err) {
             if (err instanceof Error) {
                 messageModal('error', err.message)

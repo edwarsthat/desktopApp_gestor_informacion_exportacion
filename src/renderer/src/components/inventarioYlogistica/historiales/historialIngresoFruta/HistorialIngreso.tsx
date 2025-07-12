@@ -13,6 +13,7 @@ export default function HistorialIngresoFruta(): JSX.Element {
   const { eventoServidor, triggerServer } = useAppContext();
   const [page, setPage] = useState<number>(1);
   const [loteSeleccionado, setLoteSeleccionado] = useState<recordLotesType>()
+  const [filtro, setFiltro] = useState<{EF1: boolean, EF8: boolean}>({EF1: false, EF8: false});
   const {
     obtenerData,
     obtenerCantidadElementos,
@@ -21,7 +22,8 @@ export default function HistorialIngresoFruta(): JSX.Element {
   } = useFetchPaginatedList<recordLotesType>({
     page,
     actionData: "get_inventarios_historiales_ingresoFruta_registros",
-    actionNumberData: "get_inventarios_historiales_ingresoFruta_numeroElementos"
+    actionNumberData: "get_inventarios_historiales_ingresoFruta_numeroElementos",
+    filtro: filtro
   })
 
 
@@ -34,7 +36,7 @@ export default function HistorialIngresoFruta(): JSX.Element {
 
   useEffect(() => {
     obtenerData()
-  }, [page])
+  }, [page, filtro])
 
   useEffect(() => {
     obtenerCantidadElementos()
@@ -50,6 +52,14 @@ export default function HistorialIngresoFruta(): JSX.Element {
     <div>
       <div className="navBar"></div>
       <h2>Historial ingreso fruta</h2>
+      <hr />
+      <div className="select-indicador-container">
+        <input type="checkbox" id="filtro-aprobacion-produccion" name="select-indicador" onChange={(e):void => setFiltro({...filtro, EF1:e.target.checked})} />
+        <label htmlFor="filtro-aprobacion-produccion">EF1</label>
+
+        <input type="checkbox" id="filtro-aprobacion-comercial" name="select-indicador" onChange={(e):void => setFiltro({...filtro, EF8:e.target.checked})}/>
+        <label htmlFor="filtro-aprobacion-comercial">EF8</label>
+      </div>
       <TablaHistorialIngresoFruta
         setLoteSeleccionado={setLoteSeleccionado}
         data={data}

@@ -14,9 +14,10 @@ type propsType = {
     page: number
     actionData: string
     actionNumberData: string
+    filtro?: { [key: string]: boolean | string }
 }
 
-export function useFetchPaginatedList<T>({ page, actionData, actionNumberData }:propsType): typeOut<T> {
+export function useFetchPaginatedList<T>({ page, actionData, actionNumberData, filtro={} }:propsType): typeOut<T> {
     const { setLoading, messageModal } = useAppContext();
     const [data, setData] = useState<T[]>([])
     const [numeroElementos, setNumeroElementos] = useState<number>(1)
@@ -26,10 +27,10 @@ export function useFetchPaginatedList<T>({ page, actionData, actionNumberData }:
             setLoading(true)
             const request = {
                 action: actionData,
-                page: page
+                page: page,
+                filtro: filtro
             }
             const response = await window.api.server2(request)
-            console.log("useFetchPaginatedList", response)
             if (response.status !== 200)
                 throw new Error(response.message)
             setData([...response.data])
@@ -46,7 +47,6 @@ export function useFetchPaginatedList<T>({ page, actionData, actionNumberData }:
                 action: actionNumberData
             }
             const response = await window.api.server2(request);
-            console.log("useFetchPaginatedList cantidad elementos", response)
             if (response.status !== 200)
                 throw new Error(`Code ${response.status}: ${response.message}`)
             setNumeroElementos(response.data)
