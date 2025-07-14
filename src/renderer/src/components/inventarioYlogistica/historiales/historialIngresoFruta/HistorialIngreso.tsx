@@ -7,19 +7,23 @@ import ModalModificarLote from "./components/ModalModificarLote";
 import { recordLotesType } from "@renderer/types/recorLotesType";
 import BotonesPasarPaginas from "@renderer/components/UI/BotonesPasarPaginas";
 import { useFetchPaginatedList } from "@renderer/hooks/useFetchPaginatedList";
+import { loteEF8Type } from "@renderer/types/loteEf8";
+import ModalModificarLoteEf8 from "./components/ModalModificarLoteEf8";
 
 
 export default function HistorialIngresoFruta(): JSX.Element {
   const { eventoServidor, triggerServer } = useAppContext();
   const [page, setPage] = useState<number>(1);
-  const [loteSeleccionado, setLoteSeleccionado] = useState<recordLotesType>()
-  const [filtro, setFiltro] = useState<{EF1: boolean, EF8: boolean}>({EF1: false, EF8: false});
+  const [loteSeleccionado, setLoteSeleccionado] = useState<recordLotesType | loteEF8Type>()
+  const [filtro, setFiltro] = useState<{ EF1: boolean, EF8: boolean }>({ EF1: false, EF8: false });
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openModalEf8, setOpenModalEf8] = useState<boolean>(false);
   const {
     obtenerData,
     obtenerCantidadElementos,
     data,
     numeroElementos
-  } = useFetchPaginatedList<recordLotesType>({
+  } = useFetchPaginatedList<recordLotesType | loteEF8Type>({
     page,
     actionData: "get_inventarios_historiales_ingresoFruta_registros",
     actionNumberData: "get_inventarios_historiales_ingresoFruta_numeroElementos",
@@ -42,28 +46,24 @@ export default function HistorialIngresoFruta(): JSX.Element {
     obtenerCantidadElementos()
   }, [])
 
-  const handleModificar = (): void => {
-    const dialogINfo = document.getElementById("inventarios_ingresoFruta_modificar_historial_dialog") as HTMLDialogElement;
-    if (dialogINfo) {
-      dialogINfo.showModal();
-    }
-  }
   return (
     <div>
       <div className="navBar"></div>
       <h2>Historial ingreso fruta</h2>
       <hr />
       <div className="select-indicador-container">
-        <input type="checkbox" id="filtro-aprobacion-produccion" name="select-indicador" onChange={(e):void => setFiltro({...filtro, EF1:e.target.checked})} />
+        <input type="checkbox" id="filtro-aprobacion-produccion" name="select-indicador" onChange={(e): void => setFiltro({ ...filtro, EF1: e.target.checked })} />
         <label htmlFor="filtro-aprobacion-produccion">EF1</label>
 
-        <input type="checkbox" id="filtro-aprobacion-comercial" name="select-indicador" onChange={(e):void => setFiltro({...filtro, EF8:e.target.checked})}/>
+        <input type="checkbox" id="filtro-aprobacion-comercial" name="select-indicador" onChange={(e): void => setFiltro({ ...filtro, EF8: e.target.checked })} />
         <label htmlFor="filtro-aprobacion-comercial">EF8</label>
       </div>
       <TablaHistorialIngresoFruta
         setLoteSeleccionado={setLoteSeleccionado}
         data={data}
-        handleModificar={handleModificar} />
+        setOpenModalEf8={setOpenModalEf8}
+        setOpenModal={setOpenModal} />
+
       <BotonesPasarPaginas
         numeroElementos={numeroElementos}
         page={page}
@@ -74,7 +74,16 @@ export default function HistorialIngresoFruta(): JSX.Element {
       <ModalModificarLote
         obtenerData={obtenerData}
         loteSeleccionado={loteSeleccionado}
-        handleModificar={handleModificar} />
+        setOpenModal={setOpenModal}
+        openModal={openModal}
+      />
+
+      <ModalModificarLoteEf8
+        obtenerData={obtenerData}
+        loteSeleccionado={loteSeleccionado}
+        setOpenModal={setOpenModalEf8}
+        openModal={openModalEf8}
+      />
     </div>
   );
 };

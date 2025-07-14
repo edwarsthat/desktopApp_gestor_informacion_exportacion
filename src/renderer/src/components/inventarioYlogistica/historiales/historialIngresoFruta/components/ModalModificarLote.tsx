@@ -8,11 +8,13 @@ import useGetSysData from "@renderer/hooks/useGetSysData";
 import useForm from "@renderer/hooks/useForm";
 import FormInput from "@renderer/components/UI/components/Forminput";
 import FormSelect from "@renderer/components/UI/components/FormSelect";
+import { loteEF8Type } from "@renderer/types/loteEf8";
 
 type propsType = {
-    handleModificar: () => void
-    loteSeleccionado: recordLotesType | undefined
+    setOpenModal: (e) => void
+    loteSeleccionado: recordLotesType | undefined | loteEF8Type
     obtenerData: () => void
+    openModal: boolean
 }
 
 export default function ModalModificarLote(props: propsType): JSX.Element {
@@ -51,15 +53,17 @@ export default function ModalModificarLote(props: propsType): JSX.Element {
     useEffect(() => {
         if (props.loteSeleccionado !== undefined) {
             const formData = { ...formState }
-            formData.enf = String(props.loteSeleccionado.documento.enf)
-            formData.predio = String(props.loteSeleccionado.documento.predio?._id)
-            formData.observaciones = String(props.loteSeleccionado.documento.observaciones)
-            formData.placa = String(props.loteSeleccionado.documento.placa)
-            formData.tipoFruta = String(props.loteSeleccionado.documento.tipoFruta)
-            formData.fecha_ingreso_inventario = String(props.loteSeleccionado.documento.fecha_ingreso_inventario)
-            formData.canastillas = String(props.loteSeleccionado.documento.canastillas)
-            formData.kilos = String(props.loteSeleccionado.documento.kilos)
-            formData.GGN = String(props.loteSeleccionado.documento.GGN)
+            if ('documento' in props.loteSeleccionado) {
+                formData.enf = String(props.loteSeleccionado.documento.enf)
+                formData.predio = String(props.loteSeleccionado.documento.predio?._id)
+                formData.observaciones = String(props.loteSeleccionado.documento.observaciones)
+                formData.placa = String(props.loteSeleccionado.documento.placa)
+                formData.tipoFruta = String(props.loteSeleccionado.documento.tipoFruta)
+                formData.fecha_ingreso_inventario = String(props.loteSeleccionado.documento.fecha_ingreso_inventario)
+                formData.canastillas = String(props.loteSeleccionado.documento.canastillas)
+                formData.kilos = String(props.loteSeleccionado.documento.kilos)
+                formData.GGN = String(props.loteSeleccionado.documento.GGN)
+            } 
             fillForm(formData)
         }
     }, [props.loteSeleccionado])
@@ -89,16 +93,13 @@ export default function ModalModificarLote(props: propsType): JSX.Element {
 
     }
     const closeModal = (): void => {
-        const dialogSetting = document.getElementById("inventarios_ingresoFruta_modificar_historial_dialog") as HTMLDialogElement;
-        if (dialogSetting) {
-            dialogSetting.close();
-        }
+        props.setOpenModal(false)
     }
 
     return (
-        <dialog id="inventarios_ingresoFruta_modificar_historial_dialog" className="dialog-modal">
+        <dialog open={props.openModal} className="dialog-modal">
             <div className="dialog-header">
-                <h3>Modificar ingreso</h3>
+                <h3>Modificar ingreso EF1</h3>
                 <button className="close-button" aria-label="Cerrar" onClick={closeModal}>×</button>
             </div>
 

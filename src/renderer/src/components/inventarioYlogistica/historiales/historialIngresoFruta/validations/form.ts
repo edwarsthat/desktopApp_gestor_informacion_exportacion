@@ -54,3 +54,65 @@ export const formSchema = z.object({
         }),
     GGN: z.string().min(1, "El GGN es obligatorio").transform(val => val === "true"),
 })
+
+export const formInitEF8 = {
+    enf: '',
+    predio: '',
+    canastillas: '',
+    balin: '',
+    pareja: '',
+    descarteGeneral: '',
+    tipoFruta: '',
+    observaciones: '',
+    placa: '',
+    fecha_ingreso_inventario: '',
+}
+
+export type formTypeEF8 = typeof formInitEF8;
+
+export const formLabelsEF8 = {
+    enf: "Código del lote",
+    predio: "Nombre del predio",
+    canastillas: "Canastillas",
+    balin: "Balin",
+    pareja: "Pareja",
+    descarteGeneral: "Descarte general",
+    tipoFruta: "Tipo de fruta",
+    observaciones: "Observaciones",
+    placa: "Placa",
+    fecha_ingreso_inventario: "Fecha de ingreso",
+}
+
+export const formSchemaEF8 = z.object({
+    enf: z.string().min(1, "El codigo del lote no puede ir vacio"),
+    predio: z.string().min(1, "Debe seleccionar un predio"),
+    canastillas: z.string({ required_error: "Campo obligatorio" })
+        .min(1, "Debe ingresar un número")
+        .transform(val => Number(val))
+        .refine(val => !isNaN(val), { message: "Debe ser un número válido" })
+        .refine(val => val >= 0, { message: "Debe ser mayor o igual a 0" }),
+    balin: z
+        .string()
+        .optional()
+        .transform(val => val === undefined ? undefined : Number(val))
+        .refine(val => val === undefined || !isNaN(val), { message: "Los kilos deben ser un número válido" }),
+    pareja: z
+        .string()
+        .optional()
+        .transform(val => val === undefined ? undefined : Number(val))
+        .refine(val => val === undefined || !isNaN(val), { message: "Los kilos deben ser un número válido" }),
+    descarteGeneral: z
+        .string()
+        .optional()
+        .transform(val => val === undefined ? undefined : Number(val))
+        .refine(val => val === undefined || !isNaN(val), { message: "Los kilos deben ser un número válido" }),
+
+    tipoFruta: z.string().min(1, "Se debe seleccionar un tipo de fruta"),
+    observaciones: z.string().optional(),
+    placa: z.string().min(1, "La placa es obligatoria"),
+    fecha_ingreso_inventario: z.string()
+        .min(1, "La fecha estimada de llegada es obligatoria")
+        .refine(val => !isNaN(Date.parse(val)), {
+            message: "La fecha no es válida",
+        }),
+})

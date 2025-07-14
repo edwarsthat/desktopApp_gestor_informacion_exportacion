@@ -1,19 +1,25 @@
 /* eslint-disable prettier/prettier */
 import { PiNotePencilDuotone } from "react-icons/pi";
 import { recordLotesType } from "@renderer/types/recorLotesType";
-import { formatearFecha } from "@renderer/functions/fechas";
+import { TABLE_COLUMNS_INGRESOS } from "../constants/table";
+import { loteEF8Type } from "@renderer/types/loteEf8";
 
 type propsType = {
-    data: recordLotesType[] | undefined
-    handleModificar: () => void
+    data: (recordLotesType | loteEF8Type)[] | undefined
+    setOpenModal: (e) => void
+    setOpenModalEf8: (e) => void
     setLoteSeleccionado: (lote) => void
 }
 export default function TablaHistorialIngresoFruta(props: propsType): JSX.Element {
     if (props.data === undefined) return <div>Cargando...</div>
     const headers = ["EF1", "Predio", "Numero de canastillas", "Kilos", "Fecha creación", "Fecha estimada de llegada", "Tipo de fruta", "GGN", "Observaciones", "Placa", "User", ""]
     const handleButton = (lote): void => {
-        props.handleModificar()
         props.setLoteSeleccionado(lote)
+        if (!('documento' in lote)) {
+            props.setOpenModalEf8(true)
+        } else {
+            props.setOpenModal(true)
+        }
     }
     return (
         <div className="table-container">
@@ -28,17 +34,17 @@ export default function TablaHistorialIngresoFruta(props: propsType): JSX.Elemen
                 <tbody>
                     {props.data.map((lote, index) => (
                         <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={lote._id} >
-                            <td>{lote.documento.enf}</td>
-                            <td>{lote.documento.predio?.PREDIO}</td>
-                            <td>{lote.documento.canastillas}</td>
-                            <td>{lote.documento.kilos?.toLocaleString('es-ES')}</td>
-                            <td>{formatearFecha(lote.documento.fecha_creacion, true)}</td>
-                            <td>{formatearFecha(lote.documento.fecha_ingreso_inventario, true)}</td>
-                            <td>{lote.documento.tipoFruta}</td>
-                            <td>{lote?.documento?.GGN ? (lote.documento?.predio?.GGN?.code || "") : ""}</td>
-                            <td>{lote.documento.observaciones}</td>
-                            <td>{lote.documento.placa}</td>
-                            <td>{lote.user}</td>
+                            <>
+                                {typeof lote === 'object' && Object.hasOwnProperty.call(lote, "documento") ? (
+                                    TABLE_COLUMNS_INGRESOS.ef1.map(col => (
+                                        <td key={col.header + index}>{col.value(lote as recordLotesType)}</td>
+                                    ))
+                                ) : (
+                                    TABLE_COLUMNS_INGRESOS.ef8.map(col => (
+                                        <td key={col.header + index}>{col.value(lote as loteEF8Type)}</td>
+                                    ))
+                                )}
+                            </>
                             <td>
                                 <button style={{ color: "blue" }} onClick={(): void => handleButton(lote)} ><PiNotePencilDuotone /></button>
                             </td>

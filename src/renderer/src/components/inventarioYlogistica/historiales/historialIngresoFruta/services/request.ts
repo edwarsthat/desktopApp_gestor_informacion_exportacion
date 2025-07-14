@@ -33,6 +33,7 @@ export const request_guardar_cambios = (lote, formData): object => {
         _idLote: lote.documento._id,
         _idRecord: lote._id,
         __v: lote.__v,
+        type: "loteEF1",
         data: {
             ...data,
             promedio: promedio,
