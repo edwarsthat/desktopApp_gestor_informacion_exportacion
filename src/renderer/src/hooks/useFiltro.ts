@@ -1,9 +1,11 @@
 /* eslint-disable prettier/prettier */
 
+import { tiposFrutasType } from "@renderer/types/tiposFrutas"
 import { useState } from "react"
 
 const initCurrentFilter = {
         tipoFruta: '',
+        tipoFruta2: {} as tiposFrutasType,
         fechaInicio: '',
         fechaFin: '',
         GGN: false,
@@ -23,6 +25,8 @@ type outType = {
     setFechaFin: (e: string) => void
     tipoFruta: string
     setTipoFruta: (e) => void
+    tipoFruta2: tiposFrutasType
+    setTipoFruta2: (e) => void
     GGN: boolean
     setGGN: (e: boolean) => void
     buscar:string
@@ -43,6 +47,7 @@ type outType = {
 
 export type FilterValues = {
     tipoFruta: string;
+    tipoFruta2: tiposFrutasType;
     fechaInicio: string;
     fechaFin: string;
     GGN: boolean;
@@ -59,6 +64,7 @@ export function useFiltro(): outType {
     const [fechaInicio, setFechaInicio] = useState<string>('')
     const [fechaFin, setFechaFin] = useState<string>('')
     const [tipoFruta, setTipoFruta] = useState<string>('')
+    const [tipoFruta2, setTipoFruta2] = useState<tiposFrutasType>({} as tiposFrutasType)
     const [GGN, setGGN] = useState<boolean>(false)
     const [buscar, setBuscar] = useState<string>('')
     const [proveedor, setProveedor] = useState<string>('')
@@ -76,6 +82,8 @@ export function useFiltro(): outType {
         setFechaFin,
         tipoFruta,
         setTipoFruta,
+        tipoFruta2,
+        setTipoFruta2,
         GGN,
         setGGN,
         buscar,

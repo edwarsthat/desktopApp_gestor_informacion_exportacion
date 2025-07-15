@@ -5,31 +5,26 @@ import TablaHistorialIngresoFruta from "./components/TablaHistorialIngresoFruta"
 import useAppContext from "@renderer/hooks/useAppContext";
 import ModalModificarLote from "./components/ModalModificarLote";
 import { recordLotesType } from "@renderer/types/recorLotesType";
-import BotonesPasarPaginas from "@renderer/components/UI/BotonesPasarPaginas";
-import { useFetchPaginatedList } from "@renderer/hooks/useFetchPaginatedList";
 import { loteEF8Type } from "@renderer/types/loteEf8";
 import ModalModificarLoteEf8 from "./components/ModalModificarLoteEf8";
+import Filtros from "@renderer/components/UI/components/Filtros";
+import { useFiltroValue } from "@renderer/hooks/useFiltro";
+import useFetchDataFilter from "@renderer/hooks/useFetchDataFilter";
 
 
 export default function HistorialIngresoFruta(): JSX.Element {
   const { eventoServidor, triggerServer } = useAppContext();
-  const [page, setPage] = useState<number>(1);
+
   const [loteSeleccionado, setLoteSeleccionado] = useState<recordLotesType | loteEF8Type>()
   const [filtro, setFiltro] = useState<{ EF1: boolean, EF8: boolean }>({ EF1: false, EF8: false });
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openModalEf8, setOpenModalEf8] = useState<boolean>(false);
-  const {
-    obtenerData,
-    obtenerCantidadElementos,
-    data,
-    numeroElementos
-  } = useFetchPaginatedList<recordLotesType | loteEF8Type>({
-    page,
+  const { setCurrentFilters, currentFilters } = useFiltroValue();
+  const { data, obtenerData } = useFetchDataFilter<recordLotesType | loteEF8Type>({
     actionData: "get_inventarios_historiales_ingresoFruta_registros",
-    actionNumberData: "get_inventarios_historiales_ingresoFruta_numeroElementos",
-    filtro: filtro
-  })
-
+    currentFilters,
+    otherFilter: filtro
+  });
 
   useEffect(() => {
     if (eventoServidor === 'add_lote') {
@@ -37,20 +32,24 @@ export default function HistorialIngresoFruta(): JSX.Element {
     }
   }, [triggerServer])
 
-
   useEffect(() => {
-    obtenerData()
-  }, [page, filtro])
-
-  useEffect(() => {
-    obtenerCantidadElementos()
-  }, [])
+    if (currentFilters.fechaInicio !== '') {
+      obtenerData()
+    }
+  }, [currentFilters.fechaFin,currentFilters.fechaInicio, currentFilters.tipoFruta2, filtro])
 
   return (
     <div>
       <div className="navBar"></div>
       <h2>Historial ingreso fruta</h2>
       <hr />
+      <Filtros
+        showFechaInicio={true}
+        showFechaFin={true}
+        showTipoFruta2={true}
+        ggnId="historial-procesado"
+        onFiltersChange={setCurrentFilters} />
+
       <div className="select-indicador-container">
         <input type="checkbox" id="filtro-aprobacion-produccion" name="select-indicador" onChange={(e): void => setFiltro({ ...filtro, EF1: e.target.checked })} />
         <label htmlFor="filtro-aprobacion-produccion">EF1</label>
@@ -63,12 +62,6 @@ export default function HistorialIngresoFruta(): JSX.Element {
         data={data}
         setOpenModalEf8={setOpenModalEf8}
         setOpenModal={setOpenModal} />
-
-      <BotonesPasarPaginas
-        numeroElementos={numeroElementos}
-        page={page}
-        setPage={setPage}
-        division={50} />
 
 
       <ModalModificarLote

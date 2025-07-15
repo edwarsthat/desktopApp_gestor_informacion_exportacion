@@ -42,3 +42,18 @@ export const formatearFecha = (fechaString: string, hora = false): string => {
         return 'Fecha inválida';
     }
 };
+
+export function formatearParaDatetimeLocal(fechaIsoUTC): string {
+    const dateUtc = new Date(fechaIsoUTC);
+
+    // Convertimos restando 5 horas (Colombia está en UTC-5)
+    const colombiaTime = new Date(dateUtc.getTime() - (5 * 60 * 60 * 1000));
+
+    const year = colombiaTime.getFullYear();
+    const month = String(colombiaTime.getMonth() + 1).padStart(2, '0');
+    const day = String(colombiaTime.getDate()).padStart(2, '0');
+    const hours = String(colombiaTime.getHours()).padStart(2, '0');
+    const minutes = String(colombiaTime.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}

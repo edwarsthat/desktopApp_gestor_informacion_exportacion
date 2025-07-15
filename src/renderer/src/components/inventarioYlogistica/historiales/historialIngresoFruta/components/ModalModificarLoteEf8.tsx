@@ -9,6 +9,7 @@ import useGetSysData from "@renderer/hooks/useGetSysData"
 import { useEffect } from "react"
 import FormSelect from "@renderer/components/UI/components/FormSelect"
 import FormInput from "@renderer/components/UI/components/Forminput"
+import { formatearParaDatetimeLocal } from "@renderer/functions/fechas"
 type propsType = {
     setOpenModal: (e) => void
     loteSeleccionado: recordLotesType | undefined | loteEF8Type
@@ -130,7 +131,7 @@ export default function ModalModificarLoteEf8({ setOpenModal, loteSeleccionado, 
                                 name={key}
                                 label={label}
                                 type="datetime-local"
-                                value={formState[key as keyof formTypeEF8]}
+                                value={formatearParaDatetimeLocal(formState[key as keyof formTypeEF8])}
                                 onChange={handleChange}
                                 error={formErrors[key as keyof formTypeEF8]}
                             />
