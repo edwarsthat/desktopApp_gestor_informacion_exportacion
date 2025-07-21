@@ -7,7 +7,6 @@ import { useState } from "react"
 
 type outType = {
     enf: string
-    enf8: string
     tiposFrutas: string[]
     prediosDatos: proveedoresType[]
     obtener_ef: () => Promise<void>
@@ -18,7 +17,6 @@ type outType = {
 export function useIngresoLotesData(): outType {
     const { messageModal } = useAppContext();
     const [enf, setEnf] = useState<string>("")
-    const [enf8, setEnf8] = useState<string>("")
     const [tiposFrutas, setTiposFrutas] = useState<string[]>([])
     const [prediosDatos, setPrediosData] = useState<proveedoresType[]>([])
 
@@ -29,7 +27,6 @@ export function useIngresoLotesData(): outType {
             if (response.status !== 200)
                 throw new Error(`Code ${response.status}: ${response.message}`)
             setEnf(response.data.ef1)
-            setEnf8(response.data.ef8)
         } catch (err) {
             if (err instanceof Error) {
                 messageModal("error", err.message)
@@ -65,7 +62,6 @@ export function useIngresoLotesData(): outType {
 
     return {
         enf,
-        enf8,
         tiposFrutas,
         prediosDatos,
         obtener_ef,

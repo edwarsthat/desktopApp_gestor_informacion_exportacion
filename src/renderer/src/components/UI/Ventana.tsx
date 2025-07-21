@@ -78,6 +78,7 @@ import EntregaPrescinto from "../transporte/Ingresos/entregaPrescinto/EntregaPre
 import TransporteRegistroEntregaPrecinto from "../transporte/registros/entreguaPrecinto/TransporteRegistroEntregaPrecinto"
 import RegistroIndicadorExportacionProceso from "../indicadores/operaciones/RegistroExportacionProceso/RegistroIndicadorExportacionProceso"
 import IngresoEf8 from "../inventarioYlogistica/ingresos/ingresoEF8/IngresoEf8"
+import RegistrosInventarioDescartes from "../inventarioYlogistica/historiales/historialRegistroinventarioDescarte/RegistrosInventarioDescartes"
 
 
 type propsType = {
@@ -156,6 +157,9 @@ export default function Ventana(props: propsType): JSX.Element {
                     </div>
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "6740fb4f8e9713e210a0489a" ? 'block' : 'none' }}>
                         {activas.includes("6740fb4f8e9713e210a0489a") && <HistorialEnInventarioFrutaSinProcesar />}
+                    </div>
+                    <div className="componentContainer" style={{ display: props.pestañaActiva === "6877b961e35ac9d2a0ab08cd" ? 'block' : 'none' }}>
+                        {activas.includes("6877b961e35ac9d2a0ab08cd") && <RegistrosInventarioDescartes />}
                     </div>
                     {/* programacion contenedores */}
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "66c5ee45d07e71f7d36597ee" ? 'block' : 'none' }}>

@@ -15,7 +15,8 @@ var sendcommand_binary
 var windowsfont
 var formfeed
 var nobackfeed
-var setup
+var setup 
+
 
 try {
   openport = edge.func({

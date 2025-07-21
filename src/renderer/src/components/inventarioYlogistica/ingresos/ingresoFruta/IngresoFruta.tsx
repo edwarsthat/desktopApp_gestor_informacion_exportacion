@@ -13,7 +13,7 @@ import FormSelect from '@renderer/components/UI/components/FormSelect'
 
 export default function IngresoFruta(): JSX.Element {
   const { messageModal, setLoading, loading } = useAppContext()
-  const { enf, enf8, obtener_ef, obtenerTipoFruta, tiposFrutas, prediosDatos, obtenerPredios } =
+  const { enf, obtener_ef, obtenerTipoFruta, tiposFrutas, prediosDatos, obtenerPredios } =
     useIngresoLotesData()
   const { formState, handleChange, resetForm, formErrors, validateForm } =
     useForm<formType>(initialValues)
@@ -49,7 +49,7 @@ export default function IngresoFruta(): JSX.Element {
 
       const data = { ...datos }
       const request = {
-        dataLote: {...data, GGN: data.GGN === 'true'},
+        dataLote: { ...data, GGN: data.GGN === 'true' },
         dataCanastillas: {
           canastillasPropias:
             Number(formState.canastillasPropias ?? 0) +
@@ -83,17 +83,7 @@ export default function IngresoFruta(): JSX.Element {
         <hr />
       </div>
       <form className="form-container" onSubmit={guardarLote}>
-        <FormSelect
-          name="ef"
-          value={formState.ef}
-          label="EF-"
-          onChange={handleChange}
-          error={formErrors.ef}
-          data={[
-            { _id: enf, name: enf },
-            { _id: enf8, name: enf8 }
-          ]}
-        />
+        <h2>{enf}</h2>
 
         <FormSelect
           name="nombrePredio"
@@ -119,7 +109,7 @@ export default function IngresoFruta(): JSX.Element {
           label="GGN"
           onChange={handleChange}
           error={formErrors.GGN}
-          data={[{name:"Si", _id:"true"}, {name:"No", _id:"false"}]}
+          data={[{ name: "Si", _id: "true" }, { name: "No", _id: "false" }]}
         />
 
         <FormInput

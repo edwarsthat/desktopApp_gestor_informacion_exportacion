@@ -60,6 +60,7 @@ export default function ModalModificarLoteEf8({ setOpenModal, loteSeleccionado, 
                 formData.tipoFruta = String(loteSeleccionado.tipoFruta._id)
                 formData.fecha_ingreso_inventario = String(loteSeleccionado.fecha_ingreso_inventario)
                 formData.canastillas = String(loteSeleccionado.canastillas)
+                formData.canastillasPrestadas = String(loteSeleccionado.canastillasPrestadas)
                 formData.balin = String(loteSeleccionado.balin)
                 formData.pareja = String(loteSeleccionado.pareja)
                 formData.descarteGeneral = String(loteSeleccionado.descarteGeneral)

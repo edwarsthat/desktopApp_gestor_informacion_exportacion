@@ -41,3 +41,10 @@ export type itemExportacionExcelType = {
     kilos_procesados: number;
     porcentaje_exportacion: number;
 }
+
+export type totalesLotesType = {
+    totalKilosIngreso: number;
+    totalKilosProcesados: number;
+    totalKilosExportacion: number;
+    totalKilosDescarte: number;
+}

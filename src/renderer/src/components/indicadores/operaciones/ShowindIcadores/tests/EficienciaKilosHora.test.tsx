@@ -46,6 +46,7 @@ const mockData: IndicadorKilosProcesados[] = [
 const currentFiltersDia: FilterValues = { 
     divisionTiempo: "dia",
     tipoFruta: '',
+    tipoFruta2: { rengoDeshidratacionNegativa: 0, rengoDeshidratacionPositiva: 0, tipoFruta: "", valorPromedio: 0, _id: "", defectos:[], createdAt: "" },
     fechaInicio: '',
     fechaFin: '',
     GGN: false,
@@ -60,6 +61,7 @@ const currentFiltersDia: FilterValues = {
 const currentFiltersSemana: FilterValues = { 
     divisionTiempo: "semana",
     tipoFruta: '',
+    tipoFruta2: { rengoDeshidratacionNegativa: 0, rengoDeshidratacionPositiva: 0, tipoFruta: "", valorPromedio: 0, _id: "", defectos:[], createdAt: "" },
     fechaInicio: '',
     fechaFin: '',
     GGN: false,

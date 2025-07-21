@@ -5,6 +5,7 @@ import { IndicadorKilosProcesados, itemExportacionType } from '../validations/ty
 import { formatearFecha } from '@renderer/functions/fechas';
 import { convertir_fecha_a_mes, convertir_fecha_a_semana, sumar_calibre_tipoFruta, sumar_calidad_tipoFruta, sumar_tipoFruta, total_exportacion, total_procesado } from '../function';
 import { ChartConfiguration } from 'chart.js';
+import { lotesType } from '@renderer/types/lotesType';
 
 // Utilidad para obtener labels según agrupación
 export function getLabels(data: IndicadorKilosProcesados[], agrupacion: string): string[] {
@@ -20,7 +21,6 @@ export function getLabels(data: IndicadorKilosProcesados[], agrupacion: string):
         }
     });
 }
-
 export function buildEficienciaKilosHoraChartConfig(
     data: IndicadorKilosProcesados[],
     agrupacion: string
@@ -58,7 +58,6 @@ export function buildEficienciaKilosHoraChartConfig(
         }
     };
 }
-
 export function buildKilosHoraChartConfig(
     data: IndicadorKilosProcesados[],
     agrupacion: string
@@ -126,7 +125,6 @@ export function buildKilosHoraChartConfig(
         }
     };
 }
-
 export function buildExportacionChartConfig(
     dataOriginal: itemExportacionType[], data: itemExportacionType[], filtrosTipoFruta: string[], filtrosCalidad: string[], filtrosCalibre: string[]
 ): ChartConfiguration<'pie'> {
@@ -257,4 +255,223 @@ export function buildExportacionChartConfig(
             }
         }
     };
+}
+export function buildEficienciaPrediosPieChartConfig(
+    totalLotes: { totalKilosProcesados: number; totalKilosExportacion: number; totalKilosDescarte: number; }
+): ChartConfiguration<'pie'> {
+    // Calcular kilos deshidratado: KilosProcesados - (KilosDescarte + KilosExportacion)
+    const kilosDeshidratado = Math.max(totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalLotes.totalKilosExportacion), 0);
+
+    // Datos del gráfico
+    const claves = ['Exportación', 'Descarte', 'Deshidratado'];
+    const totales = [
+        totalLotes.totalKilosExportacion,
+        totalLotes.totalKilosDescarte,
+        kilosDeshidratado
+    ];
+
+    const COLOR_MAP: Record<string, string> = {
+        'Exportación': 'rgba(34, 197, 94, 0.8)',    // verde - exportación
+        'Descarte': 'rgba(239, 68, 68, 0.8)',       // rojo - descarte
+        'Deshidratado': 'rgba(59, 130, 246, 0.8)'   // azul - deshidratado
+    };
+
+    const backgroundColors = claves.map(clave => COLOR_MAP[clave]);
+    const borderColors = backgroundColors.map(c => c.replace('0.8', '1'));
+    const hoverColors = backgroundColors.map(c => c.replace('0.8', '0.95'));
+
+    return {
+        type: 'pie',
+        data: {
+            labels: claves,
+            datasets: [{
+                label: 'Distribución de Kilos Procesados',
+                data: totales,
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
+                borderWidth: 2,
+                hoverBackgroundColor: hoverColors,
+                hoverBorderColor: borderColors,
+                hoverBorderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'left',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function (context): string {
+                            const label = context.label || '';
+                            const value = context.parsed;
+                            const totalProcesados = totalLotes.totalKilosProcesados;
+                            const percentage = ((value / totalProcesados) * 100).toFixed(1);
+                            return `${label}: ${value.toLocaleString()} kg (${percentage}%)`;
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: `Total Procesados: ${totalLotes.totalKilosProcesados.toLocaleString()} kg`,
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    left: 20,
+                    right: 20,
+                    top: 20,
+                    bottom: 20
+                }
+            }
+        }
+    };
+}
+export function buildEficienciaPrediosBarChartConfig(
+    data: lotesType[], elemento: string, titulo: string
+): ChartConfiguration {
+    let labels: string[] = [];
+    let kilos: number[] = [];
+
+    if (elemento === 'kilosExportacion') {
+        labels = data.map(item => item.enf);
+        kilos = data.map(item => item.calidad1 + item.calidad15 + item.calidad2);
+    } else if(elemento === "kilosDescarte" ){
+        labels = data.map(item => item.enf);
+        kilos = data.map(item => (
+            (item.descarteLavado ? Object.values(item.descarteLavado).reduce((sum, value) => sum + value, 0) : 0) +
+            (item.descarteEncerado ? Object.values(item.descarteEncerado).reduce((sum, value) => sum + value, 0) : 0)
+        ));
+    } else {
+        labels = data.map(item => item.enf);
+        kilos = data.map(item => item[elemento]);
+    }
+
+    // Calcular promedio
+    const promedio = kilos.reduce((sum, val) => sum + val, 0) / kilos.length;
+    const lineaPromedio = new Array(kilos.length).fill(promedio);
+
+    // Calcular acumulado
+    let acumulado = 0;
+    const lineaAcumulado = kilos.map(valor => {
+        acumulado += valor;
+        return acumulado;
+    });
+
+    return {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: titulo,
+                    type: 'bar',
+                    data: kilos,
+                    backgroundColor: 'rgba(34, 197, 94, 0.8)',
+                    borderColor: 'rgba(34, 197, 94, 1)',
+                    borderWidth: 1,
+                    yAxisID: 'y',
+                    order: 3
+                },
+                {
+                    label: 'Promedio',
+                    type: 'line',
+                    data: lineaPromedio,
+                    borderColor: 'rgba(255, 193, 7, 1)',
+                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                    borderWidth: 3,
+                    borderDash: [5, 5],
+                    fill: false,
+                    pointRadius: 0,
+                    yAxisID: 'y',
+                    order: 1
+                },
+                {
+                    label: 'Acumulado',
+                    type: 'line',
+                    data: lineaAcumulado,
+                    borderColor: 'rgba(220, 53, 69, 1)',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 3,
+                    pointBackgroundColor: 'rgba(220, 53, 69, 1)',
+                    pointBorderColor: 'rgba(255, 255, 255, 1)',
+                    pointBorderWidth: 1,
+                    yAxisID: 'y1',
+                    order: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context): string {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y;
+                            if (label === 'Promedio') {
+                                return `${label}: ${value.toFixed(0).toLocaleString()} kg`;
+                            }
+                            return `${label}: ${value.toLocaleString()} kg`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    position: 'left',
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: `${titulo} por Predio`
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    position: 'right',
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: `${titulo} Acumulados`
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Predios'
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    left: 20,
+                    right: 20,
+                    top: 20,
+                    bottom: 20
+                }
+            }
+        }
+    } as ChartConfiguration<'bar'>;
 }

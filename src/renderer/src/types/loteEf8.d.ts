@@ -7,7 +7,8 @@ import { tiposFrutasType } from "./tiposFrutas";
 export type loteEF8Type = {
     _id: string;
     balin: number;
-    canastillas: number,
+    canastillas: number;
+    canastillasPrestadas: number;
     descarteGeneral: number;
     enf: string;
     fecha_ingreso_inventario: string;

@@ -6,7 +6,6 @@ export type formTypeInput = z.input<typeof formSchema> // lo que viene del formu
 
 
 export type formType = {
-    ef: string
     nombrePredio: string,
     tipoFruta: string,
     canastillasPropias: string
@@ -22,7 +21,6 @@ export type formType = {
 }
 
 export const initialValues: formType = {
-    ef: "",
     nombrePredio: "",
     tipoFruta: "",
     canastillasPropias: "",
@@ -39,7 +37,6 @@ export const initialValues: formType = {
 
 
 export const formSchema = z.object({
-    ef: z.string().min(1, "EF es obligatorio"),
     nombrePredio: z.string().min(1, "El nombre del predio es obligatorio"),
     tipoFruta: z.string().min(1, "El tipo de fruta es obligatorio"),
     GGN: z.string().min(1, "El GGN es obligatorio").transform(val => val === "true"),

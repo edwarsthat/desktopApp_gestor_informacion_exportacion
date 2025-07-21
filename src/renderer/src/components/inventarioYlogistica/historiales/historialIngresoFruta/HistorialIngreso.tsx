@@ -10,6 +10,7 @@ import ModalModificarLoteEf8 from "./components/ModalModificarLoteEf8";
 import Filtros from "@renderer/components/UI/components/Filtros";
 import { useFiltroValue } from "@renderer/hooks/useFiltro";
 import useFetchDataFilter from "@renderer/hooks/useFetchDataFilter";
+import { totalKilosIngresos } from "./services/procesardata";
 
 
 export default function HistorialIngresoFruta(): JSX.Element {
@@ -36,7 +37,7 @@ export default function HistorialIngresoFruta(): JSX.Element {
     if (currentFilters.fechaInicio !== '') {
       obtenerData()
     }
-  }, [currentFilters.fechaFin,currentFilters.fechaInicio, currentFilters.tipoFruta2, filtro])
+  }, [currentFilters.fechaFin, currentFilters.fechaInicio, currentFilters.tipoFruta2, filtro])
 
   return (
     <div>
@@ -50,10 +51,11 @@ export default function HistorialIngresoFruta(): JSX.Element {
         ggnId="historial-procesado"
         onFiltersChange={setCurrentFilters} />
 
+      <h2>Total kilos: {totalKilosIngresos(data).toFixed(2)} Kg</h2>
+
       <div className="select-indicador-container">
         <input type="checkbox" id="filtro-aprobacion-produccion" name="select-indicador" onChange={(e): void => setFiltro({ ...filtro, EF1: e.target.checked })} />
         <label htmlFor="filtro-aprobacion-produccion">EF1</label>
-
         <input type="checkbox" id="filtro-aprobacion-comercial" name="select-indicador" onChange={(e): void => setFiltro({ ...filtro, EF8: e.target.checked })} />
         <label htmlFor="filtro-aprobacion-comercial">EF8</label>
       </div>

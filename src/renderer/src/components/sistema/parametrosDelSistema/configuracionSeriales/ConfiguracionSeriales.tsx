@@ -4,9 +4,11 @@ import useAppContext from "@renderer/hooks/useAppContext"
 import { useEffect, useState } from "react";
 import "./styles.css"
 import ConfirmacionModal from "@renderer/messages/ConfirmacionModal";
+import useGetSysData from "@renderer/hooks/useGetSysData";
 
 export default function ConfiguracionSeriales(): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
+    const { obtenerEf8, ef8 } = useGetSysData({});
     const [cadenaEf1, setCadenaEf1] = useState<string>()
     const [serialEF1, setSerialEF1] = useState<string>()
 
@@ -26,7 +28,7 @@ export default function ConfiguracionSeriales(): JSX.Element {
         const fetchData = async (): Promise<void> => {
             try {
                 await obtenerEF1()
-                await obtenerEF8()
+                await obtenerEf8()
                 await obtenerCelifrut()
             } catch (err) {
                 if (err instanceof Error)
@@ -36,7 +38,16 @@ export default function ConfiguracionSeriales(): JSX.Element {
         fetchData()
     }, [])
 
-    useEffect(()=>{
+    useEffect(() => {
+        if (ef8) {
+            const cadena = ef8.slice(0, 8)
+            const codigo = ef8.slice(8)
+            setCadenaEf8(cadena)
+            setSerialEF8(codigo)
+        }
+    }, [ef8])
+
+    useEffect(() => {
         if (confirm) {
             if (requestType === 'EF1')
                 modificarEF1()
@@ -46,7 +57,7 @@ export default function ConfiguracionSeriales(): JSX.Element {
                 modificarCelifrut()
             setConfirm(false)
         }
-    },[confirm])
+    }, [confirm])
 
     const obtenerEF1 = async (): Promise<void> => {
         const request = {
@@ -81,19 +92,6 @@ export default function ConfiguracionSeriales(): JSX.Element {
         } finally {
             setLoading(false)
         }
-    }
-    const obtenerEF8 = async (): Promise<void> => {
-        const request = {
-            action: "get_sistema_parametros_configuracionSeriales_EF8"
-        }
-        const response = await window.api.server2(request)
-        if (response.status !== 200)
-            throw new Error(`Code ${response.status}: ${response.message}`)
-
-        const cadena = response.data.slice(0, 8)
-        const codigo = response.data.slice(8)
-        setCadenaEf8(cadena)
-        setSerialEF8(codigo)
     }
     const modificarEF8 = async (): Promise<void> => {
         try {
@@ -179,7 +177,7 @@ export default function ConfiguracionSeriales(): JSX.Element {
                         />
                     </div>
                     <div className="card-footer">
-                        <button onClick={():void => handleguardar("EF1")}>Guardar</button>
+                        <button onClick={(): void => handleguardar("EF1")}>Guardar</button>
                     </div>
                 </div>
 
@@ -197,7 +195,7 @@ export default function ConfiguracionSeriales(): JSX.Element {
                         />
                     </div>
                     <div className="card-footer">
-                        <button onClick={():void => handleguardar("EF8")}>Guardar</button>
+                        <button onClick={(): void => handleguardar("EF8")}>Guardar</button>
                     </div>
                 </div>
 
@@ -215,7 +213,7 @@ export default function ConfiguracionSeriales(): JSX.Element {
                         />
                     </div>
                     <div className="card-footer">
-                        <button onClick={():void => handleguardar("Celifrut")}>Guardar</button>
+                        <button onClick={(): void => handleguardar("Celifrut")}>Guardar</button>
                     </div>
                 </div>
 

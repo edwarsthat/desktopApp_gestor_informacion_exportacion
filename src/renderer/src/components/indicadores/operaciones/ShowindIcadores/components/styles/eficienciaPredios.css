@@ -1,0 +1,66 @@
+
+/* Contenedor principal con layout responsivo */
+.indicadores-operaciones-eficiencia-predios-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding: 1.5rem;
+    background-color: var(--color-fondo);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--color-card-shadow);
+    margin: 1rem;
+    border: 1px solid var(--border-Color);
+}
+
+/* Estilo para todas las tarjetas */
+.indicadores-operaciones-eficiencia-predios-container > div {
+    background: var(--color-card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px var(--color-card-shadow);
+    border: 1px solid var(--border-Color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.indicadores-operaciones-eficiencia-predios-container > div:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px var(--color-card-shadow);
+}
+
+/* Mejoras para el contenedor de la tabla */
+.indicadores-operaciones-eficiencia-predios-container .table-container {
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--color-card-bg);
+}
+
+/* Título para las tarjetas */
+.indicadores-operaciones-eficiencia-predios-container .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-title);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-Celifrut);
+}
+
+/* Responsivo para pantallas pequeñas */
+@media (max-width: 1024px) {
+    .indicadores-operaciones-eficiencia-predios-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1rem;
+        margin: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .indicadores-operaciones-eficiencia-predios-container {
+        padding: 0.75rem;
+        margin: 0.25rem;
+    }
+    
+    .indicadores-operaciones-eficiencia-predios-container > div {
+        padding: 1rem;
+    }
+}

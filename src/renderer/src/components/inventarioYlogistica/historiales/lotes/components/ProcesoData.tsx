@@ -39,6 +39,27 @@ export default function ProcesoData(): JSX.Element {
         obtenerProveedores()
     }, [])
 
+    useEffect(() => {
+        const savedCol = localStorage.getItem("lotes_filtro_col");
+            if (savedCol) {
+                // Migrar el objeto guardado para incluir el nuevo campo
+                const parsedCol = JSON.parse(savedCol);
+                const updatedCol = {
+                    ...filtrosColumnasObj, // Esto asegura que todos los campos estén presentes
+                    ...parsedCol, // Sobrescribe con los valores guardados
+                };
+                setColumnVisibility(updatedCol);
+
+                // Guardar el objeto actualizado de vuelta en localStorage
+                localStorage.setItem("lotes_filtro_col", JSON.stringify(updatedCol));
+            } else {
+                // Si no hay nada guardado, usar el objeto por defecto
+                setColumnVisibility(filtrosColumnasObj);
+                localStorage.setItem("lotes_filtro_col", JSON.stringify(filtrosColumnasObj));
+            }
+
+    }, [])
+
     // useEffect(() => {
     //     const saved = localStorage.getItem("lotes_filtro_rows");
     //     const savedCol = localStorage.getItem("lotes_filtro_col");
@@ -83,7 +104,7 @@ export default function ProcesoData(): JSX.Element {
     }
     const buscar = async (): Promise<void> => {
         // localStorage.setItem("lotes_filtro_rows", JSON.stringify(filtro))
-        // localStorage.setItem("lotes_filtro_col", JSON.stringify(columnVisibility))
+        localStorage.setItem("lotes_filtro_col", JSON.stringify(columnVisibility))
         await obtenerData()
     }
 
@@ -110,7 +131,7 @@ export default function ProcesoData(): JSX.Element {
                 showAll={true}
                 allId="proceso-data-lotes-all"
                 findFunction={buscar}
-                onFiltersChange={setCurrentFilters}/>
+                onFiltersChange={setCurrentFilters} />
             <div>
                 <PromediosProceso data={data} columnVisibility={columnVisibility} />
             </div>

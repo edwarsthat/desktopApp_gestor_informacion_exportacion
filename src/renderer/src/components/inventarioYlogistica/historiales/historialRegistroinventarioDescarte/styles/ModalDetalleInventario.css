@@ -1,0 +1,174 @@
+/* Estilos para el contenido del modal de detalle de inventario */
+
+.inventario-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 8px;
+    justify-content: center;
+}
+
+.inventario-card {
+    background: linear-gradient(135deg, var(--color-card-bg) 0%, var(--color-input-bg) 100%);
+    border: 1px solid var(--border-Color);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px var(--color-card-shadow);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    width: 40%;
+    min-width: 300px;
+}
+
+.inventario-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--color-card-shadow);
+    border-color: var(--color-Celifrut);
+}
+
+.inventario-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-Celifrut), var(--color-Celifrut-brigth), var(--color-Celifrut-dark));
+    border-radius: 12px 12px 0 0;
+}
+
+.inventario-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-title);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.inventario-title::before {
+    content: '📦';
+    font-size: 16px;
+}
+
+.inventario-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.descarte-item {
+    background: var(--color-card-bg);
+    border: 1px solid var(--border-Color);
+    border-radius: 8px;
+    padding: 12px;
+    margin-left: 12px;
+    transition: background-color 0.2s ease;
+}
+
+.descarte-item:hover {
+    background: var(--color-input-bg);
+    border-color: var(--color-Celifrut);
+}
+
+.descarte-header {
+    font-weight: 600;
+    color: var(--color-subtitle);
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.descarte-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-left: 16px;
+}
+
+.descarte-detail {
+    background: var(--color-ListaEmpaqueFondo);
+    border: 1px solid var(--color-Celifrut);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: var(--color-ListaEmpaqueTexto);
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.descarte-detail:hover {
+    background: var(--color-Celifrut);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.total-badge {
+    background: linear-gradient(135deg, var(--color-Celifrut), var(--color-Celifrut-dark));
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-block;
+    margin-left: 8px;
+    box-shadow: 0 2px 4px rgba(126, 186, 39, 0.3);
+}
+
+/* Scrollbar personalizada */
+.inventario-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.inventario-container::-webkit-scrollbar-track {
+    background: var(--color-input-bg);
+    border-radius: 3px;
+}
+
+.inventario-container::-webkit-scrollbar-thumb {
+    background: var(--color-Celifrut);
+    border-radius: 3px;
+}
+
+.inventario-container::-webkit-scrollbar-thumb:hover {
+    background: var(--color-Celifrut-dark);
+}
+
+/* Animaciones */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.inventario-card {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .inventario-card {
+        padding: 12px;
+    }
+    
+    .inventario-title {
+        font-size: 16px;
+    }
+    
+    .descarte-details {
+        flex-direction: column;
+        gap: 4px;
+    }
+}

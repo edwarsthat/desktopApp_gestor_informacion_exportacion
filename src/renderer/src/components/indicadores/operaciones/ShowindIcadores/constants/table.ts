@@ -27,7 +27,6 @@ export const TABLE_COLUMNS_EFICIENCIA = {
         { header: "Promedio Eficiencia Kilos Hora", value: (item): string => `${item.eficiencia_procesado_hora?.toFixed(2) ?? 0} %` },
     ]
 };
-
 export const TABLE_KILOS_HORA = {
     dia: [
         { header: "Fecha", value: (item: IndicadorKilosProcesados): string => formatearFecha(item.fecha) },
@@ -54,7 +53,6 @@ export const TABLE_KILOS_HORA = {
         { header: "Promedio Kilos Procesados (Hora)", value: (item: IndicadorKilosProcesados): string => item.kilos_hora?.toFixed(2) ?? 0 },
     ]
 };
-
 export const TABLE_COLUMNS_EXPORTACION = {
     dia: [
         { header: "Fecha", value: (item: itemExportacionType): string => formatearFecha(item.fecha) },

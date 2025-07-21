@@ -59,6 +59,7 @@ export const formInitEF8 = {
     enf: '',
     predio: '',
     canastillas: '',
+    canastillasPrestadas: '',
     balin: '',
     pareja: '',
     descarteGeneral: '',
@@ -74,9 +75,10 @@ export const formLabelsEF8 = {
     enf: "Código del lote",
     predio: "Nombre del predio",
     canastillas: "Canastillas",
+    canastillasPrestadas: "Canastillas Prestadas",
     balin: "Balin",
     pareja: "Pareja",
-    descarteGeneral: "Descarte general",
+    descarteGeneral: "Manchada",
     tipoFruta: "Tipo de fruta",
     observaciones: "Observaciones",
     placa: "Placa",
@@ -86,11 +88,17 @@ export const formLabelsEF8 = {
 export const formSchemaEF8 = z.object({
     enf: z.string().min(1, "El codigo del lote no puede ir vacio"),
     predio: z.string().min(1, "Debe seleccionar un predio"),
-    canastillas: z.string({ required_error: "Campo obligatorio" })
-        .min(1, "Debe ingresar un número")
-        .transform(val => Number(val))
-        .refine(val => !isNaN(val), { message: "Debe ser un número válido" })
-        .refine(val => val >= 0, { message: "Debe ser mayor o igual a 0" }),
+    canastillas: z
+        .string()
+        .optional()
+        .transform(val => val === undefined ? undefined : Number(val))
+        .refine(val => val === undefined || !isNaN(val), { message: "Los kilos deben ser un número válido" }),
+        
+    canastillasPrestadas: z
+        .string()
+        .optional()
+        .transform(val => val === undefined ? undefined : Number(val))
+        .refine(val => val === undefined || !isNaN(val), { message: "Los kilos deben ser un número válido" }),
     balin: z
         .string()
         .optional()

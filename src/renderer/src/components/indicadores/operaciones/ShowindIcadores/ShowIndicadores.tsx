@@ -8,12 +8,15 @@ import useAppContext from "@renderer/hooks/useAppContext";
 import { validateFrutapRocesadaHora } from "./validations/requestValidations";
 import { z } from "zod";
 import { agruparRegistrosKilosExportacion, agruparRegistrosKilospRocesados, arreglar_datos_excel_eficiencia, arreglar_datos_excel_exportaciones, arreglar_datos_excel_kilos_hora, filtrar_calibre, filtrar_calidad, filtrar_tipoFruta, obtener_filtros_exportaciones } from "./function";
-import { filtrosExportacionesType, IndicadorKilosProcesados, filtroExportacionesSelectType, itemExportacionType } from "./validations/types";
+import { filtrosExportacionesType, IndicadorKilosProcesados, filtroExportacionesSelectType, itemExportacionType, totalesLotesType } from "./validations/types";
 import './styles.css';
 import { indicadoresType } from "@renderer/types/indicadoresType";
 import EficienciaKilosHora from "./components/EficienciaKilosHora";
 import FiltrosExportaciones from "./components/FiltrosExportaciones";
 import ExportacionDiaria from "./components/ExportacionDiaria";
+import { datosPredios, datosProceso } from "./services/requests";
+import { lotesType } from "@renderer/types/lotesType";
+import EficienciaPredios from "./components/EficienciaPredios";
 
 
 
@@ -29,6 +32,9 @@ export default function ShowIndicadores(): JSX.Element {
     //exportacion
     const [dataExportacion, setDataExportacion] = useState<itemExportacionType[]>([]);
     const [dataExportacionOriginal, setDataExportacionOriginal] = useState<itemExportacionType[]>([]);
+    const [lotes, setLotes] = useState<lotesType[]>([]);
+    const [totalesLotes, setTotalesLotes] = useState<totalesLotesType>({ totalKilosIngreso: 0, totalKilosProcesados: 0, totalKilosExportacion: 0, totalKilosDescarte: 0 });
+
     const [filtrosTipoFruta, setFiltrosTipoFruta] = useState<string[]>([]);
     const [filtrosCalidad, setFiltrosCalidad] = useState<string[]>([]);
     const [filtrosCalibre, setFiltrosCalibre] = useState<string[]>([]);
@@ -82,27 +88,12 @@ export default function ShowIndicadores(): JSX.Element {
     const buscar = async (): Promise<void> => {
         try {
             setLoading(true);
-            validateFrutapRocesadaHora.parse(currentFilters);
 
-            const request = {
-                action: "get_indicadores_operaciones_kilosProcesados",
-                filtro: currentFilters
+            if (tipoIndicador === 'rendimiento-predios') {
+                await datosPredios(currentFilters, setLotes, setTotalesLotes)
+            } else {
+                await datosProceso(setData, setDataOriginal, setDataExportacion, setDataExportacionOriginal, setFiltrosExportacion, currentFilters)
             }
-            const response = await window.api.server2(request);
-            if (response.status !== 200) {
-                throw new Error(`Code ${response.status}: ${response.message}`);
-            }
-
-            const dataFiltrada = agruparRegistrosKilospRocesados(response.data, currentFilters.divisionTiempo);
-            setData(dataFiltrada);
-            setDataOriginal(response.data);
-
-            const dataExportacionAgrupada = agruparRegistrosKilosExportacion(response.data, currentFilters.divisionTiempo);
-            setDataExportacion(dataExportacionAgrupada)
-            setDataExportacionOriginal(dataExportacionAgrupada)
-
-            const dataFiltro = obtener_filtros_exportaciones(response.data)
-            setFiltrosExportacion(dataFiltro)
         } catch (err) {
             // Manejar errores de validación de Zod
             if (err instanceof z.ZodError) {
@@ -165,6 +156,7 @@ export default function ShowIndicadores(): JSX.Element {
                         <option value="kilo-hora">Kilogramos por Hora vs Meta</option>
                         <option value="eficiencia-kilos-hora">Eficiencia Operativa</option>
                         <option value="exportacion-dia">Total Exportacion Diaria</option>
+                        <option value="rendimiento-predios">Rendimiento por Predios</option>
                     </select>
                 </div>
 
@@ -173,6 +165,7 @@ export default function ShowIndicadores(): JSX.Element {
                     showFechaInicio={true}
                     showFechaFin={true}
                     showButton={true}
+                    showProveedor={(tipoIndicador === "rendimiento-predios")}
                     findFunction={buscar}
                     ggnId="indicadoresGGN"
                     onFiltersChange={setCurrentFilters}
@@ -207,6 +200,7 @@ export default function ShowIndicadores(): JSX.Element {
                         filtrosCalibre={filtrosCalibre}
                     />
                 }
+                {tipoIndicador === 'rendimiento-predios' && <EficienciaPredios data={lotes} totalLotes={totalesLotes} /> }
             </div>
         </div>
     )

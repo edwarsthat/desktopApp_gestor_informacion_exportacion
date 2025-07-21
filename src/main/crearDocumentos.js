@@ -23,6 +23,7 @@ function numeroALetras(num) {
    return 'Número fuera de rango';
 }
 
+
 const formatearFecha = (fechaString, hora = false) => {
    if (!fechaString) {
       return '';
