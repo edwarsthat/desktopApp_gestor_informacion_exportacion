@@ -10,11 +10,13 @@ import { buildEficienciaPrediosPieChartConfig } from "../config/chartConfig";
 
 type propsType = {
     totalLotes: totalesLotesType;
+    filtrosCalidad: string[];
+
 }
 
 
 export default function GraficoTortaEficienciaPredios({
-    totalLotes
+    totalLotes, filtrosCalidad
 }: propsType): JSX.Element {
     const chartRef = useRef<Chart | null>(null);
 
@@ -28,7 +30,7 @@ export default function GraficoTortaEficienciaPredios({
         chartRef.current?.destroy();
 
         // Usa el generador de config
-        const config = buildEficienciaPrediosPieChartConfig(totalLotes);
+        const config = buildEficienciaPrediosPieChartConfig(totalLotes, filtrosCalidad);
 
         chartRef.current = new Chart(ctx, config);
 

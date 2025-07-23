@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 // src/utils/chartConfigBuilders.ts
 
-import { IndicadorKilosProcesados, itemExportacionType } from '../validations/types';
+import { IndicadorKilosProcesados, itemExportacionType, totalesLotesType } from '../validations/types';
 import { formatearFecha } from '@renderer/functions/fechas';
 import { convertir_fecha_a_mes, convertir_fecha_a_semana, sumar_calibre_tipoFruta, sumar_calidad_tipoFruta, sumar_tipoFruta, total_exportacion, total_procesado } from '../function';
 import { ChartConfiguration } from 'chart.js';
@@ -257,24 +257,61 @@ export function buildExportacionChartConfig(
     };
 }
 export function buildEficienciaPrediosPieChartConfig(
-    totalLotes: { totalKilosProcesados: number; totalKilosExportacion: number; totalKilosDescarte: number; }
+    totalLotes: totalesLotesType, filtrosCalidad: string[]
 ): ChartConfiguration<'pie'> {
-    // Calcular kilos deshidratado: KilosProcesados - (KilosDescarte + KilosExportacion)
-    const kilosDeshidratado = Math.max(totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalLotes.totalKilosExportacion), 0);
+    let kilosDeshidratado, claves, totales, COLOR_MAP: Record<string, string>
 
-    // Datos del gráfico
-    const claves = ['Exportación', 'Descarte', 'Deshidratado'];
-    const totales = [
-        totalLotes.totalKilosExportacion,
-        totalLotes.totalKilosDescarte,
-        kilosDeshidratado
-    ];
+    if (filtrosCalidad.length > 0) {
+        kilosDeshidratado = Math.max(totalLotes.totalKilosProcesados -
+            (totalLotes.totalKilosDescarte + totalLotes.totalCalidad1 + totalLotes.totalCalidad2 + totalLotes.totalCalidad15), 0);
+        claves = [...filtrosCalidad, "Descarte", "Deshidratacion", "otros"];
+        const diccionario = {
+            calidad1: "totalCalidad1",
+            calidad2: "totalCalidad2",
+            calidad15: "totalCalidad15"
+        }
+        const totalesCalidad: number[] = []
+        filtrosCalidad.forEach(calidad => {
+            totalesCalidad.push(totalLotes[diccionario[calidad]])
+        })
+        const otros = totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalesCalidad.reduce((acu, item) => acu += item, 0) + kilosDeshidratado);
+        totales = [
+            ...totalesCalidad,
+            totalLotes.totalKilosDescarte,
+            kilosDeshidratado,
+            otros
+        ];
 
-    const COLOR_MAP: Record<string, string> = {
-        'Exportación': 'rgba(34, 197, 94, 0.8)',    // verde - exportación
-        'Descarte': 'rgba(239, 68, 68, 0.8)',       // rojo - descarte
-        'Deshidratado': 'rgba(59, 130, 246, 0.8)'   // azul - deshidratado
-    };
+        COLOR_MAP = {
+            'calidad1': 'rgba(34, 197, 94, 0.8)',
+            'calidad2': 'rgba(234, 179, 8, 0.8)',
+            'calidad15': 'rgba(139, 92, 246, 0.8)',
+            'Descarte': 'rgba(239, 68, 68, 0.8)',
+            'Deshidratacion': 'rgba(59, 130, 246, 0.8)',
+            'otros': 'rgba(156, 163, 175, 0.8)'
+        };
+    }
+    else {
+        // Calcular kilos deshidratado: KilosProcesados - (KilosDescarte + KilosExportacion)
+        kilosDeshidratado = Math.max(totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalLotes.totalKilosExportacion), 0);
+
+        // Datos del gráfico
+        claves = ['Exportación', 'Descarte', 'Deshidratacion'];
+        totales = [
+            totalLotes.totalKilosExportacion,
+            totalLotes.totalKilosDescarte,
+            kilosDeshidratado
+        ];
+
+        COLOR_MAP = {
+            'Exportación': 'rgba(34, 197, 94, 0.8)',
+            'Descarte': 'rgba(239, 68, 68, 0.8)',
+            'Deshidratacion': 'rgba(59, 130, 246, 0.8)' 
+        };
+    }
+
+
+
 
     const backgroundColors = claves.map(clave => COLOR_MAP[clave]);
     const borderColors = backgroundColors.map(c => c.replace('0.8', '1'));
@@ -349,7 +386,7 @@ export function buildEficienciaPrediosBarChartConfig(
     if (elemento === 'kilosExportacion') {
         labels = data.map(item => item.enf);
         kilos = data.map(item => item.calidad1 + item.calidad15 + item.calidad2);
-    } else if(elemento === "kilosDescarte" ){
+    } else if (elemento === "kilosDescarte") {
         labels = data.map(item => item.enf);
         kilos = data.map(item => (
             (item.descarteLavado ? Object.values(item.descarteLavado).reduce((sum, value) => sum + value, 0) : 0) +

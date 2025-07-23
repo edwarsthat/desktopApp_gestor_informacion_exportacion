@@ -47,4 +47,7 @@ export type totalesLotesType = {
     totalKilosProcesados: number;
     totalKilosExportacion: number;
     totalKilosDescarte: number;
+    totalCalidad1: number;
+    totalCalidad2: number;
+    totalCalidad15: number;
 }
