@@ -5,6 +5,7 @@ import { proveedoresType } from "@renderer/types/proveedoresType"
 import { useState } from "react"
 import { clientesNacionalesType } from "@renderer/types/clientesType"
 import { tiposFrutasType } from "@renderer/types/tiposFrutas"
+import { userType } from "@renderer/types/cuentas"
 
 type outType = {
     proveedores: proveedoresType[]
@@ -19,6 +20,8 @@ type outType = {
     obtenerClientesNacionales: () => Promise<void>
     ef8: string
     obtenerEf8: () => Promise<void>
+    operarios: userType[]
+    obtenerOperarios: () => Promise<void>
 }
 
 type propsType = {
@@ -32,6 +35,7 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
     const [dataDefectos, setDataDefectos] = useState<object>({})
     const [clientesNacionales, setClientesNacionales] = useState<clientesNacionalesType[]>([])
     const [ef8, setEf8] = useState<string>("")
+    const [operarios, setOperarios] = useState<userType[]>([])
 
     const obtenerPredios = async (): Promise<void> => {
         try {
@@ -114,6 +118,19 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
             }
         }
     }
+    const obtenerOperarios = async (): Promise<void> => {
+        try {
+            const request = { action: "get_calidad_ingresos_operariosVolanteCalidad" }
+            const response = await window.api.server2(request);
+            if (response.status !== 200)
+                throw new Error(`Code ${response.status}: ${response.message}`);
+            setOperarios(response.data);
+        } catch (err) {
+            if (err instanceof Error) {
+                console.error("error", err.message)
+            }
+        }
+    }
     return {
         proveedores,
         obtenerPredios,
@@ -126,6 +143,8 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
         clientesNacionales,
         obtenerClientesNacionales,
         ef8,
-        obtenerEf8
+        obtenerEf8,
+        operarios,
+        obtenerOperarios
     }
 }

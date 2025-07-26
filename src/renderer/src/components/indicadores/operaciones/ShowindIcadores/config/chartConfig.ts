@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
 // src/utils/chartConfigBuilders.ts
 
-import { IndicadorKilosProcesados, itemExportacionType, totalesLotesType } from '../validations/types';
+import { filtroExportacionesSelectType, IndicadorKilosProcesados, itemExportacionType, totalesLotesType } from '../validations/types';
 import { formatearFecha } from '@renderer/functions/fechas';
 import { convertir_fecha_a_mes, convertir_fecha_a_semana, sumar_calibre_tipoFruta, sumar_calidad_tipoFruta, sumar_tipoFruta, total_exportacion, total_procesado } from '../function';
 import { ChartConfiguration } from 'chart.js';
 import { lotesType } from '@renderer/types/lotesType';
+import { generateColors } from '../services/procesarData';
 
 // Utilidad para obtener labels según agrupación
 export function getLabels(data: IndicadorKilosProcesados[], agrupacion: string): string[] {
@@ -257,11 +258,11 @@ export function buildExportacionChartConfig(
     };
 }
 export function buildEficienciaPrediosPieChartConfig(
-    totalLotes: totalesLotesType, filtrosCalidad: string[]
+    totalLotes: totalesLotesType, filtrosCalidad: string[], filtrosCalibre: string[], selectFiltroExportacion: filtroExportacionesSelectType
 ): ChartConfiguration<'pie'> {
     let kilosDeshidratado, claves, totales, COLOR_MAP: Record<string, string>
 
-    if (filtrosCalidad.length > 0) {
+    if (selectFiltroExportacion.calidad) {
         kilosDeshidratado = Math.max(totalLotes.totalKilosProcesados -
             (totalLotes.totalKilosDescarte + totalLotes.totalCalidad1 + totalLotes.totalCalidad2 + totalLotes.totalCalidad15), 0);
         claves = [...filtrosCalidad, "Descarte", "Deshidratacion", "otros"];
@@ -290,6 +291,37 @@ export function buildEficienciaPrediosPieChartConfig(
             'Deshidratacion': 'rgba(59, 130, 246, 0.8)',
             'otros': 'rgba(156, 163, 175, 0.8)'
         };
+    } else if (selectFiltroExportacion.calibre) {
+
+        kilosDeshidratado = Math.max(totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalLotes.totalKilosExportacion), 0);
+        claves = [...filtrosCalibre, "Descarte", "Deshidratacion", "otros"];
+        // Valores
+        const totalesCalibre = filtrosCalibre.map(calibre => totalLotes.calibresTotal[calibre]?.kilos || 0);
+        const otros = totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalesCalibre.reduce((acu, item) => acu + item, 0) + kilosDeshidratado);
+        totales = [
+            ...totalesCalibre,
+            totalLotes.totalKilosDescarte,
+            kilosDeshidratado,
+            otros
+        ];
+
+        // Colores para los calibres dinámicos
+        const calibreColors = generateColors(filtrosCalibre.length);
+
+        // Colores fijos para los tres últimos
+        const fijoDescarte = 'rgba(239, 68, 68, 0.8)';      // rojo
+        const fijoDeshidratacion = 'rgba(59, 130, 246, 0.8)'; // azul
+        const fijoOtros = 'rgba(156, 163, 175, 0.8)';        // gris
+
+        COLOR_MAP = {};
+        // Asigna colores a los calibres
+        filtrosCalibre.forEach((calibre, idx) => {
+            COLOR_MAP[calibre] = calibreColors[idx];
+        });
+        // Y los fijos, siempre igual
+        COLOR_MAP["Descarte"] = fijoDescarte;
+        COLOR_MAP["Deshidratacion"] = fijoDeshidratacion;
+        COLOR_MAP["otros"] = fijoOtros;
     }
     else {
         // Calcular kilos deshidratado: KilosProcesados - (KilosDescarte + KilosExportacion)
@@ -306,7 +338,7 @@ export function buildEficienciaPrediosPieChartConfig(
         COLOR_MAP = {
             'Exportación': 'rgba(34, 197, 94, 0.8)',
             'Descarte': 'rgba(239, 68, 68, 0.8)',
-            'Deshidratacion': 'rgba(59, 130, 246, 0.8)' 
+            'Deshidratacion': 'rgba(59, 130, 246, 0.8)'
         };
     }
 

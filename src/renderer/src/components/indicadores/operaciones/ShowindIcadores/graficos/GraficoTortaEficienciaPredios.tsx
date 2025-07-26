@@ -4,19 +4,20 @@
 import { useEffect, useRef } from "react";
 
 import { Chart } from "chart.js";
-import { totalesLotesType } from "../validations/types";
+import { filtroExportacionesSelectType, totalesLotesType } from "../validations/types";
 import { buildEficienciaPrediosPieChartConfig } from "../config/chartConfig";
 
 
 type propsType = {
     totalLotes: totalesLotesType;
     filtrosCalidad: string[];
-
+    filtrosCalibre: string[];
+    selectFiltroExportacion: filtroExportacionesSelectType
 }
 
 
 export default function GraficoTortaEficienciaPredios({
-    totalLotes, filtrosCalidad
+    totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion
 }: propsType): JSX.Element {
     const chartRef = useRef<Chart | null>(null);
 
@@ -30,7 +31,7 @@ export default function GraficoTortaEficienciaPredios({
         chartRef.current?.destroy();
 
         // Usa el generador de config
-        const config = buildEficienciaPrediosPieChartConfig(totalLotes, filtrosCalidad);
+        const config = buildEficienciaPrediosPieChartConfig(totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion);
 
         chartRef.current = new Chart(ctx, config);
 

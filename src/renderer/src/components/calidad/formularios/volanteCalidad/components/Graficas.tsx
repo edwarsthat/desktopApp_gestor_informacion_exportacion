@@ -28,7 +28,7 @@ export default function Graficas(props: propsType): JSX.Element {
                           labels: datosProm.map(item => item.operario),
                           datasets: [
                             {
-                              label: 'Promedio de defectos por operario',
+                              label: 'Porcentaje promedio de No Calidad',
                               data: datosProm.map(item => item.porcentaje),
                               backgroundColor: colorFondo,
                               borderColor: 'rgba(75, 192, 192, 1)',

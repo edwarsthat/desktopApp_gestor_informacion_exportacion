@@ -8,7 +8,7 @@ export type registrosType = {
   defectos: number
   fecha: string
   operario: operarioType
-
+  calibre: string
 }
 
 type operarioType = {

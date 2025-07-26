@@ -30,9 +30,8 @@ export const datosProceso = async (
     setFiltrosExportacion(dataFiltro)
 }
 
-export const datosPredios = async (currentFilters: FilterValues, setLotes, setTotalesLotes, filtrosCalidad: string[]): Promise<void> => {
+export const datosPredios = async (currentFilters: FilterValues, setLotes, setTotalesLotes, filtrosCalidad: string[], setFiltrosExportacion): Promise<void> => {
     if (currentFilters.proveedor === "") throw new Error("El proveedor es requerido para el indicador de rendimiento por predios");
-    console.log("Datos de rendimiento por predios:", currentFilters.proveedor);
 
     const request = {
         action: "get_indicadores_operaciones_rendimientoPredios",
@@ -42,8 +41,9 @@ export const datosPredios = async (currentFilters: FilterValues, setLotes, setTo
     if (response.status !== 200) {
         throw new Error(`Code ${response.status}: ${response.message}`);
     }
-    console.log("Datos de rendimiento por predios:", response.data);
+    console.log("Response data:", response.data);
     setLotes(response.data.lotes);
+    setFiltrosExportacion((prev) => ({ ...prev, calibre: response.data.calibres }));
     setTotalesLotes({
         totalKilosIngreso: response.data.totalKilosIngreso,
         totalKilosProcesados: response.data.totalKilosProcesados,
@@ -52,5 +52,6 @@ export const datosPredios = async (currentFilters: FilterValues, setLotes, setTo
         totalCalidad1: response.data.totalCalidad1,
         totalCalidad2: response.data.totalCalidad2,
         totalCalidad15: response.data.totalCalidad15,
+        calibresTotal: response.data.calibresTotal
     });
 }

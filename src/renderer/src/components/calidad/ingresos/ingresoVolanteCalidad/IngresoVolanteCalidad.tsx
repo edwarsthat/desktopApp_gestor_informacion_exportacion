@@ -1,60 +1,57 @@
 /* eslint-disable prettier/prettier */
 import { useEffect, useState } from "react"
-import formato from "./formularios/volanteCalidad0.0.1.json"
-import { userType } from "@renderer/types/cuentas"
 import useAppContext from "@renderer/hooks/useAppContext"
+import useGetSysData from "@renderer/hooks/useGetSysData";
+import useForm from "@renderer/hooks/useForm";
+import { formInit, formKeyValue, formSchema, FormType } from "./validations/validations";
+import FormInput from "@renderer/components/UI/components/Forminput";
+import FormSelect from "@renderer/components/UI/components/FormSelect";
+import { tiposFrutasType } from "@renderer/types/tiposFrutas";
 export default function IngresoVolanteCalidad(): JSX.Element {
-    const { messageModal } = useAppContext();
-    const [operarios, setOperarios] = useState<userType[]>()
-    const [operario, setOperario] = useState<string>()
-    const [tipoFruta, setTipoFruta] = useState<string>()
-    const [unidades, setUnidades] = useState<string>()
-    const [defectos, setDefectos] = useState<string>()
+    const { messageModal, setLoading, loading } = useAppContext();
+    const { obtenerTipoFruta2, tiposFruta2, obtenerOperarios, operarios } = useGetSysData({});
+    const { formState, handleChange, formErrors, validateForm, resetForm } = useForm<FormType>(formInit)
+    const [frutaSeleccionada, setFrutaSeleccionada] = useState<tiposFrutasType | null>(null);
 
     useEffect(() => {
-        obtenerOperarios();
-    }, []);
-
-    const obtenerOperarios = async (): Promise<void> => {
-        try {
-            const request = { action: "get_calidad_ingresos_operariosVolanteCalidad" }
-            const response = await window.api.server2(request);
-            if (response.status !== 200)
-                throw new Error(`Code ${response.status}: ${response.message}`);
-            setOperarios(response.data);
-        } catch (err) {
-            if (err instanceof Error) {
-                messageModal("error", err.message)
+        const fetachData = async (): Promise<void> => {
+            try {
+                setLoading(true);
+                await obtenerOperarios();
+                await obtenerTipoFruta2();
+            } catch (err) {
+                if (err instanceof Error) {
+                    messageModal("error", err.message);
+                }
+            } finally {
+                setLoading(false);
             }
         }
-    }
+        fetachData();
+    }, []);
+
     const handleGuardar = async (e): Promise<void> => {
         e.preventDefault()
-
         try {
+            const result = validateForm(formSchema)
+            if (!result) return
+            setLoading(true)
             const request = {
                 action: "post_calidad_ingresos_volanteCalidad",
-                data: {
-                    tipoFruta: tipoFruta,
-                    unidades: Number(unidades),
-                    defectos: Number(defectos),
-                    operario: operario
-                }
+                data: formState
             }
-            console.log(request)
             const response = await window.api.server2(request)
-            if(response.status !== 200)
+            if (response.status !== 200)
                 throw new Error(`Code ${response.status}: ${response.message}`)
+            setFrutaSeleccionada(null);
+            resetForm();
             messageModal("success", "Guardado con exito!")
         } catch (err) {
             if (err instanceof Error) {
                 messageModal("error", err.message)
             }
         } finally {
-            setOperario('')
-            setTipoFruta('')
-            setUnidades('')
-            setDefectos('')
+            setLoading(false);
         }
     }
     return (
@@ -64,39 +61,68 @@ export default function IngresoVolanteCalidad(): JSX.Element {
             <hr />
 
             <form className="form-container" onSubmit={handleGuardar}>
-                <div>
-                    <label>{formato.operario}</label>
-                    <select value={operario} className="defaultSelect" onChange={
-                        (e): void => { 
-                            setOperario(e.target.value) 
-                        }
-                    } required>
-                        <option></option>
-                        {operarios && operarios?.map(operario => (
-                            <option value={operario._id}  key={operario._id}>
-                                {operario.nombre + " " + operario.apellido}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label>{formato.tipoFruta}</label>
-                    <select className="defaultSelect" value={tipoFruta} onChange={(e): void => setTipoFruta(e.target.value)} required>
-                        <option></option>
-                        <option value="Limon">Limon</option>
-                        <option value="Naranja">Naranja</option>
-                    </select>
-                </div>
-                <div>
-                    <label>{formato.unidades}</label>
-                    <input type="text" value={unidades} onChange={(e): void => setUnidades(e.target.value)} required />
-                </div>
-                <div>
-                    <label>{formato.defectos}</label>
-                    <input type="text" value={defectos} onChange={(e): void => setDefectos(e.target.value)} required />
-                </div>
-                <div className='defaultSelect-button-div'>
-                    <button type='submit'>Guardar</button>
+                {Object.entries(formKeyValue).map(([key, label]) => {
+                    if (key === "operario") {
+                        return (
+                            <FormSelect
+                                key={key}
+                                name="operario"
+                                value={formState.operario}
+                                label="Operario"
+                                onChange={handleChange}
+                                error={formErrors.operario}
+                                data={operarios?.map((item) => ({ _id: item._id, name: (item?.nombre || "") + " " + (item?.apellido || "") }))}
+                            />
+                        )
+                    }
+                    else if (key === "tipoFruta") {
+                        return (
+                            <FormSelect
+                                key={key}
+                                name="tipoFruta"
+                                value={formState.tipoFruta}
+                                label="Tipo de fruta"
+                                onChange={(e):void => {
+                                    handleChange(e);
+                                    const selectedFruta = tiposFruta2.find(item => item._id === e.target.value);
+                                    setFrutaSeleccionada(selectedFruta || null);
+                                }}
+                                error={formErrors.tipoFruta}
+                                data={tiposFruta2.map((item) => ({ _id: item._id, name: item.tipoFruta }))}
+                            />
+                        )
+                    } else if(key === "calibre") {
+                        return (
+                            <FormSelect
+                                key={key}
+                                name="calibre"
+                                value={formState.calibre}
+                                label="Calibre"
+                                onChange={handleChange}
+                                error={formErrors.calibre}
+                                data={ frutaSeleccionada?.calibres.map((calibre) => ({ _id: calibre, name: calibre })) || []}
+                            />
+                        )
+                    }
+                    else {
+                        return (
+                            <FormInput
+                                key={key}
+                                name={key}
+                                label={label}
+                                value={formState[key]}
+                                onChange={handleChange}
+                                type="text"
+                                error={formErrors[key]}
+                            />
+                        )
+                    }
+                }
+                )}
+                <div className="defaultSelect-button-div">
+                    <button disabled={loading} type="submit">
+                        Guardar
+                    </button>
                 </div>
             </form>
 

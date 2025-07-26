@@ -8,4 +8,5 @@ export type tiposFrutasType = {
     rengoDeshidratacionPositiva: number,
     rengoDeshidratacionNegativa: number,
     createdAt: string
+    calibres: string[]
 }

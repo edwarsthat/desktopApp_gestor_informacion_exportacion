@@ -30,7 +30,7 @@ export type filtroExportacionesSelectType = {
 }
 
 export type itemExportacionType = {
-    fecha:string;
+    fecha: string;
     kilos_exportacion: KilosExportacionSchema
     kilos_procesados: kilosProcesadosSchema;
 }
@@ -50,4 +50,13 @@ export type totalesLotesType = {
     totalCalidad1: number;
     totalCalidad2: number;
     totalCalidad15: number;
+    calibresTotal: {
+        [key: string]: { kilos: number };
+    }
+}
+
+export type itemLotesExcelType = {
+    Totales: string;
+    Kilos: number;
+    Porcentage: number;
 }
