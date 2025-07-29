@@ -63,7 +63,6 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
     const obtenerTipoFruta2 = async (): Promise<void> => {
         try {
             const response = await window.api.obtenerFruta2()
-            console.log("tipoFruta response", response)
             setTiposFruta2(response)
         } catch (err) {
             if (err instanceof Error)
@@ -112,6 +111,23 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
                 throw new Error(`Code ${response.status}: ${response.message}`)
             }
             setEf8(response.data)
+        } catch (err) {
+            if (err instanceof Error) {
+                console.error("error", err.message)
+            }
+        }
+    }
+    const obtenerEf1 = async (): Promise<void> => {
+        try {
+            const request = {
+                action: "get_data_EF1"
+            }
+            const response = await window.api.server2(request)
+            if (response.status !== 200) {
+                throw new Error(`Code ${response.status}: ${response.message}`)
+            }
+            console.log("responseEF1", response)
+            setEf1(response.data)
         } catch (err) {
             if (err instanceof Error) {
                 console.error("error", err.message)

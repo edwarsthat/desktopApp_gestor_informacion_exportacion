@@ -5,16 +5,15 @@ import { crear_request_guardar } from './functions/functions'
 import useAppContext from '@renderer/hooks/useAppContext'
 import '@renderer/css/components.css'
 import '@renderer/css/form.css'
-import { useIngresoLotesData } from './hooks/useIngresoLotesData'
 import useForm from '@renderer/hooks/useForm'
 import FormInput from '@renderer/components/UI/components/Forminput'
-import { formSchema, formType, initialValues } from './validations/ingresoLotesValidations'
+import { formSchema, formType, initialValues, labelsForms } from './validations/ingresoLotesValidations'
 import FormSelect from '@renderer/components/UI/components/FormSelect'
+import useGetSysData from '@renderer/hooks/useGetSysData'
 
 export default function IngresoFruta(): JSX.Element {
   const { messageModal, setLoading, loading } = useAppContext()
-  const { enf, obtener_ef, obtenerTipoFruta, tiposFrutas, prediosDatos, obtenerPredios } =
-    useIngresoLotesData()
+  const { obtenerTipoFruta2, tiposFruta2, obtenerEf1, ef1, proveedores, obtenerPredios } = useGetSysData({});
   const { formState, handleChange, resetForm, formErrors, validateForm } =
     useForm<formType>(initialValues)
 
@@ -22,9 +21,9 @@ export default function IngresoFruta(): JSX.Element {
     const fetchData = async (): Promise<void> => {
       try {
         setLoading(true)
-        await obtener_ef()
+        await obtenerEf1()
         await obtenerPredios()
-        await obtenerTipoFruta()
+        await obtenerTipoFruta2()
       } catch (err) {
         if (err instanceof Error) {
           messageModal('error', err.message)
@@ -64,7 +63,7 @@ export default function IngresoFruta(): JSX.Element {
       if (response.status !== 200) throw new Error(`Error ${response.status}: ${response.message}`)
 
       resetForm()
-      await obtener_ef()
+      await obtenerEf1()
       messageModal('success', '¡lote guardado con exito!')
     } catch (err) {
       if (err instanceof Error) {
@@ -83,106 +82,74 @@ export default function IngresoFruta(): JSX.Element {
         <hr />
       </div>
       <form className="form-container" onSubmit={guardarLote}>
-        <h2>{enf}</h2>
+        <h2>{ef1}</h2>
 
-        <FormSelect
-          name="nombrePredio"
-          value={formState.nombrePredio}
-          label={strings.input_predios}
-          onChange={handleChange}
-          error={formErrors.nombrePredio}
-          data={prediosDatos.map((item) => ({ _id: item._id, name: item.PREDIO }))}
-        />
+        {Object.entries(labelsForms).map(([key, value]) => {
+          if (key === "nombrePredio") {
+            return (
+              <FormSelect
+                key={key}
+                name="nombrePredio"
+                value={formState.nombrePredio}
+                label={value}
+                onChange={handleChange}
+                error={formErrors.nombrePredio}
+                data={proveedores.map((item) => ({ _id: item._id, name: item.PREDIO }))}
+              />
+            )
+          }
+          else if (key === "tipoFruta") {
+            return (
+              <FormSelect
+                key={key}
+                name="tipoFruta"
+                value={formState.tipoFruta}
+                label={value}
+                onChange={handleChange}
+                error={formErrors.tipoFruta}
+                data={tiposFruta2.map((item) => ({ _id: item._id, name: item.tipoFruta }))}
+              />
+            )
+          } else if (key === "GGN") {
+            return (
+              <FormSelect
+                key={key}
+                name="GGN"
+                value={formState.GGN}
+                label={value}
+                onChange={handleChange}
+                error={formErrors.GGN}
+                data={[{ name: "Si", _id: "true" }, { name: "No", _id: "false" }]}
+              />
+            )
+          } else if (key === "fecha_estimada_llegada") {
+            return (
+              <FormInput
+                key={key}
+                name={key}
+                label={value}
+                type="datetime-local"
+                value={formState[key]}
+                onChange={handleChange}
+                error={formErrors[key]}
+              />
+            )
+          }
 
-        <FormSelect
-          name="tipoFruta"
-          value={formState.tipoFruta}
-          label="Tipo de fruta"
-          onChange={handleChange}
-          error={formErrors.tipoFruta}
-          data={tiposFrutas.map((item) => ({ _id: item, name: item }))}
-        />
-
-        <FormSelect
-          name="GGN"
-          value={formState.GGN}
-          label="GGN"
-          onChange={handleChange}
-          error={formErrors.GGN}
-          data={[{ name: "Si", _id: "true" }, { name: "No", _id: "false" }]}
-        />
-
-        <FormInput
-          name="canastillasPropias"
-          label={strings.numeroCanastillasPropias}
-          type="text"
-          value={formState.canastillasPropias}
-          onChange={handleChange}
-          error={formErrors.canastillasPropias}
-        />
-
-        <FormInput
-          name="canastillasPrestadas"
-          label={strings.numeroCanastillasPrestadas}
-          type="text"
-          value={formState.canastillasPrestadas}
-          onChange={handleChange}
-          error={formErrors.canastillasPrestadas}
-        />
-
-        <FormInput
-          name="canastillasVaciasPropias"
-          label={strings.numeroCanastillasVaciasPropias}
-          type="text"
-          value={formState.canastillasVaciasPropias}
-          onChange={handleChange}
-          error=""
-        />
-
-        <FormInput
-          name="canastillasVaciasPrestadas"
-          label={strings.numeroCanastillasVaciasPrestadas}
-          type="text"
-          value={formState.canastillasVaciasPrestadas}
-          onChange={handleChange}
-          error={formErrors.canastillasVaciasPrestadas}
-        />
-
-        <FormInput
-          name="kilos"
-          label={strings.kilos}
-          type="text"
-          value={formState.kilos}
-          onChange={handleChange}
-          error={formErrors.kilos}
-        />
-
-        <FormInput
-          name="placa"
-          label={strings.placa}
-          type="text"
-          value={formState.placa}
-          onChange={handleChange}
-          error={formErrors.placa}
-        />
-
-        <FormInput
-          name="fecha_estimada_llegada"
-          label={strings.fecha_estimada_llegada}
-          type="datetime-local"
-          value={formState.fecha_estimada_llegada}
-          onChange={handleChange}
-          error={formErrors.fecha_estimada_llegada}
-        />
-
-        <FormInput
-          name="numeroPrecintos"
-          label="N°. Precintos"
-          type="text"
-          value={formState.numeroPrecintos}
-          onChange={handleChange}
-          error={formErrors.numeroPrecintos}
-        />
+          else {
+            return (
+              <FormInput
+                key={key}
+                name={key}
+                label={value}
+                type="text"
+                value={formState[key]}
+                onChange={handleChange}
+                error={formErrors[key]}
+              />
+            )
+          }
+        })}
 
         <div>
           <label>{strings.observaciones}</label>

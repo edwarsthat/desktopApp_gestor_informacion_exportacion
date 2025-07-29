@@ -37,6 +37,7 @@ export default function useFetchDataFilter<T>({ currentFilters, actionData, othe
             if (response.status !== 200) {
                 messageModal("error", `Error ${response.status}: ${response.message}`)
             }
+            console.log("Response:", response)
             setData(response.data)
             // setDataOriginal(frutaActual.data)
         } catch (e: unknown) {

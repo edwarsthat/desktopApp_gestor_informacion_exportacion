@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 import { proveedoresType } from "./proveedoresType";
+import { tiposFrutasType } from "./tiposFrutas";
 
 /* eslint-disable @typescript-eslint/ban-types */
 export type lotesType = {
@@ -54,9 +55,10 @@ export type lotesType = {
     predio: proveedoresType;
     promedio: number;
     rendimiento: number;
-    tipoFruta: string;
+    tipoFruta: tiposFrutasType;
     urlBascula?: string;
     urlInformeCalidad?: string;
+    user:string
     
 
 };

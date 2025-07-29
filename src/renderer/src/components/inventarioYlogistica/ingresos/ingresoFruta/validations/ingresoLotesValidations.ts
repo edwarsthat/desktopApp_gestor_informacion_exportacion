@@ -35,6 +35,20 @@ export const initialValues: formType = {
     observaciones: ""
 }
 
+export const labelsForms = {
+    nombrePredio: "Predio",
+    tipoFruta: "Tipo de fruta",
+    canastillasPropias: "Canastillas propias",
+    canastillasPrestadas: "Canastillas prestadas",
+    canastillasVaciasPropias: "Canastillas vacías propias",
+    canastillasVaciasPrestadas: "Canastillas vacías prestadas",
+    kilos: "Kilos",
+    GGN: "GGN",
+    placa: "Placa",
+    fecha_estimada_llegada: "Fecha estimada de llegada",
+    numeroPrecintos: "Número de precintos",
+}
+
 
 export const formSchema = z.object({
     nombrePredio: z.string().min(1, "El nombre del predio es obligatorio"),

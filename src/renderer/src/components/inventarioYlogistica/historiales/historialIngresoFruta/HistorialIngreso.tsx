@@ -11,6 +11,7 @@ import Filtros from "@renderer/components/UI/components/Filtros";
 import { useFiltroValue } from "@renderer/hooks/useFiltro";
 import useFetchDataFilter from "@renderer/hooks/useFetchDataFilter";
 import { totalKilosIngresos } from "./services/procesardata";
+import { lotesType } from "@renderer/types/lotesType";
 
 
 export default function HistorialIngresoFruta(): JSX.Element {
@@ -21,7 +22,7 @@ export default function HistorialIngresoFruta(): JSX.Element {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openModalEf8, setOpenModalEf8] = useState<boolean>(false);
   const { setCurrentFilters, currentFilters } = useFiltroValue();
-  const { data, obtenerData } = useFetchDataFilter<recordLotesType | loteEF8Type>({
+  const { data, obtenerData } = useFetchDataFilter<lotesType | loteEF8Type>({
     actionData: "get_inventarios_historiales_ingresoFruta_registros",
     currentFilters,
     otherFilter: filtro
