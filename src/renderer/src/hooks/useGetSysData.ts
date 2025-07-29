@@ -20,6 +20,8 @@ type outType = {
     obtenerClientesNacionales: () => Promise<void>
     ef8: string
     obtenerEf8: () => Promise<void>
+    ef1: string
+    obtenerEf1: () => Promise<void>
     operarios: userType[]
     obtenerOperarios: () => Promise<void>
 }
@@ -35,6 +37,8 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
     const [dataDefectos, setDataDefectos] = useState<object>({})
     const [clientesNacionales, setClientesNacionales] = useState<clientesNacionalesType[]>([])
     const [ef8, setEf8] = useState<string>("")
+    const [ef1, setEf1] = useState<string>("")
+
     const [operarios, setOperarios] = useState<userType[]>([])
 
     const obtenerPredios = async (): Promise<void> => {
@@ -161,6 +165,8 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
         ef8,
         obtenerEf8,
         operarios,
-        obtenerOperarios
+        obtenerOperarios,
+        ef1,
+        obtenerEf1
     }
 }
