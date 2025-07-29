@@ -19,6 +19,8 @@ type outType = {
     obtenerClientesNacionales: () => Promise<void>
     ef8: string
     obtenerEf8: () => Promise<void>
+    ef1: string
+    obtenerEf1: () => Promise<void>
 }
 
 type propsType = {
@@ -26,12 +28,13 @@ type propsType = {
 }
 
 export default function useGetSysData({ proveedoresProp = 'all' }: propsType): outType {
-    const [proveedores, setProveedores] = useState<proveedoresType[]>([])
-    const [tiposFruta, setTiposFruta] = useState<string[]>([])
-    const [tiposFruta2, setTiposFruta2] = useState<tiposFrutasType[]>([])
-    const [dataDefectos, setDataDefectos] = useState<object>({})
-    const [clientesNacionales, setClientesNacionales] = useState<clientesNacionalesType[]>([])
-    const [ef8, setEf8] = useState<string>("")
+    const [proveedores, setProveedores] = useState<proveedoresType[]>([]);
+    const [tiposFruta, setTiposFruta] = useState<string[]>([]);
+    const [tiposFruta2, setTiposFruta2] = useState<tiposFrutasType[]>([]);
+    const [dataDefectos, setDataDefectos] = useState<object>({});
+    const [clientesNacionales, setClientesNacionales] = useState<clientesNacionalesType[]>([]);
+    const [ef8, setEf8] = useState<string>("");
+    const [ef1, setEf1] = useState<string>("");
 
     const obtenerPredios = async (): Promise<void> => {
         try {
@@ -59,7 +62,6 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
     const obtenerTipoFruta2 = async (): Promise<void> => {
         try {
             const response = await window.api.obtenerFruta2()
-            console.log("tipoFruta response", response)
             setTiposFruta2(response)
         } catch (err) {
             if (err instanceof Error)
@@ -114,6 +116,23 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
             }
         }
     }
+    const obtenerEf1 = async (): Promise<void> => {
+        try {
+            const request = {
+                action: "get_data_EF1"
+            }
+            const response = await window.api.server2(request)
+            if (response.status !== 200) {
+                throw new Error(`Code ${response.status}: ${response.message}`)
+            }
+            console.log("responseEF1", response)
+            setEf1(response.data)
+        } catch (err) {
+            if (err instanceof Error) {
+                console.error("error", err.message)
+            }
+        }
+    }
     return {
         proveedores,
         obtenerPredios,
@@ -126,6 +145,8 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
         clientesNacionales,
         obtenerClientesNacionales,
         ef8,
-        obtenerEf8
+        obtenerEf8,
+        ef1,
+        obtenerEf1
     }
 }

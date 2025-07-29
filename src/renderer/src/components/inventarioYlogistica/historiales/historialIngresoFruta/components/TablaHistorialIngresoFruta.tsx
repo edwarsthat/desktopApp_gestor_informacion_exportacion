@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { PiNotePencilDuotone } from "react-icons/pi";
-import { recordLotesType } from "@renderer/types/recorLotesType";
 import { TABLE_COLUMNS_INGRESOS } from "../constants/table";
 import { loteEF8Type } from "@renderer/types/loteEf8";
+import { lotesType } from "@renderer/types/lotesType";
 
 type propsType = {
-    data: (recordLotesType | loteEF8Type)[] | undefined
+    data: (lotesType | loteEF8Type)[] | undefined
     setOpenModal: (e) => void
     setOpenModalEf8: (e) => void
     setLoteSeleccionado: (lote) => void
@@ -35,9 +35,9 @@ export default function TablaHistorialIngresoFruta(props: propsType): JSX.Elemen
                     {props.data.map((lote, index) => (
                         <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={lote._id} >
                             <>
-                                {typeof lote === 'object' && Object.hasOwnProperty.call(lote, "documento") ? (
+                                {typeof lote === 'object' && Object.hasOwnProperty.call(lote, "kilos") ? (
                                     TABLE_COLUMNS_INGRESOS.ef1.map(col => (
-                                        <td key={col.header + index}>{col.value(lote as recordLotesType)}</td>
+                                        <td key={col.header + index}>{col.value(lote as lotesType)}</td>
                                     ))
                                 ) : (
                                     TABLE_COLUMNS_INGRESOS.ef8.map(col => (
