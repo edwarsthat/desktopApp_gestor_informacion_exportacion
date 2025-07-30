@@ -65,7 +65,7 @@ export default function InventarioFrutaSinProcesar(): JSX.Element {
     }
 
     if(currentFilters.tipoFruta){
-      datosFiltrados = datosFiltrados.filter(lote => lote.tipoFruta === currentFilters.tipoFruta)
+      datosFiltrados = datosFiltrados.filter(lote => lote.tipoFruta?.tipoFruta === currentFilters.tipoFruta)
     }
 
     if(currentFilters.GGN){

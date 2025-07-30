@@ -90,7 +90,7 @@ export default function FilaTablaFrutaSinProcesar(props: propsType): JSX.Element
                         : 0}
                 </td>
                 <td>{props.lote?.inventario && props.lote.inventario}</td>
-                <td>{props.lote.tipoFruta}</td>
+                <td>{props.lote.tipoFruta?.tipoFruta || ''}</td>
                 <td>{props.lote.clasificacionCalidad}</td>
                 <td>{props.lote.observaciones}</td>
                 <td></td>
@@ -131,7 +131,7 @@ export default function FilaTablaFrutaSinProcesar(props: propsType): JSX.Element
                     <td>{props.lote?.inventario && props.lote.inventario}</td>
                 )}
 
-                <td>{props.lote.tipoFruta}</td>
+                <td>{props.lote.tipoFruta?.tipoFruta || ''}</td>
                 <td>{props.lote.clasificacionCalidad}</td>
                 <td>{props.lote.observaciones}</td>
                 <td>
@@ -183,7 +183,7 @@ export default function FilaTablaFrutaSinProcesar(props: propsType): JSX.Element
                 </td>
                 <td>{props.lote.kilos_estimados}</td>
                 <td>{props.lote.canastillas_estimadas}</td>
-                <td>{props.lote.tipoFruta}</td>
+                <td>{props.lote.tipoFruta?.tipoFruta || '' }</td>
                 <td>{props.lote.clasificacionCalidad}</td>
                 <td>{props.lote.observaciones}</td>
                 <td></td>
@@ -211,7 +211,7 @@ export default function FilaTablaFrutaSinProcesar(props: propsType): JSX.Element
                 </td>
                 <td>{props.lote.kilos_estimados}</td>
                 <td>{props.lote.canastillas_estimadas}</td>
-                <td>{props.lote.tipoFruta}</td>
+                <td>{props.lote.tipoFruta?.tipoFruta || ''}</td>
                 <td>{props.lote.clasificacionCalidad}</td>
                 <td>{props.lote.observaciones}</td>
                 <td></td>

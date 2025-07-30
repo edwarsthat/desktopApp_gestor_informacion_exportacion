@@ -32,7 +32,7 @@ export default function PredioCard(props: propsType): JSX.Element {
             <div className="grid-main-info">
                 <span className="enf">{props.lote.enf}</span>
                 <span className="predio">{props.lote.predio?.PREDIO}</span>
-                <span>{props.lote.tipoFruta}</span>
+                <span>{props.lote.tipoFruta.tipoFruta}</span>
             </div>
             <div className="grid-extra-info">
                 <span>{formatearFecha(props.lote.fecha_ingreso_inventario)}</span>

@@ -34,7 +34,7 @@ export default function TableHistorialProcesado(props: propsType): JSX.Element {
               </td>
               <td>{item.documento.kilosVaciados && item.documento.kilosVaciados.toLocaleString('es-ES')}</td>
               <td>{item.documento.GGN && (item.documento.predio.GGN.code ?? '')}</td>
-              <td>{item.documento.tipoFruta}</td>
+              <td>{item.documento.tipoFruta.tipoFruta}</td>
               <td>{formatearFecha(item.fecha, true)}</td>
               <td>{item.user && item.user}</td>
 

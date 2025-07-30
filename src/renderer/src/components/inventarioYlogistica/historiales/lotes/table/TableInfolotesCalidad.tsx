@@ -56,7 +56,7 @@ export default function TableInfolotesCalidad(props: propsType): JSX.Element {
                                             )
                                         }
                                     </td>
-                                    <td>{lote.tipoFruta}</td>
+                                    <td>{lote.tipoFruta.tipoFruta}</td>
                                     {Object.keys(props.columnVisibility).map((item, index) => {
                                         if (props.columnVisibility[item]) {
                                             if (['acidez', 'brix', 'ratio'].includes(item)) {

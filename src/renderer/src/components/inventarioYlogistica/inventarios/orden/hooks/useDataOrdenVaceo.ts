@@ -127,7 +127,7 @@ export default function useDataOrdenVaceo({ filtroPrediosInventario }: propsType
     useEffect(() => {
         let data = lotesOriginal.filter(item => item.predio?.PREDIO?.toLocaleLowerCase().startsWith(filtroPrediosInventario.filtro));
         if (filtroPrediosInventario.select !== "")
-            data = data.filter(item => item.tipoFruta === filtroPrediosInventario.select);
+            data = data.filter(item => item.tipoFruta.tipoFruta === filtroPrediosInventario.select);
         setLotes(data);
     }, [filtroPrediosInventario.filtro, filtroPrediosInventario.select, lotesOriginal])
     return {

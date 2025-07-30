@@ -34,7 +34,7 @@ export default function OrdenVaciadoCard(props: propsType): JSX.Element {
           {Object.prototype.hasOwnProperty.call(props.lote, "desverdizado") &&
             <p>Desverdizado</p>
           }
-          <p>{props.lote.tipoFruta}</p>
+          <p>{props.lote.tipoFruta.tipoFruta}</p>
 
           {/* <p>{props.lote._id}</p> */}
 

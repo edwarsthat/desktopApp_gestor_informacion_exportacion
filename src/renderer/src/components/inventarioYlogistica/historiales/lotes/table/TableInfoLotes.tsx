@@ -57,7 +57,7 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                 <td>{lote.GGN ? lote.predio.GGN.code : ""}</td>
 
 
-                <td>{lote.tipoFruta}</td>
+                <td>{lote.tipoFruta?.tipoFruta || ""}</td>
                 {Object.keys(props.columnVisibility).map((item, index2) => {
                   if (props.columnVisibility[item]) {
                     if (item === 'descarteLavado' || item === 'descarteEncerado') {

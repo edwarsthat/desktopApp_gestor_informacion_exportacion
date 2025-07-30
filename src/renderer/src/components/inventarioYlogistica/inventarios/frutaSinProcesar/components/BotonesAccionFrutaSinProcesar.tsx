@@ -36,7 +36,7 @@ export default function BotonesAccionFrutaSinProcesar(props: propsType): JSX.Ele
     // ).reduce((acu, lote) => acu += lote.kilos_estimados, 0)
 
     const enInventarioNaranjaTemp = props.data && props.data.reduce((acu, lote) => {
-      if (lote.tipoFruta === 'Naranja') {
+      if (lote.tipoFruta.tipoFruta === 'Naranja') {
         return (acu += lote.inventario ? lote.inventario * lote.promedio : 0)
       } else {
         return acu += 0
@@ -44,7 +44,7 @@ export default function BotonesAccionFrutaSinProcesar(props: propsType): JSX.Ele
     }, 0)
 
     const enInventarioLimonTemp = props.data.reduce((acu, lote) => {
-      if (lote.tipoFruta === 'Limon') {
+      if (lote.tipoFruta.tipoFruta === 'Limon') {
         return (acu += lote.inventario ? (lote.inventario * lote.promedio) : 0)
       } else {
         return acu += 0
@@ -67,7 +67,7 @@ export default function BotonesAccionFrutaSinProcesar(props: propsType): JSX.Ele
           <span>Directo Nacional</span>
         </button>
         <button onClick={props.closeDesverdizado}
-          className={props.loteSeleccionado?.tipoFruta === "Naranja" ? 'desverdizar' : 'no-desverdizar'} >
+          className={props.loteSeleccionado?.tipoFruta.tipoFruta === "Naranja" ? 'desverdizar' : 'no-desverdizar'} >
           <span >Desverdizar</span>
         </button>
       </div>
