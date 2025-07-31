@@ -13,9 +13,8 @@ import { useFiltroValue } from '@renderer/hooks/useFiltro'
 
 export default function InventarioFrutaSinProcesar(): JSX.Element {
   const { eventoServidor, triggerServer } = useAppContext()
-  const {setCurrentFilters, currentFilters} = useFiltroValue();
+  const { setCurrentFilters, currentFilters } = useFiltroValue();
   const { obtenerFruta, data, datosOriginales, setData } = useDataInventarioFrutaSinProcesar()
-
 
   const [loteSeleccionado, setLoteSeleccionado] = useState<lotesType>()
 
@@ -64,11 +63,11 @@ export default function InventarioFrutaSinProcesar(): JSX.Element {
       })
     }
 
-    if(currentFilters.tipoFruta){
+    if (currentFilters.tipoFruta) {
       datosFiltrados = datosFiltrados.filter(lote => lote.tipoFruta?.tipoFruta === currentFilters.tipoFruta)
     }
 
-    if(currentFilters.GGN){
+    if (currentFilters.GGN) {
       datosFiltrados = datosFiltrados.filter(lote => lote.GGN)
     }
 
@@ -92,7 +91,7 @@ export default function InventarioFrutaSinProcesar(): JSX.Element {
       eventoServidor === 'inspeccion_fruta' ||
       eventoServidor === 'derogar_lote' ||
       eventoServidor === 'calidad_interna' ||
-      eventoServidor === 'inventario_frutaSinProcesar' 
+      eventoServidor === 'inventario_frutaSinProcesar'
     ) {
       obtenerFruta()
     }
@@ -161,7 +160,7 @@ export default function InventarioFrutaSinProcesar(): JSX.Element {
         createPortal(
           <Desverdizado
             open={showDesverdizadoModal}
-            onClose={():void => setShowDesverdizadoModal(false)}
+            onClose={(): void => setShowDesverdizadoModal(false)}
             loteSeleccionado={loteSeleccionado}
           />,
           document.body

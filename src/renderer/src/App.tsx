@@ -79,7 +79,6 @@ function App(): JSX.Element {
     }, 5000);
   };
 
-
   useEffect(() => {
     funcionAuxiliar()
     window.api.status_proceso("status_proceso", (data) => {
@@ -108,6 +107,7 @@ function App(): JSX.Element {
       setIsprocesoStart(responseIsProcesoStart.data)
       setUser(cuenta)
       setVersionState(version)
+
       document.title = "Celifrut App " + version;
       if (response === "Dark") {
         setTheme('Dark')

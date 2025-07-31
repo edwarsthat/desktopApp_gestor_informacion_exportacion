@@ -216,3 +216,145 @@
 .btn-habilitar:active {
     transform: scale(0.97);
 }
+
+/* FormMultipleSelect Styles */
+.form-multiple-select {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    background-color: white;
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.form-multiple-select.input-error {
+    border-color: #e74c3c;
+}
+
+.checkbox-item {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 20px;
+    padding: 6px 12px;
+    margin: 2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    white-space: nowrap;
+    width: fit-content;
+    position: relative;
+}
+
+.checkbox-item:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.checkbox-item.selected {
+    background-color: var(--color-Celifrut, #28a745);
+    border-color: var(--color-Celifrut, #28a745);
+    color: white;
+}
+
+.checkbox-item.selected .checkbox-label {
+    color: white;
+}
+
+.checkbox-item.selected:hover {
+    background-color: var(--color-Celifrut-dark, #218838);
+    border-color: var(--color-Celifrut-dark, #218838);
+}
+
+.checkbox-input {
+    display: none; /* Ocultamos el checkbox real */
+}
+
+.checkbox-label {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.2;
+    transition: color 0.2s ease;
+    pointer-events: none; /* Evita que el label interfiera con el click del div */
+}
+
+/* Tipo Caja Styles */
+.tipo-caja-group {
+    margin-bottom: 16px;
+}
+
+.tipo-caja-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.tipo-caja-inputs .defaultSelect,
+.tipo-caja-inputs .tipo-caja-text {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 14px;
+    color: #333;
+}
+
+.tipo-caja-inputs .defaultSelect {
+    min-width: 120px;
+}
+
+.tipo-caja-inputs .tipo-caja-text {
+    width: 80px;
+    text-align: center;
+}
+
+.tipo-caja-dash {
+    font-size: 16px;
+    color: #555;
+}
+
+.tipo-caja-add-btn {
+    padding: 8px 12px;
+    border: none;
+    background-color: var(--color-Celifrut, #28a745) !important;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-weight: bold;
+}
+
+.tipo-caja-add-btn:hover {
+    background-color: var(--color-Celifrut-dark, #218838) !important;
+}
+
+.tipo-caja-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tipo-caja-item {
+    padding: 6px 10px;
+    background-color: var(--color-Celifrut-dark, #218838) !important;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.tipo-caja-item:hover {
+    background-color: #e0e0e0;
+}

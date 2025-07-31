@@ -3,12 +3,14 @@ import { lotesType } from "@renderer/types/lotesType"
 import "../css/prediosEnInventario.css"
 import PredioCard from "../utils/PredioCard"
 import { filtroPrediosInventarioType } from "../hooks/useDataOrdenVaceo"
+import { tiposFrutasType } from "@renderer/types/tiposFrutas"
 
 type propsType = {
     filtroPrediosInventario: filtroPrediosInventarioType
     setFiltroPrediosInventario: (e: filtroPrediosInventarioType) => void
     lotes: lotesType[]
     handleAddOrdenVaceo: (_id) => void
+    tipoFrutas: tiposFrutasType[];
 }
 
 export default function PrediosEnInventario(props: propsType): JSX.Element {
@@ -27,8 +29,9 @@ return (
             <input type="text" className="defaultSelect" onChange={handleFiltro} />
             <select className="defaultSelect" onChange={(e): void => props.setFiltroPrediosInventario({...props.filtroPrediosInventario, select: e.target.value })}>
                 <option value="">Tipo de fruta</option>
-                <option value="Naranja">Naranja</option>
-                <option value="Limon">Limon</option>
+                {props.tipoFrutas.map(tipo => (
+                    <option key={tipo._id} value={tipo.tipoFruta}>{tipo.tipoFruta}</option>
+                ))}
             </select>
             <hr />
         </div>

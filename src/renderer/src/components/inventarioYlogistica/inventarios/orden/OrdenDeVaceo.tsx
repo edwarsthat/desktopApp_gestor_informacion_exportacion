@@ -7,6 +7,7 @@ import "./css/predioCard.css"
 import "./css/ordenVaceo.css"
 import { useEffect, useState } from "react";
 import useDataOrdenVaceo, { filtroPrediosInventarioType } from "./hooks/useDataOrdenVaceo";
+import useGetSysData from "@renderer/hooks/useGetSysData";
 
 
 export default function OrdenDeVaceo(): JSX.Element {
@@ -20,9 +21,10 @@ export default function OrdenDeVaceo(): JSX.Element {
         lotes,
         lotesOrdenVaceo
     } = useDataOrdenVaceo({ filtroPrediosInventario });
-
+    const { obtenerTipoFruta2, tiposFruta2 } = useGetSysData({});
     useEffect(() => {
         obtenerData()
+        obtenerTipoFruta2();
     }, [])
 
     useEffect(() => {
@@ -51,6 +53,7 @@ export default function OrdenDeVaceo(): JSX.Element {
                         setFiltroPrediosInventario={setFiltroPrediosInventario}
                         filtroPrediosInventario={filtroPrediosInventario}
                         lotes={lotes}
+                        tipoFrutas={tiposFruta2}
                         handleAddOrdenVaceo={handleAddOrdenVaceo} />
                     <ListaOrdenVaceo
                         lotes={lotes}

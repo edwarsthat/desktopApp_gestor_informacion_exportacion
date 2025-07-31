@@ -102,8 +102,6 @@ export default function ProcesoListaEmpaque(): JSX.Element {
         }
     }
 
-
-
     return (
         <div className="componentContainer">
             <div className="navBar"></div>

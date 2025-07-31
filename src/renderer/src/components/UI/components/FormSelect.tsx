@@ -3,7 +3,7 @@
 type FormInputProps = {
     name: string
     label: string
-    value: string | number
+    value: string | number 
     onChange: (e) => void
     error?: string
     disabled?: boolean

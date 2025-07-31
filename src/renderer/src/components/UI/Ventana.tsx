@@ -79,6 +79,7 @@ import TransporteRegistroEntregaPrecinto from "../transporte/registros/entreguaP
 import RegistroIndicadorExportacionProceso from "../indicadores/operaciones/RegistroExportacionProceso/RegistroIndicadorExportacionProceso"
 import IngresoEf8 from "../inventarioYlogistica/ingresos/ingresoEF8/IngresoEf8"
 import RegistrosInventarioDescartes from "../inventarioYlogistica/historiales/historialRegistroinventarioDescarte/RegistrosInventarioDescartes"
+import { FrutaLoader } from "@renderer/loader/FrutaLoader"
 
 
 type propsType = {
@@ -97,6 +98,7 @@ export default function Ventana(props: propsType): JSX.Element {
     }, [props.section])
     return (
         <>
+            <FrutaLoader />
             {activas === undefined ?
                 <div className="ventana-main">
                     <div className="componentContainer">

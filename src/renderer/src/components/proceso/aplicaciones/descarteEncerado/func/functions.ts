@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+import { tiposFrutasType } from "@renderer/types/tiposFrutas";
 import { FormState, datosPredioType } from "../types/types";
 
 export const formInit: FormState = {
@@ -43,18 +44,13 @@ export const labels = {
 };
 
 
-export const sumarDatos = (datos: FormState, lote: datosPredioType): object => {
+export const sumarDatos = (datos: FormState, lote: datosPredioType,  tiposFruta2: tiposFrutasType[]): object => {
     let mult;
-    switch (lote.tipoFruta) {
-        case 'Naranja':
-        case 'Mandarina':
-            mult = 19;
-            break;
-        case 'Limon':
-            mult = 20;
-            break;
-        default:
-            mult = 1;
+    const tipoFruta = tiposFruta2.find(item => item.tipoFruta === lote.tipoFruta);
+    if (tipoFruta) {
+        mult = tipoFruta.valorPromedio;
+    } else {
+        mult = 1;
     }
     const salida = {
         descarteGeneral: 0,

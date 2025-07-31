@@ -11,6 +11,8 @@ import { GiCancel } from "react-icons/gi";
 import ConfirmacionModal from "@renderer/messages/ConfirmacionModal";
 import BotonesSeleccionarItemTabla from "@renderer/components/UI/BotonesSeleccionarItemTabla";
 import { RiDeleteBack2Fill } from "react-icons/ri";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
+import React from "react";
 
 const headers = [
     "Pallet",
@@ -28,6 +30,7 @@ const headers = [
 
 export default function Pallets(): JSX.Element {
     const { messageModal } = useAppContext();
+    const tiposFruta = useTipoFrutaStore((s) => s.tiposFruta);
     const contenedores = useContext(contenedoresContext)
     const contenedorSeleccionado = useContext(contenedorSeleccionadoContext)
     const loteSeleccionado = useContext(loteselectedContext)
@@ -56,6 +59,8 @@ export default function Pallets(): JSX.Element {
             const cont = contenedores.find(c => c._id === contenedorSeleccionado)
             setContenedor(cont)
         }
+
+
     }, [contenedores, contenedorSeleccionado, contenedor]);
 
     useEffect(() => {
@@ -96,7 +101,6 @@ export default function Pallets(): JSX.Element {
         setIndex2Item(index2)
         setIndexItem(index)
     }
-
     const handleEliminar = (index, index2): void => {
         setIndex2ItemDel(index2)
         setIndexItemDel(index)
@@ -114,7 +118,6 @@ export default function Pallets(): JSX.Element {
         setMessage("¿Desea agregar las cajas?")
         setRequestType("newItem")
     }
-
 
     const guardarNewItem = async (): Promise<void> => {
         try {
@@ -187,17 +190,17 @@ export default function Pallets(): JSX.Element {
     }
     const eliminarItem = async (): Promise<void> => {
         try {
-            if(indexItemDel === -1) throw new Error("Seleccione un item")
-            if(index2ItemDel === -1) throw new Error("Seleccione un item")
+            if (indexItemDel === -1) throw new Error("Seleccione un item")
+            if (index2ItemDel === -1) throw new Error("Seleccione un item")
 
             const request = {
-                action:"put_proceso_aplicaciones_listaEmpaque_eliminarItem_desktop",
+                action: "put_proceso_aplicaciones_listaEmpaque_eliminarItem_desktop",
                 _id: contenedor?._id,
                 pallet: indexItemDel,
                 seleccion: index2ItemDel
             }
             const response = await window.api.server2(request)
-            if(response.status !== 200)
+            if (response.status !== 200)
                 throw new Error(`Code ${response.status}: ${response.message}`)
             messageModal("succes", "Dato eliminado con exito")
             resetStates()
@@ -207,6 +210,19 @@ export default function Pallets(): JSX.Element {
             }
         }
     }
+    let tipoFrutaSeleccionado;
+    useEffect(() => {
+        if (loteSeleccionado && loteSeleccionado.documento && loteSeleccionado.documento.tipoFruta) {
+            tipoFrutaSeleccionado = tiposFruta.find(
+                item => item._id === loteSeleccionado.documento.tipoFruta
+            );
+            console.log("tiposFruta", tiposFruta);
+            console.log("Tipo de fruta seleccionado:", tipoFrutaSeleccionado);
+            console.log("Tipo de fruta lote:", loteSeleccionado.documento.tipoFruta);
+
+        }
+
+    }, [loteSeleccionado, tiposFruta]);
 
     if (contenedor === undefined) {
         return (
@@ -230,7 +246,7 @@ export default function Pallets(): JSX.Element {
                     <tbody>
                         {contenedor &&
                             contenedor.pallets.map((_, index) => (
-                                <>
+                                <React.Fragment key={index}>
                                     {contenedor.pallets[index].EF1.map((item, index2) => (
                                         <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={index + item.fecha}>
                                             <td>{index2 === 0 ? index + 1 : ''}</td>
@@ -241,9 +257,17 @@ export default function Pallets(): JSX.Element {
                                                 <td>
                                                     <select onChange={(e): void => setCalidad(e.target.value)}>
                                                         <option value=""></option>
-                                                        {contenedor.infoContenedor.calidad.map(caItem => (
-                                                            <option value={caItem} key={caItem}>{caItem}</option>
-                                                        ))}
+                                                        {contenedor.infoContenedor.calidad.map(caItem => {
+                                                            console.log(tipoFrutaSeleccionado)
+
+                                                            const calidad = tipoFrutaSeleccionado?.calidades.find(c => c._id === caItem);
+                                                            console.log(calidad)
+                                                            return (
+                                                                <option value={caItem} key={caItem + index}>
+                                                                    {calidad ? calidad.descripcion : caItem}
+                                                                </option>
+                                                            );
+                                                        })}
                                                     </select>
                                                 </td>
                                                 :
@@ -295,7 +319,7 @@ export default function Pallets(): JSX.Element {
                                             />
                                             <td>
 
-                                                <button onClick={():void => handleEliminar(index,index2)}>
+                                                <button onClick={(): void => handleEliminar(index, index2)}>
                                                     <RiDeleteBack2Fill color="red" />
                                                 </button>
                                             </td>
@@ -370,7 +394,7 @@ export default function Pallets(): JSX.Element {
                                         </td>
                                         <td></td>
                                     </tr>
-                                </>
+                                </React.Fragment>
                             ))
                         }
                     </tbody>

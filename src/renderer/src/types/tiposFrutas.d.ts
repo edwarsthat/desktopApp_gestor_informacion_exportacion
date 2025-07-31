@@ -9,4 +9,11 @@ export type tiposFrutasType = {
     rengoDeshidratacionNegativa: number,
     createdAt: string
     calibres: string[]
+    calidades: calidadesType[]
+}
+
+export type calidadesType = {
+    _id: string;
+    nombre: string;
+    descripcion: string;
 }

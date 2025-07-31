@@ -11,52 +11,23 @@ type propsType = {
 }
 
 export default function BotonesAccionFrutaSinProcesar(props: propsType): JSX.Element {
-  // const [enCaminoNaranja, setEnCaminoNaranja] = useState<number>();
-  // const [enCaminoLimon, setEnCaminoLimon] = useState<number>();
-  // const [esperaDescargueNaranja, setEsperaDescargueNaranja] = useState<number>();
-  // const [esperaDescargueLimon, setEsperaDescargueLimon] = useState<number>();
-  const [enInventarioNaranja, setEnInventarioNaranja] = useState<number>();
-  const [enInventarioLimon, setEninventarioLimon] = useState<number>();
+
+  const [enInventario, setEnInventario] = useState<{ [key: string]: number }>({});
+  const [totalInventario, setTotalInventario] = useState<number>(0);
 
   useEffect(() => {
-    // const enCaminoTempNaranja = props.data.filter(
-    //   lote => !(lote.fecha_ingreso_inventario) && !(lote.fecha_ingreso_patio) && lote.tipoFruta === 'Naranja'
-    // ).reduce((acu, lote) => acu += lote.kilos_estimados, 0)
-
-    // const enCaminoTempLimon = props.data.filter(
-    //   lote => !(lote.fecha_ingreso_inventario) && !(lote.fecha_ingreso_patio) && lote.tipoFruta === 'Limon'
-    // ).reduce((acu, lote) => acu += lote.kilos_estimados, 0)
-
-    // const esperaDescargueNaranjaTemp = props.data.filter(
-    //   lote => !(lote.fecha_ingreso_inventario) && (lote.fecha_ingreso_patio) && lote.tipoFruta === 'Naranja'
-    // ).reduce((acu, lote) => acu += lote.kilos_estimados, 0)
-
-    // const esperaDescargueLimonTemp = props.data.filter(
-    //   lote => !(lote.fecha_ingreso_inventario) && (lote.fecha_ingreso_patio) && lote.tipoFruta === 'Limon'
-    // ).reduce((acu, lote) => acu += lote.kilos_estimados, 0)
-
-    const enInventarioNaranjaTemp = props.data && props.data.reduce((acu, lote) => {
-      if (lote.tipoFruta.tipoFruta === 'Naranja') {
-        return (acu += lote.inventario ? lote.inventario * lote.promedio : 0)
+    const result = {};
+    let total = 0;
+    props.data && props.data.forEach((lote) => {
+      if(result[lote.tipoFruta.tipoFruta]) {
+        result[lote.tipoFruta.tipoFruta] += lote.inventario ? lote.inventario * lote.promedio : 0;
       } else {
-        return acu += 0
+        result[lote.tipoFruta.tipoFruta] = lote.inventario ? lote.inventario * lote.promedio : 0;
       }
-    }, 0)
-
-    const enInventarioLimonTemp = props.data.reduce((acu, lote) => {
-      if (lote.tipoFruta.tipoFruta === 'Limon') {
-        return (acu += lote.inventario ? (lote.inventario * lote.promedio) : 0)
-      } else {
-        return acu += 0
-      }
-    }, 0)
-
-    // setEnCaminoNaranja(enCaminoTempNaranja)
-    // setEnCaminoLimon(enCaminoTempLimon)
-    // setEsperaDescargueLimon(esperaDescargueLimonTemp)
-    // setEsperaDescargueNaranja(esperaDescargueNaranjaTemp)
-    setEnInventarioNaranja(enInventarioNaranjaTemp)
-    setEninventarioLimon(enInventarioLimonTemp)
+      total += lote.inventario ? lote.inventario * lote.promedio : 0;
+    })
+    setEnInventario(result);
+    setTotalInventario(total);
 
   }, [props.data])
   return (
@@ -79,32 +50,10 @@ export default function BotonesAccionFrutaSinProcesar(props: propsType): JSX.Ele
             : "EF1"
         }</h3>
         <h3>
-          {/* Total:
-          {
-            (enCaminoLimon ? enCaminoLimon : 0) +
-            (esperaDescargueLimon ? esperaDescargueLimon : 0) +
-            (enInventarioLimon ? enInventarioLimon : 0) +
-            (enCaminoNaranja ? enCaminoNaranja : 0) +
-            (esperaDescargueNaranja ? esperaDescargueNaranja : 0) +
-            (enInventarioNaranja ? enInventarioNaranja : 0)
-          } */}
-        </h3>
-
-        <h3>
-          {/* Kilos Limon:
-          {
-            (enCaminoLimon ? enCaminoLimon : 0) +
-            (esperaDescargueLimon ? esperaDescargueLimon : 0) +
-            (enInventarioLimon ? enInventarioLimon : 0)
-          } */}
         </h3>
         <h3>
-          {/* Kilos Naranja:
-          {
-            (enCaminoNaranja ? enCaminoNaranja : 0) +
-            (esperaDescargueNaranja ? esperaDescargueNaranja : 0) +
-            (enInventarioNaranja ? enInventarioNaranja : 0)
-          } */}
+        </h3>
+        <h3>
         </h3>
 
       </div>
@@ -113,45 +62,14 @@ export default function BotonesAccionFrutaSinProcesar(props: propsType): JSX.Ele
         <h3>{
           "En inventario"
         }</h3>
-        <h3>Total:
-          {((enInventarioLimon ? 
-            enInventarioLimon : 0) + (enInventarioNaranja ? enInventarioNaranja : 0)).toLocaleString('es-ES')} </h3>
+        <h3>Total:{totalInventario.toLocaleString('es-ES')}</h3>
 
-        <h3>Kilos Limon {enInventarioLimon && enInventarioLimon.toLocaleString('es-ES')} </h3>
-        <h3>Kilos Naranja {enInventarioNaranja && enInventarioNaranja.toLocaleString('es-ES')} </h3>
+            {Object.entries(enInventario).map(([tipo, cantidad]) => (
+              <h3 key={tipo}>Kilos {tipo}: {cantidad.toLocaleString('es-ES')}</h3>
+            ))}
+
 
       </div>
-      {/* <div className='inventario-fruta-sin-procesar-botones-container'>
-        <h3>
-          Espera descargue
-        </h3>
-        <h3>
-          Total: {
-            (esperaDescargueLimon ? esperaDescargueLimon : 0) +
-            (esperaDescargueNaranja ? esperaDescargueNaranja : 0)
-          }
-        </h3>
-        <h3>
-          Total Limon: {esperaDescargueLimon}
-        </h3>
-        <h3>
-          Total Naranja: {esperaDescargueNaranja}
-        </h3>
-      </div> */}
-      {/* <div className='inventario-fruta-sin-procesar-botones-container'>
-        <h3>
-          En camino
-        </h3>
-        <h3>
-          Total: {(enCaminoNaranja ? enCaminoNaranja : 0) + (enCaminoLimon ? enCaminoLimon : 0)}
-        </h3>
-        <h3>
-          Total Limon: {enCaminoLimon}
-        </h3>
-        <h3>
-          Total Naranja: {enCaminoNaranja}
-        </h3>
-      </div> */}
     </div>
   )
 }

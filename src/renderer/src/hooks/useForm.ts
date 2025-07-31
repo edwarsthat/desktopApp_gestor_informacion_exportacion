@@ -9,13 +9,14 @@ type OutType<T> = {
     handleChange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => void
+    handleArrayChange: (e: { target: { name: string; value: string[] } }) => void
     resetForm: () => void
     fillForm: (formData) => void
     validateForm: (schema: ZodSchema<unknown>) => boolean
     setFormState: (e) => void
 }
 
-export default function useForm<T extends Record<string, number | string>>(initialState?: T): OutType<T> {
+export default function useForm<T extends Record<string, number | string | string[]>>(initialState?: T): OutType<T> {
     const [formState, setFormState] = useState<T>(initialState ?? ({} as T))
     const [formErrors, setFormErrors] = useState<Partial<Record<keyof T | string, string>>>({})
 
@@ -38,6 +39,15 @@ export default function useForm<T extends Record<string, number | string>>(initi
             [name]: parsedValue,
         }))
     }
+
+    // Función de cambio para campos array
+    const handleArrayChange = (e: { target: { name: string; value: string[] } }): void => {
+        const { name, value } = e.target;
+        setFormState(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
 
     const getErrorMessages = (zodError: ZodError): Partial<Record<keyof T | string, string>> => {
         const errors: Partial<Record<keyof T | string, string>> = {}
@@ -67,6 +77,7 @@ export default function useForm<T extends Record<string, number | string>>(initi
         resetForm,
         fillForm,
         validateForm,
-        setFormState
+        setFormState,
+        handleArrayChange
     }
 }

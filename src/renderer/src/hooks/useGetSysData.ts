@@ -3,7 +3,7 @@
 import { obtener_proveedores2 } from "@renderer/functions/SystemRequest"
 import { proveedoresType } from "@renderer/types/proveedoresType"
 import { useState } from "react"
-import { clientesNacionalesType } from "@renderer/types/clientesType"
+import { clientesNacionalesType, clienteType } from "@renderer/types/clientesType"
 import { tiposFrutasType } from "@renderer/types/tiposFrutas"
 import { userType } from "@renderer/types/cuentas"
 
@@ -18,6 +18,8 @@ type outType = {
     obtenerDefectos: () => Promise<void>
     clientesNacionales: clientesNacionalesType[]
     obtenerClientesNacionales: () => Promise<void>
+    clientes: clienteType[]
+    obtenerClientes: () => Promise<void>
     ef8: string
     obtenerEf8: () => Promise<void>
     ef1: string
@@ -36,6 +38,7 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
     const [tiposFruta2, setTiposFruta2] = useState<tiposFrutasType[]>([])
     const [dataDefectos, setDataDefectos] = useState<object>({})
     const [clientesNacionales, setClientesNacionales] = useState<clientesNacionalesType[]>([])
+    const [clientes, setClientes] = useState<clienteType[]>([])
     const [ef8, setEf8] = useState<string>("")
     const [ef1, setEf1] = useState<string>("")
 
@@ -105,6 +108,23 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
             }
         }
     }
+    const obtenerClientes = async (): Promise<void> => {
+        try {
+            const request = {
+                action: "get_data_clientes"
+            }
+            const response = await window.api.server2(request)
+            if (response.status !== 200) {
+                throw new Error(`Code ${response.status}: ${response.message}`)
+            }
+            console.log("responseClientes", response)
+            setClientes(response.data)
+        } catch (err) {
+            if (err instanceof Error) {
+                console.error("error", err.message)
+            }
+        }
+    }
     const obtenerEf8 = async (): Promise<void> => {
         try {
             const request = {
@@ -159,6 +179,8 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
         tiposFruta2,
         obtenerTipoFruta2,
         dataDefectos,
+        clientes,
+        obtenerClientes,
         obtenerDefectos,
         clientesNacionales,
         obtenerClientesNacionales,
@@ -167,6 +189,6 @@ export default function useGetSysData({ proveedoresProp = 'all' }: propsType): o
         operarios,
         obtenerOperarios,
         ef1,
-        obtenerEf1
+        obtenerEf1,
     }
 }
