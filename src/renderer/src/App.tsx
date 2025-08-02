@@ -19,7 +19,6 @@ type MyContextDataType = {
   setDataComponentes: React.Dispatch<React.SetStateAction<string>>;
 };
 
-
 type confirmationDataType = {
   confirmation: boolean
   setConfirmation: React.Dispatch<React.SetStateAction<boolean>>;

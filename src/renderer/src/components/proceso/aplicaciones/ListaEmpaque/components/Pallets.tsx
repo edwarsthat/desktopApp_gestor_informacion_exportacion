@@ -13,6 +13,7 @@ import BotonesSeleccionarItemTabla from "@renderer/components/UI/BotonesSeleccio
 import { RiDeleteBack2Fill } from "react-icons/ri";
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 import React from "react";
+import { calidadesType } from "@renderer/types/tiposFrutas";
 
 const headers = [
     "Pallet",
@@ -53,6 +54,9 @@ export default function Pallets(): JSX.Element {
     const [message, setMessage] = useState<string>('')
 
     const [requestType, setRequestType] = useState<string>()
+
+    const [calidadSeleccionada, setCalidadSeleccionada] = useState<calidadesType[]>([])
+    const [calidadesCont, setCalidadesCont] = useState<calidadesType[]>([])
 
     useEffect(() => {
         if (contenedorSeleccionado !== undefined && contenedores !== undefined) {
@@ -135,7 +139,7 @@ export default function Pallets(): JSX.Element {
                 tipoCaja: tipoCaja,
                 calibre: calibre,
                 calidad: calidad,
-                tipoFruta: loteSeleccionado.documento.tipoFruta,
+                tipoFruta: loteSeleccionado.documento.tipoFruta._id,
                 fecha: new Date()
             }
 
@@ -210,19 +214,36 @@ export default function Pallets(): JSX.Element {
             }
         }
     }
-    let tipoFrutaSeleccionado;
     useEffect(() => {
+        let tipoFrutaSeleccionado;
+
         if (loteSeleccionado && loteSeleccionado.documento && loteSeleccionado.documento.tipoFruta) {
             tipoFrutaSeleccionado = tiposFruta.find(
-                item => item._id === loteSeleccionado.documento.tipoFruta
+                item => item.tipoFruta === loteSeleccionado.documento.tipoFruta.tipoFruta
             );
-            console.log("tiposFruta", tiposFruta);
-            console.log("Tipo de fruta seleccionado:", tipoFrutaSeleccionado);
-            console.log("Tipo de fruta lote:", loteSeleccionado.documento.tipoFruta);
 
+            if (contenedor && contenedor.infoContenedor && contenedor.infoContenedor.calidad) {
+                const calidadesUse = tipoFrutaSeleccionado.calidades.filter(c => contenedor.infoContenedor.calidad.includes(c._id));
+                setCalidadSeleccionada(calidadesUse);
+                console.log("Calidades seleccionadas:", calidadesUse);
+            }
         }
 
-    }, [loteSeleccionado, tiposFruta]);
+    }, [loteSeleccionado, tiposFruta, contenedor]);
+
+    useEffect(() => {
+        if (contenedor && contenedor.infoContenedor && contenedor.infoContenedor.calidad) {
+            const calidadesUse:calidadesType[] = []
+            for(const tipoFruta of tiposFruta){
+                for(const calidad of tipoFruta.calidades){
+                    if (contenedor.infoContenedor.calidad.includes(calidad._id)) {
+                        calidadesUse.push(calidad);
+                    }
+                }
+            }
+            setCalidadesCont(calidadesUse);
+        }
+    }, [contenedor])
 
     if (contenedor === undefined) {
         return (
@@ -238,8 +259,8 @@ export default function Pallets(): JSX.Element {
                 <table className='table-main'>
                     <thead>
                         <tr >
-                            {headers.map(item => (
-                                <th key={item}>{item}</th>
+                            {headers.map((item, index) => (
+                                <th key={item + index}>{item}</th>
                             ))}
                         </tr>
                     </thead>
@@ -257,21 +278,15 @@ export default function Pallets(): JSX.Element {
                                                 <td>
                                                     <select onChange={(e): void => setCalidad(e.target.value)}>
                                                         <option value=""></option>
-                                                        {contenedor.infoContenedor.calidad.map(caItem => {
-                                                            console.log(tipoFrutaSeleccionado)
-
-                                                            const calidad = tipoFrutaSeleccionado?.calidades.find(c => c._id === caItem);
-                                                            console.log(calidad)
-                                                            return (
-                                                                <option value={caItem} key={caItem + index}>
-                                                                    {calidad ? calidad.descripcion : caItem}
-                                                                </option>
-                                                            );
-                                                        })}
+                                                        {calidadSeleccionada.map(caItem => (
+                                                            <option value={caItem._id} key={caItem._id + index}>
+                                                                {caItem.descripcion}
+                                                            </option>
+                                                        ))}
                                                     </select>
                                                 </td>
                                                 :
-                                                <td>{item.calidad || 'N/A'}</td>
+                                                <td>{calidadesCont.find(cal => cal._id === item.calidad)?.descripcion || 'N/A'}</td>
                                             }
                                             {(indexItem === index && index2Item === index2 && ![indexItem, index2Item].includes(-1)) ?
                                                 <td>
@@ -334,8 +349,10 @@ export default function Pallets(): JSX.Element {
                                             <td>
                                                 <select onChange={(e): void => setCalidad(e.target.value)}>
                                                     <option value=""></option>
-                                                    {contenedor.infoContenedor.calidad.map(caItem => (
-                                                        <option value={caItem} key={caItem}>{caItem}</option>
+                                                    {calidadSeleccionada.map(caItem => (
+                                                        <option value={caItem._id} key={caItem._id + index}>
+                                                            {caItem.descripcion}
+                                                        </option>
                                                     ))}
                                                 </select>
                                             </td>
