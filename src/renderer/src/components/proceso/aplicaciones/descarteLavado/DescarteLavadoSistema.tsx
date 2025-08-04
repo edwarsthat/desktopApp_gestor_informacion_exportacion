@@ -70,6 +70,7 @@ export default function DescarteLavadoSistema(): JSX.Element {
             }
             messageModal("success", "Guardado con exito");
         } catch (err) {
+
             if (err instanceof Error) {
                 messageModal("error", `${err.name}: ${err.message}`);
             }
