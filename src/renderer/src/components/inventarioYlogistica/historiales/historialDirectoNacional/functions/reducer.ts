@@ -20,7 +20,7 @@ export const reducerHistorial = (
           lote.documento.predio && lote.documento.predio.PREDIO && lote.documento.predio.PREDIO.toLowerCase().indexOf(action.filtro) !== -1 ||
           lote.documento.enf && lote.documento.enf.toLowerCase().indexOf(action.filtro) !== -1 ||
           format(new Date(lote.fecha), 'dd-MM-yyyy').toLowerCase().indexOf(action.filtro) !== -1 ||
-          lote.documento.tipoFruta && lote.documento.tipoFruta.toLowerCase().indexOf(action.filtro) !== -1
+          lote.documento.tipoFruta && lote.documento.tipoFruta.tipoFruta.toLowerCase().indexOf(action.filtro) !== -1
       )
       return state
     default:

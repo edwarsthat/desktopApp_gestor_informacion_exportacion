@@ -1,89 +1,225 @@
 .calidad-interna-container{
-    width: 100%;
+    width: 98%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding: 8px 12px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    
 }
 
 .calidad-interna-div1{
-    display: flex;
-    flex-direction: row;
-    width: 90%;
-    
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    width: 100%;
 }
 
 .calidad-interna-calidad-div{
     background-color: var(--color-predioCard-ordenVaciado);
-    margin: 15px;
-    border-radius: 15px;
-    padding: 10px;
-    width: 30%;
+    margin: 8px;
+    border-radius: 12px;
+    padding: 12px 14px;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 8px;
+    border: 1px solid var(--border-Color);
+    transition: box-shadow .2s ease, transform .1s ease;
+}
+
+.calidad-interna-calidad-div:hover{
+    box-shadow: var(--color-card-shadow) 0px 8px 24px;
+}
+
+.calidad-interna-calidad-div h2{
+    margin: 6px 6px 12px 6px;
+    font-size: 20px;
+    color: var(--color-title);
 }
 
 .calidad-interna-calidad-div div{
     display: flex;
     flex-direction: column;
-    font-size: 20px;
+    font-size: 18px;
+    gap: 8px;
+}
+
+.calidad-interna-calidad-div .radio-group{
+    gap: 10px;
+}
+
+.calidad-interna-calidad-div .radio-option{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    transition: background-color .15s ease;
 }
 
 .calidad-interna-calidad-div div label input{
-    margin-left: 15px;
-    margin-right: 10px;
+    margin-left: 6px;
+    margin-right: 4px;
+    accent-color: var(--color-Celifrut);
 }
 
 .calidad-interna-zumo-div{
     background-color: var(--color-predioCard-ordenVaciado);
-    margin: 15px;
-    border-radius: 15px;
-    padding: 10px;
-    width: 70%;
+    margin: 8px;
+    border-radius: 12px;
+    padding: 12px 14px;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 8px;
+    border: 1px solid var(--border-Color);
     gap: 10px;
 }
 
+.calidad-interna-zumo-div:focus-within{
+    box-shadow: 0 0 0 2px var(--color-border-accent) inset, var(--color-card-shadow) 0px 8px 24px;
+}
+
+.calidad-interna-zumo-div h2{
+    font-size: 20px;
+    color: var(--color-title);
+    margin: 6px 6px 8px 6px;
+}
+
 .calidad-interna-zumo-div label{
-    margin-left: 15px;
-    margin-right: 10px;
+    margin-left: 8px;
+    margin-right: 6px;
     font-size: 18px;
 
 }
 
 .calidad-interna-zumo-div p{
     font-size: 18px;
-    margin-left: 10px;
+    margin-left: 6px;
 }
 
 .calidad-interna-zumo-div div label input{
-    margin-left: 15px;
-    margin-right: 10px;
+    margin-left: 6px;
+    margin-right: 6px;
+    accent-color: var(--color-Celifrut);
+}
 
+.calidad-interna-zumo-div .checkBoxContainer label{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .calidad-interna-pruebas-div{
     background-color: var(--color-predioCard-ordenVaciado);
-    margin: 15px;
-    border-radius: 15px;
-    padding: 18px;
-    width: 88%;
-    display: flex;
-    flex-direction: row;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    gap: 10px;
-    align-items: center;
+    margin-left: 1.5%;
+    margin-top: 5px;
+    border-radius: 12px;
+    padding: 16px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 8px;
+    border: 1px solid var(--border-Color);
+    gap: 16px;
+    align-items: flex-start;
 }
 
-.calidad-interna-pruebas-div div{
+.calidad-interna-pruebas-div h2{
+    grid-column: 1 / -1;
+    margin: 0 0 6px 2px;
+    font-size: 20px;
+    color: var(--color-title);
+}
+
+.calidad-interna-pruebas-div .muestra{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: flex-start;
+    align-items: start;
+    gap: 10px;
+    font-weight: 500;
+    background-color: rgba(0,0,0,0.02);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.calidad-interna-pruebas-div .muestra p{
+    margin: 0 0 6px 2px;
+    grid-column: 1 / -1;
+}
+
+.calidad-interna-actions{
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end;
+    padding: 6px 8px 12px;
+}
+
+.calidad-interna-nav{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
     align-items: center;
-    gap: 15px;
-    font-weight: bold;
+    gap: 8px;
+}
+
+.calidad-interna-nav select.defaultSelect{
+    max-width: 340px;
+    color: var(--color-text);
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-input-border);
+    height: 36px;
+    margin-top: 2rem;
+    margin-left: 2%;
+}
+
+.calidad-interna-nav select.defaultSelect:focus{
+    outline: none;
+    border-color: var(--color-input-focus);
+    box-shadow: 0 0 0 2px var(--color-border-accent) inset;
+}
+
+/* Inputs refinados dentro de la sección */
+.calidad-interna-zumo-div .defaultSelect,
+.calidad-interna-pruebas-div .defaultSelect{
+    color: var(--color-text);
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-input-border);
+    height: 36px;
+}
+
+.calidad-interna-zumo-div .defaultSelect:focus,
+.calidad-interna-pruebas-div .defaultSelect:focus{
+    outline: none;
+    border-color: var(--color-input-focus);
+    box-shadow: 0 0 0 2px var(--color-border-accent) inset;
+}
+
+/* Quitar flechas de number (scopeado a la sección) */
+.calidad-interna-container input[type="number"]::-webkit-outer-spin-button,
+.calidad-interna-container input[type="number"]::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+    margin: 0;
+}
+.calidad-interna-container input[type="number"]{
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+/* Hover sutil para opciones de radio */
+.calidad-interna-calidad-div .radio-option:hover{
+    background-color: var(--color-fondo-hover);
+}
+
+/* Responsivo */
+@media (max-width: 900px){
+    .calidad-interna-div1{
+        grid-template-columns: 1fr;
+    }
+    .calidad-interna-pruebas-div{
+        grid-template-columns: 1fr;
+    }
 }

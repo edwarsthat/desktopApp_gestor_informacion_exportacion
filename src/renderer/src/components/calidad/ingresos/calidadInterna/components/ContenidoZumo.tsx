@@ -1,15 +1,19 @@
 /* eslint-disable prettier/prettier */
-import { calidadInternaType } from '../types/calidadInterna'
+import { formType } from '../validations/validation'
 
 type propsType = {
-  handleChange: (data: React.ChangeEvent<HTMLInputElement>, action: string) => void
-  formulario: calidadInternaType
+  handleChange: (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => void
+  formState: formType
+  setFormState: (e) => void
+  formErrors: Partial<Record<keyof formType | string, string>>
 }
 
-export default function ContenidoZumo(props: propsType): JSX.Element {
+export default function ContenidoZumo({handleChange, formState,setFormState, formErrors}: propsType): JSX.Element {
   const calcularPorcentaje = (): string => {
-    const pesoInicial = parseFloat(props.formulario.pesoInicial)
-    const pesoZumo = parseFloat(props.formulario.zumo)
+    const pesoInicial = parseFloat(formState.peso)
+    const pesoZumo = parseFloat(formState.zumo)
     if (isNaN(pesoInicial) || isNaN(pesoZumo) || pesoInicial === 0) {
       return 'N/A'
     }
@@ -22,25 +26,35 @@ export default function ContenidoZumo(props: propsType): JSX.Element {
       <h2>Contenido Zumo</h2>
       <input
         className='defaultSelect'
-        type="number"
+        type="text"
         placeholder="Peso inicial muestra (gr)"
-        onChange={(e): void => props.handleChange(e, 'pesoInicial')}
-        value={props.formulario.pesoInicial}
+        name='peso'
+        onChange={handleChange}
+        value={formState.peso}
       />
+      {formErrors.peso && (
+        <p className="text-red-600 text-sm ml-2">{formErrors.peso}</p>
+      )}
       <input
         className='defaultSelect'
-        type="number"
+        type="text"
         placeholder="Peso zumo (gr)"
-        onChange={(e): void => props.handleChange(e, 'zumo')}
-        value={props.formulario.zumo}
+        name='zumo'
+        onChange={handleChange}
+        value={formState.zumo}
       />
+      {formErrors.zumo && (
+        <p className="text-red-600 text-sm ml-2">{formErrors.zumo}</p>
+      )}
       <div className="checkBoxContainer">
         <label>
           Semillas
           <input
           id="semillas"
+          checked={formState.semillas === 'true'}
+          name="semillas"
           type="checkbox"
-          onChange={(e): void => props.handleChange(e, 'semillas')}
+          onChange={(e):void => setFormState({...formState, semillas: e.target.checked ? 'true' : 'false'})}
         />
         </label>
       </div>

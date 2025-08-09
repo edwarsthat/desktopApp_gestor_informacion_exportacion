@@ -24,8 +24,8 @@ export default function ResumenExportaciones({
 
 
     useEffect(() => {
-        const total_exportacion_original = data.reduce((sum, item) => sum + (total_exportacion(item) || 0), 0);
-        const total_exportacion_kilos = data.reduce((sum, item) => sum + (total_exportacion(item) || 0), 0);
+        const total_exportacion_original = data.reduce((sum, item) => sum + (total_exportacion(item, filtrosTipoFruta) || 0), 0);
+        const total_exportacion_kilos = data.reduce((sum, item) => sum + (total_exportacion(item, filtrosTipoFruta) || 0), 0);
         const total_procesado_kilos = data.reduce((sum, item) => sum + (total_procesado(item, filtrosTipoFruta) || 0), 0);
 
         // Calcular el porcentaje de exportación

@@ -49,7 +49,7 @@ export default function InformesProveedorContabilidad(): JSX.Element {
       (item) =>
         item._id && item._id.toLowerCase().includes(filtro.toLowerCase()) ||
         item.predio && item.predio.PREDIO && item.predio.PREDIO.toLowerCase().includes(filtro.toLowerCase()) ||
-        item.tipoFruta && item.tipoFruta.toLowerCase().includes(filtro.toLowerCase())
+        item.tipoFruta && item.tipoFruta.tipoFruta.toLowerCase().includes(filtro.toLowerCase())
     );
     setDatosFiltrados(datosFiltrados);
   }, [filtro, datos]);

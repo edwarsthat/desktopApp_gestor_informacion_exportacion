@@ -34,7 +34,7 @@ export default function TablaDescarteEncerado(props: propsType): JSX.Element {
                     <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={lote._id} >
                         <td>{lote.enf}</td>
                         <td>{lote.predio?.PREDIO}</td>
-                        <td>{lote.tipoFruta}</td>
+                        <td>{lote.tipoFruta.tipoFruta}</td>
                         <td>{lote.descarteEncerado?.descarteGeneral.toLocaleString("es-ES")} Kg</td>
                         <td>{lote.descarteEncerado?.pareja.toLocaleString("es-ES")} Kg</td>
                         <td>{lote.descarteEncerado?.balin.toLocaleString("es-ES")} Kg</td>

@@ -18,9 +18,9 @@ export default function NavCalidadInternaForm(props: propsType): JSX.Element {
   }
 
   return (
-    <div className='navBar'>
-      <select onChange={handleChange}>
-        <option value=''>Lotes</option>
+    <div className='calidad-interna-nav'>
+      <select className="defaultSelect" onChange={handleChange} defaultValue="">
+        <option value='' disabled>Selecciona un lote</option>
         {props.lotesData.map((lote) => (
           <option key={lote._id} value={lote._id}>
             {lote && lote.predio ? lote.enf + ' ' + ' ' + lote.predio.PREDIO : ' '}

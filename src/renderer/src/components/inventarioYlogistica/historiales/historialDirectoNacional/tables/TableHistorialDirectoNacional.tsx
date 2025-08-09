@@ -28,7 +28,7 @@ export default function TableHistorialDirectoNacional(props: propsType): JSX.Ele
                   (item.documento.directoNacional / item.documento.promedio).toFixed(2) : 0}
               </td>
               <td>{item.documento.directoNacional && item.documento.directoNacional.toFixed(2)}</td>
-              <td>{item.documento.tipoFruta}</td>
+              <td>{item.documento.tipoFruta.tipoFruta}</td>
               <td>{formatearFecha(item.fecha, true)}</td>
               <td>{item.user && item.user}</td>
             </tr>

@@ -10,7 +10,6 @@ import ViewInformeResultados from './ViewInformeResultados';
 import ViewInformeDescarte from './ViewInformeDescarte';
 import ViewInformeObservaciones from './ViewInformeObservaciones';
 import ViewInformeFotos from './ViewInformeFotos';
-import ModificarPrecios from './ModificarPrecios';
 import ResumenKilosFruta from './ResumenKilosFruta';
 import MostrarPrecios from "./MostrarPrecios";
 import logo from '@renderer/assets/1.webp'
@@ -58,7 +57,7 @@ export default function ViewInformeData(props: propsType): JSX.Element {
         try {
             const request = {
                 action: "put_calidad_informes_loteFinalizarInforme",
-                precio: props.loteSeleccionado?.predio.precio[props.loteSeleccionado.tipoFruta],
+                precio: props.loteSeleccionado?.predio.precio[props.loteSeleccionado.tipoFruta.tipoFruta],
                 _id: props.loteSeleccionado?._id,
                 contenedores: props.loteSeleccionado?.contenedores
             }
@@ -155,9 +154,12 @@ export default function ViewInformeData(props: propsType): JSX.Element {
                         Regresar
                     </button>
                     
-                    {props.loteSeleccionado &&
+                    {
+                    props.loteSeleccionado &&
                         props.loteSeleccionado.deshidratacion < 3 &&
-                        props.loteSeleccionado.deshidratacion > -1 && (
+                        props.loteSeleccionado.deshidratacion > -1 && 
+                        
+                    (
                             props.loteSeleccionado.aprobacionProduccion ? (
                                 <button className="defaulButtonAgree" onClick={finalizar_informe_comercial}>
                                     Aprobación Comercial
@@ -268,8 +270,6 @@ export default function ViewInformeData(props: propsType): JSX.Element {
 
                 </div>}
 
-            <ModificarPrecios
-                loteSeleccionado={props.loteSeleccionado} />
         </div>
     )
 }

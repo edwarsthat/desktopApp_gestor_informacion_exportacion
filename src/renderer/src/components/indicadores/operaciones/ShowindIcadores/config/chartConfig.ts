@@ -137,7 +137,7 @@ export function buildExportacionChartConfig(
     const total_exportacion_original = filtrosTipoFruta.map(clave => sumar_tipoFruta(dataOriginal, clave)).reduce((acu, item) => acu += item, 0);
 
     const total_kilosProcesados_fruta = dataOriginal.reduce((sum, item) => sum + (total_procesado(item, filtrosTipoFruta) || 0), 0);
-    const total_exportacion_kilos = data.reduce((sum, item) => sum + (total_exportacion(item) || 0), 0);
+    const total_exportacion_kilos = data.reduce((sum, item) => sum + (total_exportacion(item, filtrosTipoFruta) || 0), 0);
     const descarte = Math.max(total_kilosProcesados_fruta - total_exportacion_kilos, 0);
 
 

@@ -168,7 +168,7 @@ export default function HistorialEnInventarioFrutaSinProcesar(): JSX.Element {
                                 <td>{item.documento.enf}</td>
                             }
                             <td>{item.documento.predio.PREDIO}</td>
-                            <td>{item.documento.tipoFruta}</td>
+                            <td>{item.documento.tipoFruta.tipoFruta}</td>
 
                             {/* //vizualizar modificar numero canastilla */}
                             {itemSeleccionado && (itemSeleccionado._id === item._id) && modificando ?

@@ -129,7 +129,7 @@ export default function HistorialEsperaDescargue(): JSX.Element {
                             <tr key={item._id} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
                                 <td>{item.documento.predio.PREDIO}</td>
                                 <td>{item.documento.placa}</td>
-                                <td>{item.documento.tipoFruta}</td>
+                                <td>{item.documento.tipoFruta.tipoFruta}</td>
 
                                 {itemSeleccionado && (itemSeleccionado._id === item._id) && modificando ?
                                     <td>

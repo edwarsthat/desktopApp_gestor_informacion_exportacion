@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import EficienciaOperativaComponent from "./components/EficienciaOperativaComponent";
 import useAppContext from "@renderer/hooks/useAppContext";
 import { z } from "zod";
-import { agruparRegistrosKilosExportacion, agruparRegistrosKilospRocesados, arreglar_datos_excel_eficiencia, arreglar_datos_excel_eficienciaPredios, arreglar_datos_excel_exportaciones, arreglar_datos_excel_kilos_hora, filtrar_calibre, filtrar_calidad, filtrar_tipoFruta } from "./function";
+import { agruparRegistrosKilosExportacion, agruparRegistrosKilospRocesados, arreglar_datos_excel_eficiencia, arreglar_datos_excel_eficienciaPredios, arreglar_datos_excel_exportaciones, arreglar_datos_excel_kilos_hora } from "./function";
 import { filtrosExportacionesType, IndicadorKilosProcesados, filtroExportacionesSelectType, itemExportacionType, totalesLotesType } from "./validations/types";
 import './styles.css';
 import { indicadoresType } from "@renderer/types/indicadoresType";
@@ -146,21 +146,22 @@ export default function ShowIndicadores(): JSX.Element {
         setDataExportacion(exportacionFiltrada);
     }, [currentFilters]);
 
-    useEffect(() => {
-        let datosFiltrados = structuredClone(dataExportacionOriginal);
+    // useEffect(() => {
+    //     let datosFiltrados = structuredClone(dataExportacionOriginal);
 
-        if (filtrosTipoFruta.length > 0) {
-            datosFiltrados = filtrar_tipoFruta(datosFiltrados, filtrosTipoFruta)
-        }
-        if (filtrosCalidad.length > 0) {
-            datosFiltrados = filtrar_calidad(datosFiltrados, filtrosCalidad)
-        }
-        if (filtrosCalibre.length > 0) {
-            datosFiltrados = filtrar_calibre(datosFiltrados, filtrosCalibre)
-        }
-        setDataExportacion(datosFiltrados);
+    //     if (filtrosTipoFruta.length > 0) {
+    //         datosFiltrados = filtrar_tipoFruta(datosFiltrados, filtrosTipoFruta)
+    //     }
+    //     if (filtrosCalidad.length > 0) {
+    //         datosFiltrados = filtrar_calidad(datosFiltrados, filtrosCalidad)
+    //     }
+    //     if (filtrosCalibre.length > 0) {
+    //         datosFiltrados = filtrar_calibre(datosFiltrados, filtrosCalibre)
+    //     }
+    //     console.log("Datos filtrados:", datosFiltrados);
+    //     setDataExportacion(datosFiltrados);
 
-    }, [filtrosTipoFruta, filtrosCalidad, filtrosCalibre])
+    // }, [filtrosTipoFruta, filtrosCalidad, filtrosCalibre])
 
     return (
         <div >

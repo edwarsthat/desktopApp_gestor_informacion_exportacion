@@ -15,7 +15,6 @@ export type lotesType = {
     calidad2: number;
     canastillas: string;
     canastillas_estimadas: number,
-    clasificacionCalidad?: string;
     contenedores?: string[];
     descarteLavado?: descarteLavadoType;
     descarteEncerado?: descarteEnceradoType;
@@ -24,7 +23,7 @@ export type lotesType = {
     dias_inicio_fin?: number;
     directoNacional: number;
     enf: string;
-    exportacionDetallada: exportacionDetalladaSchema;
+    exportacionDetallada: ExportacionDetallada;
     fecha_creacion: string,
     fechaIngreso: string,
     fecha_ingreso_patio: string,
@@ -48,7 +47,7 @@ export type lotesType = {
     kilosGGN: number;
     numeroPrecintos: number;
     numeroRemision: string;
-    not_pass?:boolean;
+    not_pass?: boolean;
     observaciones: string;
     placa: string;
     precio: precioLoteType,
@@ -58,8 +57,8 @@ export type lotesType = {
     tipoFruta: tiposFrutasType;
     urlBascula?: string;
     urlInformeCalidad?: string;
-    user:string
-    
+    user: string
+
 
 };
 
@@ -67,7 +66,7 @@ interface precioLoteType {
     "1": number,
     "15": number,
     "2": number,
-    frutaNacional:number,
+    frutaNacional: number,
     descarte: number,
     zumex: number,
     combinado: number,
@@ -126,7 +125,7 @@ type inventarioActualType = {
 };
 
 type calidadType = {
-    inspeccionIngreso?:{
+    inspeccionIngreso?: {
         fechaIngreso: string
         [key: string]: string
     }
@@ -138,6 +137,8 @@ type calidadType = {
         zumo: number;
         fecha: string;
         semillas: boolean;
+        user: string;
+        calidad: string;
     };
     clasificacionCalidad?: {
         acaro: number;

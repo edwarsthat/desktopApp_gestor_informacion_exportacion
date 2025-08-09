@@ -22,6 +22,7 @@ export default function ExportacionDiaria({
 
     const agrupacion = currentFilters.divisionTiempo || 'dia'; // fallback
     const columns = TABLE_COLUMNS_EXPORTACION[agrupacion] || TABLE_COLUMNS_EXPORTACION['dia'];
+    console.log("ExportacionDiaria data 222:", data);
 
     return (
         <div className="exportacion-diaria-container">

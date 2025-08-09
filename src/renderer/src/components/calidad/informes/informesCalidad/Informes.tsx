@@ -43,7 +43,7 @@ export default function Informes(): JSX.Element {
       (item) =>
         item.enf && item.enf.toLowerCase().includes(currentFilters.buscar.toLowerCase()) ||
         item.predio && item.predio.PREDIO && item.predio.PREDIO.toLowerCase().includes(currentFilters.buscar.toLowerCase()) ||
-        item.tipoFruta && item.tipoFruta.toLowerCase().includes(currentFilters.buscar.toLowerCase())
+        item.tipoFruta && item.tipoFruta.tipoFruta.toLowerCase().includes(currentFilters.buscar.toLowerCase())
     );
     if (filtroAprobacionProduccion) {
       datosFiltrados = datosFiltrados.filter(

@@ -43,10 +43,22 @@ const mockData: IndicadorKilosProcesados[] = [
     }
 ];
 
-const currentFiltersDia: FilterValues = { 
+const currentFiltersDia: FilterValues = {
     divisionTiempo: "dia",
     tipoFruta: '',
-    tipoFruta2: { rengoDeshidratacionNegativa: 0, rengoDeshidratacionPositiva: 0, tipoFruta: "", valorPromedio: 0, _id: "", defectos:[], createdAt: "" },
+    tipoFruta2: {
+        rengoDeshidratacionNegativa: 0,
+        rengoDeshidratacionPositiva: 0,
+        tipoFruta: "",
+        valorPromedio: 0,
+        _id: "",
+        defectos: [],
+        createdAt: "",
+        codExportacion: "",
+        codNacional: "",
+        calibres: [],
+        calidades: []
+    },
     fechaInicio: '',
     fechaFin: '',
     GGN: false,
@@ -58,10 +70,22 @@ const currentFiltersDia: FilterValues = {
     cuartoDesverdizado: ''
 };
 
-const currentFiltersSemana: FilterValues = { 
+const currentFiltersSemana: FilterValues = {
     divisionTiempo: "semana",
     tipoFruta: '',
-    tipoFruta2: { rengoDeshidratacionNegativa: 0, rengoDeshidratacionPositiva: 0, tipoFruta: "", valorPromedio: 0, _id: "", defectos:[], createdAt: "" },
+    tipoFruta2: {
+        rengoDeshidratacionNegativa: 0,
+        rengoDeshidratacionPositiva: 0,
+        tipoFruta: "",
+        valorPromedio: 0,
+        _id: "",
+        defectos: [],
+        createdAt: "",
+        codExportacion: "",
+        codNacional: "",
+        calibres: [],
+        calidades: []
+    },
     fechaInicio: '',
     fechaFin: '',
     GGN: false,
@@ -85,11 +109,11 @@ describe("EficienciaKilosHora Component", () => {
         render(<EficienciaKilosHora data={mockData} currentFilters={currentFiltersDia} />);
         expect(screen.getByText("26/06/2025")).toBeInTheDocument(); // formatearFecha mockeada
         expect(screen.getByText("12.50")).toBeInTheDocument();
-        
+
         // Buscar el elemento dentro de la tabla específicamente
         const table = screen.getByRole("table");
         expect(table).toBeInTheDocument();
-        
+
         // Verificar que el porcentaje aparece en la celda de la tabla
         const cells = screen.getAllByText("86.00 %");
         expect(cells.length).toBeGreaterThan(0); // Debe aparecer al menos una vez

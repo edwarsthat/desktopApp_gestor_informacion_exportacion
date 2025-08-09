@@ -11,6 +11,8 @@ import { useState } from 'react'
 import { IoSaveSharp } from 'react-icons/io5'
 import { GiCancel } from 'react-icons/gi'
 import useAppContext from '@renderer/hooks/useAppContext'
+import { nombreTipoFruta2 } from '@renderer/utils/tipoFrutas'
+import useTipoFrutaStore from '@renderer/store/useTipoFrutaStore'
 
 type propsType = {
     index: number
@@ -20,6 +22,7 @@ type propsType = {
 
 export default function FilaTablaFrutaSinProcesar(props: propsType): JSX.Element {
     const { messageModal } = useAppContext()
+    const tipoFrutas = useTipoFrutaStore(state => state.tiposFruta);
     const [modificarCanastillas, setModificarCanastillas] = useState<boolean>(false)
     const [canastillas, setCanastillas] = useState<string>()
     const change_de_camino = (id): void => {
@@ -91,7 +94,7 @@ export default function FilaTablaFrutaSinProcesar(props: propsType): JSX.Element
                 </td>
                 <td>{props.lote?.inventario && props.lote.inventario}</td>
                 <td>{props.lote.tipoFruta?.tipoFruta || ''}</td>
-                <td>{props.lote.clasificacionCalidad}</td>
+                <td>{nombreTipoFruta2(props.lote.calidad?.calidadInterna?.calidad || "", tipoFrutas) || "N/A"}</td>
                 <td>{props.lote.observaciones}</td>
                 <td></td>
             </tr>
@@ -132,7 +135,7 @@ export default function FilaTablaFrutaSinProcesar(props: propsType): JSX.Element
                 )}
 
                 <td>{props.lote.tipoFruta?.tipoFruta || ''}</td>
-                <td>{props.lote.clasificacionCalidad}</td>
+                <td>{nombreTipoFruta2(props.lote.calidad?.calidadInterna?.calidad || "", tipoFrutas) || "N/A"}</td>
                 <td>{props.lote.observaciones}</td>
                 <td>
                     <td>
@@ -184,7 +187,7 @@ export default function FilaTablaFrutaSinProcesar(props: propsType): JSX.Element
                 <td>{props.lote.kilos_estimados}</td>
                 <td>{props.lote.canastillas_estimadas}</td>
                 <td>{props.lote.tipoFruta?.tipoFruta || '' }</td>
-                <td>{props.lote.clasificacionCalidad}</td>
+                <td>{nombreTipoFruta2(props.lote.calidad?.calidadInterna?.calidad || "", tipoFrutas) || "N/A"}</td>
                 <td>{props.lote.observaciones}</td>
                 <td></td>
             </tr>
@@ -212,7 +215,7 @@ export default function FilaTablaFrutaSinProcesar(props: propsType): JSX.Element
                 <td>{props.lote.kilos_estimados}</td>
                 <td>{props.lote.canastillas_estimadas}</td>
                 <td>{props.lote.tipoFruta?.tipoFruta || ''}</td>
-                <td>{props.lote.clasificacionCalidad}</td>
+                <td>{nombreTipoFruta2(props.lote.calidad?.calidadInterna?.calidad || "", tipoFrutas) || "N/A"}</td>
                 <td>{props.lote.observaciones}</td>
                 <td></td>
             </tr>

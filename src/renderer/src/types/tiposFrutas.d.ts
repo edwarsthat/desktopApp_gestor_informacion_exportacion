@@ -10,6 +10,8 @@ export type tiposFrutasType = {
     createdAt: string
     calibres: string[]
     calidades: calidadesType[]
+    codNacional: string
+    codExportacion: string
 }
 
 export type calidadesType = {

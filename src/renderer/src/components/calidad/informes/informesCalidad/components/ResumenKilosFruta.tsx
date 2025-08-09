@@ -19,7 +19,7 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
         return (
             <tr>
                 <td>
-                    {props.lote.tipoFruta === 'Limon' ? 'LN' : 'NN'}
+                    {props.lote.tipoFruta.codNacional}
                 </td>
                 <td>
                     {total.toFixed(2)}
@@ -75,7 +75,7 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
 
                 if (contenedor && keyCalidad !== '_id') {
                     return (
-                        `1\t${props.lote.tipoFruta === 'Limon' ? 'LE' : 'NE'}\tKg\t${props.lote.precio[keyCalidad]}\t${props.lote.precio[keyCalidad]}\t\t${props.lote.precio[keyCalidad] * (valueCalidad as number)}\t${contenedor.numeroContenedor}\n`
+                        `1\t${props.lote.tipoFruta.codExportacion}\tKg\t${props.lote.precio[keyCalidad]}\t${props.lote.precio[keyCalidad]}\t\t${props.lote.precio[keyCalidad] * (valueCalidad as number)}\t${contenedor.numeroContenedor}\n`
 
                     );
                 }
@@ -92,7 +92,7 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
     
         let textCopy = textCopyCont.reduce((acu, item) =>  acu += item, '')
 
-        textCopy += `1\t${props.lote.tipoFruta === 'Limon' ? 'LN' : 'NN'}\tKilos\t${total}\t${props.lote.precio.descarte}\t\t${props.lote.precio.descarte * total}\n`
+        textCopy += `1\t${props.lote.tipoFruta.codNacional}\tKilos\t${total}\t${props.lote.precio.descarte}\t\t${props.lote.precio.descarte * total}\n`
         textCopy += `1\tMPL1\tKilos\t${total}\t\t\t${props.lote.precio.descarte * total_nopago}\n`
         if(textCopy !== null)
             await navigator.clipboard.writeText(textCopy)
@@ -122,7 +122,7 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
                                 return (
                                     <tr key={`${key}-${keyCalidad}`} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
                                         <td>{contenedor.numeroContenedor}</td>
-                                        <td>{props.lote.tipoFruta === 'Limon' ? 'LE' : 'NE'}</td>
+                                        <td>{props.lote.tipoFruta.codExportacion}</td>
                                         <td>{valueCalidad as React.ReactNode}</td>
                                         <td>{new Intl.NumberFormat('es-CO', {
                                             style: 'currency',

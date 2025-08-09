@@ -13,7 +13,7 @@ export default function ViewInformeDatosGenerales(props: propsType): JSX.Element
     return (
         <div className="view-informes-datos-general-container">
             <div>
-                <p>Clase de Fruta: <span>{props.loteSeleccionado.tipoFruta}</span></p>
+                <p>Clase de Fruta: <span>{props.loteSeleccionado.tipoFruta.tipoFruta}</span></p>
                 <p>Variedad:</p>
             </div>
             <div>

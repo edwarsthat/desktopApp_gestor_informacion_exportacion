@@ -21,18 +21,18 @@ export default function ModificarPrecios(props: propsType): JSX.Element {
         }
     }
     const handleGuardar = (): void => {
-        const data = {}
-        const tipoFruta = props.loteSeleccionado.tipoFruta;
-        data[tipoFruta] = {}
-        data[tipoFruta]["1"] = exportacion1 === undefined  ? 0 : exportacion1
-        data[tipoFruta]["15"] = exportacion15 === undefined ? 0 : exportacion15
-        data[tipoFruta]["2"] = exportacion2 === undefined ? 0 : exportacion2
-        data[tipoFruta]["descarte"] = descarte === undefined ? 0 : descarte
-        if (tipoFruta === 'Limon') {
-            data[tipoFruta]["combinado"] = combinado === undefined ? 0 : combinado
-        } else if (tipoFruta === 'Naranja') {
-            data[tipoFruta]['zumex'] = zumex === undefined ? 0 : zumex
-        }
+        // const data = {}
+        // const tipoFruta = props.loteSeleccionado.tipoFruta;
+        // data[tipoFruta] = {}
+        // data[tipoFruta]["1"] = exportacion1 === undefined  ? 0 : exportacion1
+        // data[tipoFruta]["15"] = exportacion15 === undefined ? 0 : exportacion15
+        // data[tipoFruta]["2"] = exportacion2 === undefined ? 0 : exportacion2
+        // data[tipoFruta]["descarte"] = descarte === undefined ? 0 : descarte
+        // if (tipoFruta === 'Limon') {
+        //     data[tipoFruta]["combinado"] = combinado === undefined ? 0 : combinado
+        // } else if (tipoFruta === 'Naranja') {
+        //     data[tipoFruta]['zumex'] = zumex === undefined ? 0 : zumex
+        // }
 
 
         closeModal()
@@ -75,7 +75,7 @@ export default function ModificarPrecios(props: propsType): JSX.Element {
                             onChange={(e): void => setDescarte(e.target.value)}
                             className="defaultSelect" />
                     </label>
-                    {props.loteSeleccionado.tipoFruta === 'Limon' ?
+                    {props.loteSeleccionado.tipoFruta.tipoFruta === 'Limon' ?
                         <label>
                             Combinado:
                             <input

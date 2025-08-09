@@ -57,19 +57,19 @@ export const TABLE_COLUMNS_EXPORTACION = {
     dia: [
         { header: "Fecha", value: (item: itemExportacionType): string => formatearFecha(item.fecha) },
         { header: "Kilos Procesados", value: (item: itemExportacionType, filtroTipoFruta: string[]): string => String(formatNumero(total_procesado(item, filtroTipoFruta))) },
-        { header: "Kilos Exportados", value: (item: itemExportacionType): string => String(formatNumero(total_exportacion(item))) },
-        { header: "% Exportados", value: (item: itemExportacionType, filtroTipoFruta: string[]): string => String(formatNumero((total_exportacion(item) / total_procesado(item, filtroTipoFruta)) * 100)) + " %" },
+        { header: "Kilos Exportados", value: (item: itemExportacionType, filtroTipoFruta:string[]): string => String(formatNumero(total_exportacion(item, filtroTipoFruta))) },
+        { header: "% Exportados", value: (item: itemExportacionType, filtroTipoFruta: string[]): string => String(formatNumero((total_exportacion(item, filtroTipoFruta) / total_procesado(item, filtroTipoFruta)) * 100)) + " %" },
     ],
     semana: [
         { header: "Fecha", value: (item: itemExportacionType): string => item.fecha },
         { header: "Kilos Procesados", value: (item: itemExportacionType, filtroTipoFruta: string[]): string => String(formatNumero(total_procesado(item, filtroTipoFruta))) },
-        { header: "Kilos Exportados", value: (item: itemExportacionType): string => String(formatNumero(total_exportacion(item))) },
-        { header: "% Exportados", value: (item: itemExportacionType, filtroTipoFruta: string[]): string => String(formatNumero((total_exportacion(item) / total_procesado(item, filtroTipoFruta)) * 100)) + " %" },
+        { header: "Kilos Exportados", value: (item: itemExportacionType, filtroTipoFruta:string[]): string => String(formatNumero(total_exportacion(item, filtroTipoFruta))) },
+        { header: "% Exportados", value: (item: itemExportacionType, filtroTipoFruta: string[]): string => String(formatNumero((total_exportacion(item, filtroTipoFruta) / total_procesado(item, filtroTipoFruta)) * 100)) + " %" },
     ],
     mes: [
         { header: "Fecha", value: (item: itemExportacionType): string => item.fecha },
         { header: "Kilos Procesados", value: (item: itemExportacionType, filtroTipoFruta: string[]): string => String(formatNumero(total_procesado(item, filtroTipoFruta))) },
-        { header: "Kilos Exportados", value: (item: itemExportacionType): string => String(formatNumero(total_exportacion(item))) },
-        { header: "% Exportados", value: (item: itemExportacionType, filtroTipoFruta: string[]): string => String(formatNumero((total_exportacion(item) / total_procesado(item, filtroTipoFruta)) * 100)) + " %" },
+        { header: "Kilos Exportados", value: (item: itemExportacionType, filtroTipoFruta:string[]): string => String(formatNumero(total_exportacion(item, filtroTipoFruta))) },
+        { header: "% Exportados", value: (item: itemExportacionType, filtroTipoFruta: string[]): string => String(formatNumero((total_exportacion(item, filtroTipoFruta) / total_procesado(item, filtroTipoFruta)) * 100)) + " %" },
     ],
 }

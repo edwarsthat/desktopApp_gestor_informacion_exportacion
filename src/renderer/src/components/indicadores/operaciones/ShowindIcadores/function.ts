@@ -574,7 +574,7 @@ export const arreglar_datos_excel_eficienciaPredios = (data: totalesLotesType, s
             Porcentage: (data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) > 0 ? ((data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) / data.totalKilosProcesados) : 0
         })
     } else {
-                outArr = [
+        outArr = [
             {
                 Totales: "kilos Ingresado",
                 Kilos: Number(data.totalKilosIngreso),
@@ -756,12 +756,16 @@ export const total_procesado = (registro: itemExportacionType, filtroTipoFruta: 
     }
     return 0
 }
-export const total_exportacion = (registro: itemExportacionType): number => {
+export const total_exportacion = (registro: itemExportacionType, filtroTipoFruta: string[] = []): number => {
     if (!registro.kilos_exportacion) return 0;
-
-    return Object.values(registro.kilos_exportacion as Record<string, Record<string, Record<string, number | string>>>)
-        .flatMap(tipoFruta =>
-            Object.values(tipoFruta as Record<string, Record<string, number | string>>)
+    console.log("registro.kilos_exportacion", registro)
+    return Object.entries(registro.kilos_exportacion as Record<string, Record<string, Record<string, number | string>>>)
+        // Solo dejamos los tipoFruta que están en el filtro
+        .filter(([tipoFruta]) =>
+            filtroTipoFruta.length === 0 || filtroTipoFruta.includes(tipoFruta)
+        )
+        .flatMap(([_, tipoFrutaObj]) =>
+            Object.values(tipoFrutaObj as Record<string, Record<string, number | string>>)
                 .flatMap(calidad =>
                     Object.values(calidad as Record<string, number | string>)
                         .map(Number)

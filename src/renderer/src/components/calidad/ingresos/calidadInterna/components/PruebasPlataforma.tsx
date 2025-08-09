@@ -1,66 +1,94 @@
 /* eslint-disable prettier/prettier */
-import { calidadInternaType } from '../types/calidadInterna'
+import { formType } from '../validations/validation'
 
 
 type propsType = {
-  handleChange: (data: React.ChangeEvent<HTMLInputElement>, action: string) => void
-  formulario: calidadInternaType
+  handleChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => void
+  formState: formType
+  formErrors: Partial<Record<keyof formType | string, string>>
+
 }
 
-export default function PruebasPlataforma(props: propsType):JSX.Element {
+export default function PruebasPlataforma({handleChange, formState, formErrors}: propsType): JSX.Element {
   return (
     <div className="calidad-interna-pruebas-div">
       <h2>Pruebas de plataforma</h2>
-      <div>
+      <div className="muestra">
         <p>N° muestra 1</p>
         <input
           className='defaultSelect'
-          type="number"
+          type="text"
+          name='brix1'
           placeholder="Brix"
-          onChange={(e): void => props.handleChange(e, 'brix1')}
-          value={props.formulario.brix1}
+          onChange={handleChange}
+          value={formState.brix1}
         />
+        {formErrors.brix1 && (
+          <p className="text-red-600 text-sm ml-2">{formErrors.brix1}</p>
+        )}
         <input
           className='defaultSelect'
-          type="number"
+          type="text"
           placeholder="Acidez"
-          onChange={(e): void => props.handleChange(e, 'acidez1')}
-          value={props.formulario.acidez1}
+          name='acidez1'
+          onChange={handleChange}
+          value={formState.acidez1}
         />
+        {formErrors.acidez1 && (
+          <p className="text-red-600 text-sm ml-2">{formErrors.acidez1}</p>
+        )}
       </div>
-      <div>
+      <div className="muestra">
         <p>N° muestra 2</p>
         <input
           className='defaultSelect'
-          type="number"
+          type="text"
           placeholder="Brix"
-          onChange={(e): void => props.handleChange(e, 'brix2')}
-          value={props.formulario.brix2}
+          name='brix2'
+          onChange={handleChange}
+          value={formState.brix2}
         />
+        {formErrors.brix2 && (
+          <p className="text-red-600 text-sm ml-2">{formErrors.brix2}</p>
+        )}
         <input
           className='defaultSelect'
-          type="number"
+          type="text"
           placeholder="Acidez"
-          onChange={(e): void => props.handleChange(e, 'acidez2')}
-          value={props.formulario.acidez2}
+          name='acidez2'
+          onChange={handleChange}
+          value={formState.acidez2}
         />
+        {formErrors.acidez2 && (
+          <p className="text-red-600 text-sm ml-2">{formErrors.acidez2}</p>
+        )}
       </div>
-      <div>
+      <div className="muestra">
         <p>N° muestra 3</p>
         <input
           className='defaultSelect'
-          type="number"
+          type="text"
           placeholder="Brix"
-          onChange={(e): void => props.handleChange(e, 'brix3')}
-          value={props.formulario.brix3}
+          name='brix3'
+          onChange={handleChange}
+          value={formState.brix3}
         />
+        {formErrors.brix3 && (
+          <p className="text-red-600 text-sm ml-2">{formErrors.brix3}</p>
+        )}
         <input
           className='defaultSelect'
-          type="number"
+          type="text"
           placeholder="Acidez"
-          onChange={(e): void => props.handleChange(e, 'acidez3')}
-          value={props.formulario.acidez3}
+          name='acidez3'
+          onChange={handleChange}
+          value={formState.acidez3}
         />
+        {formErrors.acidez3 && (
+          <p className="text-red-600 text-sm ml-2">{formErrors.acidez3}</p>
+        )}
       </div>
     </div>
   )

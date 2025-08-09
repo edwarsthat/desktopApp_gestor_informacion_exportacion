@@ -29,7 +29,7 @@ export default function TablaInformeCalidad(props: propsType): JSX.Element {
                             {item.enf}
                         </td>
                         <td>{item.predio && item.predio.PREDIO}</td>
-                        <td>{item.tipoFruta}</td>
+                        <td>{item.tipoFruta.tipoFruta}</td>
                         <td>{format(item.fechaIngreso ? new Date(item.fechaIngreso) : new Date(), 'dd/MM/yyyy HH:mm', { locale: es })}</td>
                         <td>{item.observaciones}</td>
                         <td >
