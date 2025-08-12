@@ -336,3 +336,11 @@ input:checked+.slider:before {
   box-shadow: var(--sombra--boton-menu) 0px 2px 8px;
   scale: 0.8;
 }
+
+/* Form error styles */
+.error-text {
+  color: #dc2626; /* rojo */
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}

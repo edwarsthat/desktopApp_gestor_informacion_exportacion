@@ -32,6 +32,8 @@ export default function useDataHistorialProcesado({ fechaInicio, fechaFin, tipoF
             }
             validateRequestGetData(request)
             const frutaActual = await window.api.server2(request)
+            console.log(frutaActual)
+
             if (frutaActual.status !== 200) {
                 messageModal("error", `Error ${frutaActual.status}: ${frutaActual.message}`)
             }

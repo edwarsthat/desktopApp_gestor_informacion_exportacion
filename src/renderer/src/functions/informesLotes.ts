@@ -7,6 +7,17 @@ import { lotesType } from "@renderer/types/lotesType"
 export function obtenerPorcentage(dato: number, total: number): number {
     return ((dato * 100) / total)
 }
+export function totalExportacion(lote: lotesType): number {
+    let total = 0;
+    if(!lote) return total;
+
+    for (const cont of Object.values(lote.exportacion)) {
+        for (const key of Object.keys(cont)) {
+            total += cont[key];
+        }
+    }
+    return total;
+}
 export function totalDescarte(lote: lotesType): number {
     let descarteEncerado: number
     let descarteLavado: number
@@ -54,13 +65,11 @@ export const dataInformeInit = {
     resultadosExportacion: [],
     resultadosDescarte: [],
 }
-
 export type dataInformeType = {
     datosGenerales: string[];
     resultadosExportacion: (string | number)[];
     resultadosDescarte: (string | number)[];
 }
-
 export function descarte_pagos(lote): number{
     const total_lavado = Object.entries(lote.descarteLavado as Record<string, unknown>).reduce((acu, [key, value]) => {
         if (key !== "descompuesta" && key !== "hojas") {
@@ -80,7 +89,6 @@ export function descarte_pagos(lote): number{
     const total = total_encerado + total_lavado + deshidratacion
     return total
 }
-
 export function descarte_nopago(lote):number {
     const total_lavado = Object.entries(lote.descarteLavado as Record<string, unknown>).reduce((acu, [key, value]) => {
         if (key === "descompuesta" || key === "hojas") {
@@ -99,8 +107,6 @@ export function descarte_nopago(lote):number {
     const total = total_encerado + total_lavado 
     return total
 }
-
-
 export function totalPrecios(lote: lotesType): number {
     if (!lote.predio) {
         throw new Error("Lote predio is undefined");

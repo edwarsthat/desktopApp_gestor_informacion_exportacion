@@ -1,48 +1,33 @@
 /* eslint-disable prettier/prettier */
 
 import useAppContext from "@renderer/hooks/useAppContext"
+import useForm from "@renderer/hooks/useForm"
 import { proveedoresType } from "@renderer/types/proveedoresType"
-import { useState } from "react"
+import { tiposFrutasType } from "@renderer/types/tiposFrutas"
+import { formInit, formType, formSchema } from "../validations/validations"
 
 type propsType = {
-    tipoFruta: string[] | undefined
+    tiposFrutas: tiposFrutasType[]
     selectedProveedores: proveedoresType[] | undefined
     setSelectedProveedores: (proveedor) => void
 }
 
-type formStateType = {
-    tipoFruta?: string
-    1?: string
-    15?: string
-    2?: string
-    frutaNacional?: string
-    descarte?: string
-    week?: string
-    comentario?: string
-}
-
-export default function PreciosComponent(props: propsType): JSX.Element {
+export default function PreciosComponent({ tiposFrutas, selectedProveedores, setSelectedProveedores }: propsType): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
-    const [formState, setFormState] = useState<formStateType>()
+    const { formState, handleChange, formErrors, validateForm, resetForm } = useForm<formType>(formInit)
 
-    const handleChange = (event): void => {
-        const { name, value } = event.target;
 
-        setFormState((prev) => {
-            if (!prev) {
-                return { [name]: value }
-            } else {
-                return { ...prev, [name]: value }
-            }
-        });
-    };
     const handleSave = async (): Promise<void> => {
         try {
+            const result = validateForm(formSchema)
+            if (!result) return
             setLoading(true)
-            if (!props.selectedProveedores) throw new Error("No se han seleccionado proveedores")
+            if (!selectedProveedores) throw new Error("No se han seleccionado proveedores")
             if (!formState?.tipoFruta || formState?.tipoFruta === '') throw new Error("Debe seleccionar un tipo de fruta")
             if (!formState?.week || formState?.week === '') throw new Error("Debe seleccionar una semana")
-            const predios = props.selectedProveedores.map(proveedor => proveedor._id)
+            console.log(formState);
+
+            const predios = selectedProveedores.map(proveedor => proveedor._id)
             const request = {
                 action: "post_comercial_precios_add_precio",
                 data: {
@@ -54,8 +39,8 @@ export default function PreciosComponent(props: propsType): JSX.Element {
             if (response.status !== 200) {
                 throw new Error(`Code ${response.status}: ${response.message}`)
             }
-            setFormState(undefined)
-            props.setSelectedProveedores(undefined)
+            resetForm()
+            setSelectedProveedores(undefined)
             messageModal("success", "Guardado con exito")
         } catch (err) {
             if (err instanceof Error) {
@@ -79,10 +64,11 @@ export default function PreciosComponent(props: propsType): JSX.Element {
                         name="tipoFruta"
                         className="tool-select">
                         <option value=""></option>
-                        {props.tipoFruta && props.tipoFruta.map(fruta =>
-                            <option value={fruta} key={fruta}>{fruta}</option>
+                        {tiposFrutas && tiposFrutas.map(fruta =>
+                            <option value={fruta._id} key={fruta._id}>{fruta.tipoFruta}</option>
                         )}
                     </select>
+                    {formErrors?.tipoFruta && <span className="error-text">{formErrors.tipoFruta}</span>}
                 </div>
             </div>
 
@@ -91,36 +77,35 @@ export default function PreciosComponent(props: propsType): JSX.Element {
                     <label htmlFor="week">Semana</label>
                     <input onChange={handleChange} name='week' value={formState?.week ?? ''}
                         type="week" id="week" />
+                    {formErrors?.week && <span className="error-text">{formErrors.week}</span>}
                 </div>
-                <div className="fila">
-                    <label htmlFor="calidad1">Precio Calidad 1</label>
-                    <input onChange={handleChange} name='1' value={formState?.[1] ?? ''}
-                        type="text" id="calidad1" placeholder="Precio Calidad 1" />
-                </div>
-                <div className="fila">
-                    <label htmlFor="calidad1-5">Precio Calidad 1.5</label>
-                    <input onChange={handleChange} name='15' value={formState?.[15] ?? ''}
-                        type="text" id="calidad1-5" placeholder="Precio Calidad 1.5" />
-                </div>
-                <div className="fila">
-                    <label htmlFor="calidad2">Precio Industrial</label>
-                    <input onChange={handleChange} name='2' value={formState?.[2] ?? ''}
-                        type="text" id="calidad2" placeholder="Precio Calidad 2" />
-                </div>
+
+                {formState?.tipoFruta && tiposFrutas.find(fruta => fruta._id === formState.tipoFruta)?.calidades.map(calidad => (
+                    <div className="fila" key={calidad._id}>
+                        <label htmlFor={calidad._id}>{calidad.nombre}l</label>
+                        <input onChange={handleChange} name={calidad._id}
+                            type="text" id={calidad._id} placeholder={calidad.nombre} />
+                        {formErrors?.[calidad._id] && <span className="error-text">{formErrors[calidad._id]}</span>}
+                    </div>
+                ))}
+
                 <div className="fila">
                     <label htmlFor="frutaNac">Fruta Nacional</label>
                     <input onChange={handleChange} name='frutaNacional' value={formState?.frutaNacional ?? ''}
                         type="text" id="frutaNac" placeholder="Fruta Nacional" />
+                    {formErrors?.frutaNacional && <span className="error-text">{formErrors.frutaNacional}</span>}
                 </div>
                 <div className="fila">
                     <label htmlFor="descarte">Descarte</label>
                     <input onChange={handleChange} name='descarte' value={formState?.descarte ?? ''}
                         type="text" id="descarte" placeholder="Descarte" />
+                    {formErrors?.descarte && <span className="error-text">{formErrors.descarte}</span>}
                 </div>
                 <div className="fila">
                     <label htmlFor="comentario">Observaciones</label>
                     <textarea onChange={handleChange} name='comentario' value={formState?.comentario ?? ''}
                         id="comentario" placeholder="Observaciones" />
+                    {formErrors?.comentario && <span className="error-text">{formErrors.comentario}</span>}
                 </div>
                 <button onClick={handleSave} className="btn-guardar" >
                     Guardar

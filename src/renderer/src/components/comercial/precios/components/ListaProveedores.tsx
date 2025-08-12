@@ -4,11 +4,12 @@ import { proveedoresType } from "@renderer/types/proveedoresType"
 import ProveedorComponente from "./ProveedorComponente"
 import { useEffect, useState } from "react"
 import useAppContext from "@renderer/hooks/useAppContext"
+import { tiposFrutasType } from "@renderer/types/tiposFrutas"
 
 type propsType = {
     proveedores: proveedoresType[] | undefined
     setProveedores: (e) => void
-    tipoFruta: string[] | undefined
+    tiposFrutas: tiposFrutasType[] | undefined
     setSelectedProveedores: (proveedor) => void
     selectedProveedores: proveedoresType[] | undefined
 }
@@ -18,7 +19,13 @@ type filtroType = {
     predio: string
 }
 
-export default function ListaProveedores(props: propsType): JSX.Element {
+export default function ListaProveedores({
+    proveedores,
+    setProveedores,
+    tiposFrutas,
+    selectedProveedores,
+    setSelectedProveedores
+}: propsType): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
     const [filtro, setFiltro] = useState<filtroType>({
         tipoFruta: '',
@@ -27,14 +34,14 @@ export default function ListaProveedores(props: propsType): JSX.Element {
     const [data, setData] = useState<proveedoresType[]>()
 
     useEffect(() => {
-        if (props.proveedores) {
-            setData(props.proveedores)
+        if (proveedores) {
+            setData(proveedores)
         }
-    }, [props.proveedores])
+    }, [proveedores])
 
     useEffect(() => {
-        if (props.proveedores) {
-            let new_data = props.proveedores
+        if (proveedores) {
+            let new_data = proveedores
 
             if (filtro.tipoFruta !== '') {
                 new_data = new_data.filter(proveedor => (
@@ -65,26 +72,26 @@ export default function ListaProveedores(props: propsType): JSX.Element {
     const precioFijo = async (): Promise<void> => {
         try{
             setLoading(true)
-            if(!props.selectedProveedores) throw new Error("Seleccione un proveedor")
-            if(!props.proveedores) throw new Error("No hay proveedores")
+            if(!selectedProveedores) throw new Error("Seleccione un proveedor")
+            if(!proveedores) throw new Error("No hay proveedores")
             const request = {
                 action: "put_comercial_precios_proveedores_precioFijo",
-                data:props.selectedProveedores.map(item => item._id)
+                data: selectedProveedores.map(item => item._id)
             }
             const response = await window.api.server2(request)
             if(response.status !== 200)
                 throw new Error(`Code ${response.status}: ${response.message}`)
             messageModal("success", "Modificado con exito")
 
-            const newProveedores = props.proveedores.map(prov => {
-                if(props.selectedProveedores?.findIndex(item => item._id === prov._id) !== -1){
+            const newProveedores = proveedores.map(prov => {
+                if(selectedProveedores?.findIndex(item => item._id === prov._id) !== -1){
                     prov.precioFijo = !prov.precioFijo
                     return prov
                 } else {
                     return prov
                 } 
             })
-            props.setProveedores([...newProveedores])
+            setProveedores([...newProveedores])
         } catch(err){
             if(err instanceof Error){
                 messageModal("error", err.message)
@@ -97,7 +104,7 @@ export default function ListaProveedores(props: propsType): JSX.Element {
     const handleCheckAll = (): void => {
         if(data){
             const dataFilter = data.filter(item => !item.precioFijo)
-            props.setSelectedProveedores(dataFilter)
+            setSelectedProveedores(dataFilter)
         }
     }
 
@@ -129,8 +136,8 @@ export default function ListaProveedores(props: propsType): JSX.Element {
                         name="tipoFruta"
                         className="tool-select">
                         <option value=""></option>
-                        {props.tipoFruta && props.tipoFruta.map(fruta =>
-                            <option value={fruta} key={fruta}>{fruta}</option>
+                        {tiposFrutas && tiposFrutas.map(fruta =>
+                            <option value={fruta._id} key={fruta._id}>{fruta.tipoFruta}</option>
                         )}
                     </select>
                 </div>
@@ -146,15 +153,15 @@ export default function ListaProveedores(props: propsType): JSX.Element {
                 </button>
             </div>
 
-            {props.proveedores === undefined ?
+            {proveedores === undefined ?
 
                 <div>Cargando...</div>
                 :
                 <div className="comercial-precios-proveedores-lista" >
                     {data && data.map(proveedor => (
                         <ProveedorComponente
-                            selectedProveedores={props.selectedProveedores}
-                            setSelectedProveedores={props.setSelectedProveedores}
+                            selectedProveedores={selectedProveedores}
+                            setSelectedProveedores={setSelectedProveedores}
                             proveedor={proveedor}
                             key={proveedor._id} />
                     ))}

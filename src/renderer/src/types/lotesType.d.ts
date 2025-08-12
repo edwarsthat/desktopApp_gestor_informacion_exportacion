@@ -24,6 +24,7 @@ export type lotesType = {
     directoNacional: number;
     enf: string;
     exportacionDetallada: ExportacionDetallada;
+    exportacion: exportacionType,
     fecha_creacion: string,
     fechaIngreso: string,
     fecha_ingreso_patio: string,
@@ -61,6 +62,12 @@ export type lotesType = {
 
 
 };
+
+interface exportacionType {
+    [key: string]: {
+        [key: string]: number
+    }
+}
 
 interface precioLoteType {
     "1": number,

@@ -111,3 +111,31 @@
 .informe-calidad-modificar-menu-context button:hover {
     background-color: var(--color-fondo-hover);
 }
+
+.informe-calidad-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.informe-calidad-row-title {
+    margin: 0 auto; /* centra el h3 */
+}
+
+/* Mejor separación visual dentro del cuadro */
+.informe-calidad-total-exportacion .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.informe-calidad-total-exportacion .metric-label {
+    font-size: 12px;
+    color: #065f46; /* verde oscuro */
+    font-weight: 600;
+}
+.informe-calidad-total-exportacion .metric-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(16, 185, 129, 0.4);
+    margin: 0 12px;
+}
