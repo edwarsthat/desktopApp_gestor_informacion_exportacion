@@ -5,11 +5,12 @@ import useForm from "@renderer/hooks/useForm"
 import { proveedoresType } from "@renderer/types/proveedoresType"
 import { tiposFrutasType } from "@renderer/types/tiposFrutas"
 import { formInit, formType, formSchema } from "../validations/validations"
+import React from "react"
 
 type propsType = {
     tiposFrutas: tiposFrutasType[]
     selectedProveedores: proveedoresType[] | undefined
-    setSelectedProveedores: (proveedor) => void
+    setSelectedProveedores: (proveedor: React.SetStateAction<proveedoresType[] | undefined>) => void
 }
 
 export default function PreciosComponent({ tiposFrutas, selectedProveedores, setSelectedProveedores }: propsType): JSX.Element {
@@ -25,7 +26,6 @@ export default function PreciosComponent({ tiposFrutas, selectedProveedores, set
             if (!selectedProveedores) throw new Error("No se han seleccionado proveedores")
             if (!formState?.tipoFruta || formState?.tipoFruta === '') throw new Error("Debe seleccionar un tipo de fruta")
             if (!formState?.week || formState?.week === '') throw new Error("Debe seleccionar una semana")
-            console.log(formState);
 
             const predios = selectedProveedores.map(proveedor => proveedor._id)
             const request = {
@@ -43,9 +43,9 @@ export default function PreciosComponent({ tiposFrutas, selectedProveedores, set
             setSelectedProveedores(undefined)
             messageModal("success", "Guardado con exito")
         } catch (err) {
-            if (err instanceof Error) {
-                messageModal("error", err.message)
-            }
+            const errorMessage = err instanceof Error ? err.message : "Error desconocido";
+            messageModal("error", errorMessage);
+            console.error("Error al guardar precio:", err);
         } finally {
             setLoading(false)
         }
@@ -83,7 +83,7 @@ export default function PreciosComponent({ tiposFrutas, selectedProveedores, set
                 {formState?.tipoFruta && tiposFrutas.find(fruta => fruta._id === formState.tipoFruta)?.calidades.map(calidad => (
                     <div className="fila" key={calidad._id}>
                         <label htmlFor={calidad._id}>{calidad.nombre}l</label>
-                        <input onChange={handleChange} name={calidad._id}
+                        <input onChange={handleChange} name={"exportacion." + calidad._id}
                             type="text" id={calidad._id} placeholder={calidad.nombre} />
                         {formErrors?.[calidad._id] && <span className="error-text">{formErrors[calidad._id]}</span>}
                     </div>

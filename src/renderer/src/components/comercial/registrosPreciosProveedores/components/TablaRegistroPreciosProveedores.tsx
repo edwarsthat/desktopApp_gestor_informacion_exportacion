@@ -6,6 +6,8 @@ import { proveedoresType } from "@renderer/types/proveedoresType"
 import { IoMdText } from "react-icons/io";
 import ModalIngresarComentario from "./ModalIngresarComentario";
 import { useState } from "react";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
+import { nombreTipoFruta2 } from "@renderer/utils/tipoFrutas";
 
 type propsType = {
     data: precioProveedorType[] | undefined
@@ -29,6 +31,7 @@ const headers = [
 ]
 
 export default function TablaRegistroPreciosProveedores(props: propsType): JSX.Element {
+    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
     const [registroSeleccionado, setRegistroSeleccionado] = useState<precioProveedorType>();
     const openModal = (item): void => {
         const dialogSetting = document.getElementById("modal_comercial_precios_comentarios") as HTMLDialogElement;
@@ -60,7 +63,7 @@ export default function TablaRegistroPreciosProveedores(props: propsType): JSX.E
                             <td>{new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(item[2])}</td>
                             <td>{new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(item.descarte)}</td>
                             <td>{new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(item.frutaNacional)}</td>
-                            <td>{item.tipoFruta}</td>
+                            <td>{nombreTipoFruta2(item.tipoFruta, tiposFrutas)}</td>
                             <td>
                                 {item.predios.length < 10 &&
                                     item.predios.map(predio =>

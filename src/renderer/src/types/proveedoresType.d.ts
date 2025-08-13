@@ -1,6 +1,8 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/ban-types */
 
+import { tiposFrutasType } from "./tiposFrutas"
+
 
 
 export type precioType = {
@@ -34,7 +36,7 @@ export type proveedoresType = {
   ICA: ICAtype
   'CODIGO INTERNO': number
   GGN: GGNtype
-  tipo_fruta: tipoFrutaType
+  tipo_fruta: tiposFrutasType
   PROVEEDORES: string
   DEPARTAMENTO: string
   urlArchivos?: ArrayBuffer[]

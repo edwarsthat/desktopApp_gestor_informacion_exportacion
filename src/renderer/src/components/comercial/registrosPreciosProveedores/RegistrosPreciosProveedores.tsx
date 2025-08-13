@@ -1,13 +1,16 @@
 /* eslint-disable prettier/prettier */
 
-import { obtener_proveedores, obtener_tipo_fruta } from "@renderer/functions/SystemRequest";
 import useAppContext from "@renderer/hooks/useAppContext";
-import { proveedoresType } from "@renderer/types/proveedoresType";
 import { useEffect, useState } from "react";
-import FiltroRegistroPreciosProveedores from "./components/FiltroRegistroPreciosProveedores";
 import { precioProveedorType } from "@renderer/types/preciosTypes";
 import BotonesPasarPaginas from "@renderer/components/UI/BotonesPasarPaginas";
-import TablaRegistroPreciosProveedores from "./components/TablaRegistroPreciosProveedores";
+import useGetSysData from "@renderer/hooks/useGetSysData";
+import Filtros from "@renderer/components/UI/components/Filtros";
+import { useFiltroValue } from "@renderer/hooks/useFiltro";
+import { useFetchPaginatedList } from "@renderer/hooks/useFetchPaginatedList";
+import TarjetaRegistroPrecios from "./components/TarjetaRegistroPrecios";
+import './css/cardPrecios.css'
+import ModalIngresarComentario from "./components/ModalIngresarComentario";
 
 export type filtroType = {
     fechaInicio: string
@@ -18,20 +21,26 @@ export type filtroType = {
 
 export default function RegistrosPreciosProveedores(): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
-    const [tipoFruta, setTipoFruta] = useState<string[]>();
-    const [proveedores, setProveedores] = useState<proveedoresType[]>();
-    const [numeroRegistros, setNumeroRegistros] = useState<number>(0);
-    const [precios, setPrecios] = useState<precioProveedorType[]>();
-    const [filtro, setFiltro] = useState<filtroType>();
-    const [page, setPage] = useState<number>(1);
+    const { proveedores, obtenerPredios } = useGetSysData({});
+    const { setCurrentFilters, currentFilters } = useFiltroValue();
+    const [page, setPage] = useState<number>(1)
+    const [open, setOpen] = useState<boolean>(false);
+    const [item, setItem] = useState<precioProveedorType | undefined>(undefined);
+
+    const { obtenerCantidadElementos, obtenerData, data, numeroElementos } = useFetchPaginatedList<precioProveedorType>({
+        actionData: "get_comercial_precios_registros_precios_proveedores",
+        actionNumberData: "get_comercial_precios_registros_precios_proveedores_numeroElementos",
+        page: page,
+        filtro: currentFilters
+    })
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             try {
                 setLoading(true)
-                await obtenerTipoFruta()
-                await obtenerProveedores()
-                await obtenerPrecios()
+                await obtenerPredios()
+                await obtenerCantidadElementos()
+                await obtenerData()
             } catch (err) {
                 if (err instanceof Error) {
                     messageModal("error", err.message)
@@ -44,58 +53,59 @@ export default function RegistrosPreciosProveedores(): JSX.Element {
     }, [])
 
     useEffect(() => {
-        obtenerPrecios()
-    }, [page, filtro])
+        try {
+            setLoading(true);
+            console.log("Fetching data...");
+            obtenerData();
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setLoading(false)
+        }
+    }, [page])
 
-    const obtenerTipoFruta = async (): Promise<void> => {
-        const response = await obtener_tipo_fruta()
-        if (response instanceof Error) {
-            throw response
-        }
-        setTipoFruta(response)
-    }
-    const obtenerProveedores = async (): Promise<void> => {
-        const response = await obtener_proveedores()
-        if (response instanceof Error) {
-            throw response
-        }
-        setProveedores(response)
-    }
-    const obtenerPrecios = async (): Promise<void> => {
-        const request = {
-            action: "get_comercial_precios_registros_precios_proveedores",
-            filtro: filtro,
-            page: page
-        }
-        const response = await window.api.server2(request)
-        if (response.status !== 200) {
-            throw new Error(`Code ${response.status}: ${response.message}`)
-        }
-        setPrecios(response.data.registros)
-        setNumeroRegistros(response.data.numeroRegistros)
-    }
 
     return (
         <div>
             <div className="navBar"></div>
             <h2>Registros Precios</h2>
             <hr />
-            <FiltroRegistroPreciosProveedores
-                filtro={filtro}
-                setFiltro={setFiltro}
-                obtenerPrecios={obtenerPrecios}
-                tipoFruta={tipoFruta}
-                proveedores={proveedores} />
 
-            <TablaRegistroPreciosProveedores
-                obtenerPrecios={obtenerPrecios}
-                proveedores={proveedores}
-                data={precios} />
+            <Filtros
+                showFechaInicio={true}
+                showFechaFin={true}
+                showTipoFruta2={true}
+                showProveedor={true}
+                showButton={true}
+                allId="comercial-registroProveedores-registroPrecios"
+                findFunction={obtenerData}
+                onFiltersChange={setCurrentFilters} />
+
+            <div className="precios-container">
+                <div className="cards-grid">
+                    {(data || []).map(item => (
+                        <TarjetaRegistroPrecios 
+                            key={item._id+"precios-container"} 
+                            item={item} 
+                            proveedores={proveedores} 
+                            setOpen={setOpen} 
+                            setItem={setItem} />
+                    ))}
+                </div>
+            </div>
+
+                    <ModalIngresarComentario 
+                        open={open}
+                        onClose={(): void => { setOpen(false); setItem(undefined); }}
+                        data={item}
+                        obtenerPrecios={obtenerData}
+                    />
+
             <BotonesPasarPaginas
                 setPage={setPage}
                 page={page}
-                numeroElementos={numeroRegistros}
+                numeroElementos={numeroElementos}
                 division={50} />
-        </div>
+        </div >
     )
 }

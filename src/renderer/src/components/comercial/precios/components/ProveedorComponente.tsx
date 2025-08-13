@@ -10,40 +10,41 @@ type propsType = {
 }
 
 export default function ProveedorComponente(props: propsType): JSX.Element {
-    const frutas = props.proveedor.tipo_fruta ? 
+    const frutas = props.proveedor.tipo_fruta ?
         Object.keys(props.proveedor.tipo_fruta).join(" - ") : '';
 
     const handleCheck = (event): void => {
-        if(event.target.checked){
+        if (event.target.checked) {
             props.setSelectedProveedores(prev => {
-                if(prev){ return [...prev, props.proveedor] }
+                if (prev) { return [...prev, props.proveedor] }
                 else { return [props.proveedor] }
             })
         } else {
             props.setSelectedProveedores(prev => {
-                if(prev){
+                if (prev) {
                     return prev.filter(proveedor => proveedor._id !== props.proveedor._id)
                 }
             })
         }
     }
 
-    const checkIfProveedorChecked = ():boolean => {
-        if(props.selectedProveedores){
+    const checkIfProveedorChecked = (): boolean => {
+        if (props.selectedProveedores) {
             return props.selectedProveedores.some(proveedor => proveedor._id === props.proveedor._id)
         }
         return false
     }
 
     return (
-        <div 
-        className={`comercial-precios-proveedores-componente-proveedor 
-            ${props.proveedor.precioFijo && 'precio-fijo'}`} 
-        onClick={handleCheck}
+        <div
+            className={`comercial-precios-proveedores-componente-proveedor 
+            ${props.proveedor.precioFijo && 'precio-fijo'}`}
+            onClick={handleCheck}
+            
         >
-            <input type="checkbox"  checked={checkIfProveedorChecked()}/>
-            <p>{props.proveedor["CODIGO INTERNO"] + " - " 
-                +props.proveedor.PREDIO}</p>
+            <input type="checkbox" checked={checkIfProveedorChecked()} onChange={handleCheck} />
+            <p>{props.proveedor["CODIGO INTERNO"] + " - "
+                + props.proveedor.PREDIO}</p>
             <span>{frutas}</span>
         </div>
     );

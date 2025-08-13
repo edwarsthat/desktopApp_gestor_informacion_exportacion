@@ -2,7 +2,7 @@
 
 import { proveedoresType } from "@renderer/types/proveedoresType"
 import ProveedorComponente from "./ProveedorComponente"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import useAppContext from "@renderer/hooks/useAppContext"
 import { tiposFrutasType } from "@renderer/types/tiposFrutas"
 
@@ -10,7 +10,7 @@ type propsType = {
     proveedores: proveedoresType[] | undefined
     setProveedores: (e) => void
     tiposFrutas: tiposFrutasType[] | undefined
-    setSelectedProveedores: (proveedor) => void
+    setSelectedProveedores: (proveedor: React.SetStateAction<proveedoresType[] | undefined>) => void
     selectedProveedores: proveedoresType[] | undefined
 }
 
@@ -100,7 +100,6 @@ export default function ListaProveedores({
             setLoading(false)
         }
     }
-
     const handleCheckAll = (): void => {
         if(data){
             const dataFilter = data.filter(item => !item.precioFijo)
@@ -158,12 +157,12 @@ export default function ListaProveedores({
                 <div>Cargando...</div>
                 :
                 <div className="comercial-precios-proveedores-lista" >
-                    {data && data.map(proveedor => (
+                    {data && data.map((proveedor, index) => (
                         <ProveedorComponente
                             selectedProveedores={selectedProveedores}
                             setSelectedProveedores={setSelectedProveedores}
                             proveedor={proveedor}
-                            key={proveedor._id} />
+                            key={proveedor._id + index} />
                     ))}
                 </div>
             }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import useAppContext from "./useAppContext"
+import { tiposFrutasType } from "@renderer/types/tiposFrutas";
 
 type typeOut<T> = {
     obtenerData: () => Promise<void>
@@ -14,7 +15,7 @@ type propsType = {
     page: number
     actionData: string
     actionNumberData: string
-    filtro?: { [key: string]: boolean | string }
+    filtro?: { [key: string]: boolean | string | tiposFrutasType }
 }
 
 export function useFetchPaginatedList<T>({ page, actionData, actionNumberData, filtro={} }:propsType): typeOut<T> {
@@ -44,7 +45,9 @@ export function useFetchPaginatedList<T>({ page, actionData, actionNumberData, f
     const obtenerCantidadElementos = async (): Promise<void> => {
         try {
             const request = {
-                action: actionNumberData
+                action: actionNumberData,
+                filtro: filtro
+
             }
             const response = await window.api.server2(request);
             if (response.status !== 200)
