@@ -201,6 +201,7 @@ export default function ViewInformeData(props: propsType): JSX.Element {
                     loteSeleccionado={props.loteSeleccionado} />
                 <hr />
                 <div className='informe-calidad-lote-div informe-calidad-row'>
+                    <div></div>
                     <h3 className="informe-calidad-row-title">Resultados</h3>
                     <div className="informe-calidad-total-exportacion">
                         <div className="informe-calidad-total-exportacion-title" style={{ textAlign: 'center' }}>Total Exportación</div>

@@ -9,7 +9,7 @@ export function obtenerPorcentage(dato: number, total: number): number {
 }
 export function totalExportacion(lote: lotesType): number {
     let total = 0;
-    if(!lote) return total;
+    if (!lote) return total;
 
     for (const cont of Object.values(lote.exportacion)) {
         for (const key of Object.keys(cont)) {
@@ -32,26 +32,27 @@ export function totalDescarte(lote: lotesType): number {
         descarteLavado = 0
     }
     let deshidratacion
-    if(lote.deshidratacion){
-        deshidratacion = lote.deshidratacion === 0 ? 0 : 
-        (lote.deshidratacion / 100) * lote.kilos
+    if (lote.deshidratacion) {
+        deshidratacion = lote.deshidratacion === 0 ? 0 :
+            (lote.deshidratacion / 100) * lote.kilos
     }
 
     return descarteEncerado + descarteLavado + deshidratacion
 }
 export function totalLote(lote: lotesType): number {
     const descarte = totalDescarte(lote);
-    const fruta_nacional = lote.frutaNacional ?? 0
-    return lote.calidad1 + lote.calidad15 + lote.calidad2 + descarte + lote.directoNacional + fruta_nacional
+    const fruta_nacional = lote.frutaNacional ?? 0;
+    const total_exportacion = totalExportacion(lote) ?? 0;
+    return total_exportacion + descarte + lote.directoNacional + fruta_nacional
 }
-export function getDataToInformeCalidad(lote: lotesType, contenedores:contenedoresType[]): void | null {
+export function getDataToInformeCalidad(lote: lotesType, contenedores: contenedoresType[]): void | null {
     if (!lote) return null;
     const { tipoFruta, fechaIngreso, predio, kilos, enf } = lote;
 
     const outArr: (string | number)[][] = [];
 
     outArr.push(
-        [tipoFruta, tipoFruta === 'Limon' ? "Tahiti" : "Naranja"],
+        [tipoFruta.tipoFruta, tipoFruta.tipoFruta === 'Limon' ? "Tahiti" : "Naranja"],
         [fechaIngreso, predio?.DEPARTAMENTO],
         [predio?.PREDIO, predio?.ICA.code, predio?.GGN.code],
         [kilos, enf],
@@ -70,7 +71,7 @@ export type dataInformeType = {
     resultadosExportacion: (string | number)[];
     resultadosDescarte: (string | number)[];
 }
-export function descarte_pagos(lote): number{
+export function descarte_pagos(lote): number {
     const total_lavado = Object.entries(lote.descarteLavado as Record<string, unknown>).reduce((acu, [key, value]) => {
         if (key !== "descompuesta" && key !== "hojas") {
             return acu + (value as number);
@@ -84,12 +85,12 @@ export function descarte_pagos(lote): number{
         return acu;
     }, 0);
 
-    const deshidratacion = (lote.deshidratacion === 0 ? 0 : lote.deshidratacion / 100 ) 
+    const deshidratacion = (lote.deshidratacion === 0 ? 0 : lote.deshidratacion / 100)
         * lote.kilos
     const total = total_encerado + total_lavado + deshidratacion
     return total
 }
-export function descarte_nopago(lote):number {
+export function descarte_nopago(lote): number {
     const total_lavado = Object.entries(lote.descarteLavado as Record<string, unknown>).reduce((acu, [key, value]) => {
         if (key === "descompuesta" || key === "hojas") {
             return acu + (value as number);
@@ -104,15 +105,13 @@ export function descarte_nopago(lote):number {
     }, 0);
 
 
-    const total = total_encerado + total_lavado 
+    const total = total_encerado + total_lavado
     return total
 }
 export function totalPrecios(lote: lotesType): number {
     if (!lote.predio) {
         throw new Error("Lote predio is undefined");
     }
-
-    const { calidad1, calidad15, calidad2 } = lote;
     const descarteLavado = lote.descarteLavado
         ? Object.keys(lote.descarteLavado).reduce((acu, item) => {
             if (item === 'descompuesta' || item === 'hojas') {
@@ -141,9 +140,7 @@ export function totalPrecios(lote: lotesType): number {
         }, 0)
         : 0;
 
-    const exportacion = (calidad1 * (lote.precio?.[1] ?? 0)) + 
-                       (calidad15 * (lote.precio?.[15] ?? 0)) + 
-                       (calidad2 * (lote.precio?.[2] ?? 0));
+    const exportacion = precioExportacion(lote) ?? 0;
 
     const deshidratacion = lote.deshidratacion === 0 ? 0 :
         ((lote.deshidratacion / 100) * lote.kilos) * (lote.precio?.descarte ?? 0)
@@ -156,7 +153,7 @@ export function totalPrecios(lote: lotesType): number {
         descarteEncerado +
         descarteLavado +
         exportacion +
-        deshidratacion + 
+        deshidratacion +
         directoNacional +
         nacional
     );
@@ -202,4 +199,18 @@ export function total_precio_descarte(lote: lotesType): number {
         (descarteLavado * (lote.precio?.descarte ?? 0)) +
         (deshidratacion * (lote.precio?.descarte ?? 0))
     );
+}
+function precioExportacion(lote: lotesType): number {
+    let total = 0
+
+    for (const item of Object.values(lote.exportacion)) {
+        console.log(item)
+        for (const [key, value] of Object.entries(item)) {
+        console.log(key)
+        console.log(value)
+
+            total += (lote.precio.exportacion[key] * value)
+        }
+    }
+    return total
 }

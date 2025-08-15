@@ -39,7 +39,7 @@ export default function EficienciaPredios({ data, totalLotes, filtrosCalidad, fi
                 />
             </div>
             {!selectFiltroExportacion.calibre && (
-                <GraficosBarrasEficienciaPredios data={data} filtrosCalidad={filtrosCalidad} />
+                <GraficosBarrasEficienciaPredios data={data} filtrosCalidad={filtrosCalidad} totalLotes={totalLotes} />
 
             )}
         </div>

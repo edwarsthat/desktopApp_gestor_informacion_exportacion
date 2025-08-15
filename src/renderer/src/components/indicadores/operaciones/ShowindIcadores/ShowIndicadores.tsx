@@ -35,7 +35,7 @@ export default function ShowIndicadores(): JSX.Element {
     const [lotes, setLotes] = useState<lotesType[]>([]);
     const [totalesLotes, setTotalesLotes] = useState<totalesLotesType>({
         totalKilosIngreso: 0, totalKilosProcesados: 0, totalKilosExportacion: 0, totalKilosDescarte: 0,
-        totalCalidad1: 0, totalCalidad2: 0, totalCalidad15: 0, calibresTotal: {}
+        calidades:{}, calibresTotal: {}
     });
 
     const [filtrosTipoFruta, setFiltrosTipoFruta] = useState<string[]>([]);

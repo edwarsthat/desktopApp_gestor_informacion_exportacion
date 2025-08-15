@@ -11,17 +11,17 @@ type propsType = {
 
 }
 
-export default function ResumenKilosFruta(props: propsType): JSX.Element {
+export default function ResumenKilosFruta({ lote, contenedores }: propsType): JSX.Element {
 
     // useEffect(() => { console.log(props.lote) }, [])
     const sumardescartes_pagos = (): JSX.Element => {
 
-        const total = descarte_pagos(props.lote)
+        const total = descarte_pagos(lote)
 
         return (
             <tr>
                 <td>
-                    {props.lote.tipoFruta.codNacional}
+                    {lote.tipoFruta.codNacional}
                 </td>
                 <td>
                     {total.toFixed(2)}
@@ -32,7 +32,7 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
                         currency: 'COP',
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0
-                    }).format(props.lote.precio.descarte)}
+                    }).format(lote.precio.descarte)}
 
                 </td>
                 <td>
@@ -41,7 +41,7 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
                         currency: 'COP',
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0
-                    }).format(props.lote.precio.descarte * total)}
+                    }).format(lote.precio.descarte * total)}
 
                 </td>
             </tr>
@@ -50,7 +50,7 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
 
     const sumardescartes_nopagos = (): JSX.Element => {
 
-        const total = descarte_nopago(props.lote)
+        const total = descarte_nopago(lote)
 
         return (
             <tr>
@@ -81,8 +81,8 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
                 </td>
                 <td>
                     {
-                        (props.lote.descarteLavado?.balin ?? 0) +
-                        (props.lote.descarteEncerado?.balin ?? 0)
+                        (lote.descarteLavado?.balin ?? 0) +
+                        (lote.descarteEncerado?.balin ?? 0)
                     }
                 </td>
                 <td>
@@ -104,35 +104,34 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
         };
         let textCopy = ''
         // Build up your lines
-        if (props.lote.exportacionDetallada) {
-            const textCopyArrCont = Object.entries(props.lote.exportacionDetallada.any ?? {}).map(
+        if (lote.exportacion) {
+            const textCopyArrCont = Object.entries(lote.exportacion ?? {}).map(
                 ([key, value]) => {
-                    const contenedor = props.contenedores.find(item => item._id === key);
+                    const contenedor = contenedores.find(item => item._id === key);
 
                     return Object.entries(value as Record<string, unknown>).map(
                         ([keyCalidad, valueCalidad]) => {
 
                             if (contenedor && (keyCalidad !== '_id' && keyCalidad !== "2")) {
-                                console.log(keyCalidad, "-", valueCalidad)
 
                                 const kilos = decimalToComma(valueCalidad as number);
-                                const precioKey = decimalToComma(props.lote.precio[keyCalidad]);
+                                const precioKey = decimalToComma(lote.precio.exportacion[keyCalidad]);
                                 const subTotal = decimalToComma(
-                                    props.lote.precio[keyCalidad] * (valueCalidad as number)
+                                    lote.precio.exportacion[keyCalidad] * (valueCalidad as number)
                                 );
 
                                 return (
-                                    `2\t${props.lote.tipoFruta.codExportacion}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t${contenedor.numeroContenedor}\n`
+                                    `2\t${lote.tipoFruta.codExportacion}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t${contenedor.numeroContenedor}\n`
                                 );
                             } else if (contenedor && keyCalidad === "2") {
                                 const kilos = decimalToComma(valueCalidad as number);
-                                const precioKey = decimalToComma(props.lote.precio[keyCalidad]);
+                                const precioKey = decimalToComma(lote.precio.exportacion[keyCalidad]);
                                 const subTotal = decimalToComma(
-                                    props.lote.precio[keyCalidad] * (valueCalidad as number)
+                                    lote.precio.exportacion[keyCalidad] * (valueCalidad as number)
                                 );
 
                                 return (
-                                    `2\t${props.lote.tipoFruta.codNacional}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t${contenedor.numeroContenedor}\n`
+                                    `2\t${lote.tipoFruta.codNacional}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t${contenedor.numeroContenedor}\n`
                                 );
                             }
                             return undefined;
@@ -145,35 +144,35 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
 
             textCopy = textCopyCont.reduce((acu, item) => (acu += item.join('')), '');
         }
-        let total = descarte_pagos(props.lote);
+        let total = descarte_pagos(lote);
 
-        if (props.lote.flag_balin_free) {
-            total -= (props.lote.descarteEncerado?.balin ?? 0) + (props.lote.descarteLavado?.balin ?? 0)
+        if (lote.flag_balin_free) {
+            total -= (lote.descarteEncerado?.balin ?? 0) + (lote.descarteLavado?.balin ?? 0)
         }
 
-        const totalNoPago = descarte_nopago(props.lote); // number
+        const totalNoPago = descarte_nopago(lote); // number
 
         // Líneas adicionales
-        const frutaNacional = props.lote.frutaNacional
+        const frutaNacional = lote.frutaNacional
         if (frutaNacional) {
             textCopy +=
-                `1\t${props.lote.tipoFruta.codNacional}\tKilos\t${decimalToComma(frutaNacional)}\t${decimalToComma(props.lote.precio.frutaNacional)}\t\t${decimalToComma(props.lote.precio.frutaNacional * frutaNacional)}\n`;
+                `1\t${lote.tipoFruta.codNacional}\tKilos\t${decimalToComma(frutaNacional)}\t${decimalToComma(lote.precio.frutaNacional)}\t\t${decimalToComma(lote.precio.frutaNacional * frutaNacional)}\n`;
         }
 
-        const directoNacional = props.lote.directoNacional
+        const directoNacional = lote.directoNacional
 
         if (directoNacional) {
             textCopy +=
-                `1\t${props.lote.tipoFruta.codNacional}\tKilos\t${decimalToComma(directoNacional)}\t${decimalToComma(props.lote.precio.frutaNacional)}\t\t${decimalToComma(props.lote.precio.frutaNacional * directoNacional)}\n`;
+                `1\t${lote.tipoFruta.codNacional}\tKilos\t${decimalToComma(directoNacional)}\t${decimalToComma(lote.precio.frutaNacional)}\t\t${decimalToComma(lote.precio.frutaNacional * directoNacional)}\n`;
         }
 
 
         textCopy +=
-            `1\t${props.lote.tipoFruta.codNacional}\tKilos\t${decimalToComma(total)}\t${decimalToComma(props.lote.precio.descarte)}\t\t${decimalToComma(props.lote.precio.descarte * total)}\n`;
+            `1\t${lote.tipoFruta.codNacional}\tKilos\t${decimalToComma(total)}\t${decimalToComma(lote.precio.descarte)}\t\t${decimalToComma(lote.precio.descarte * total)}\n`;
 
-        const balinTotal = (props.lote.descarteLavado?.balin ?? 0) + (props.lote.descarteEncerado?.balin ?? 0);
+        const balinTotal = (lote.descarteLavado?.balin ?? 0) + (lote.descarteEncerado?.balin ?? 0);
         textCopy +=
-            `1\t${props.lote.tipoFruta.codNacional}\tKilos\t${decimalToComma(balinTotal)}\t${decimalToComma(0)}\t\t${decimalToComma(0)}\n`;
+            `1\t${lote.tipoFruta.codNacional}\tKilos\t${decimalToComma(balinTotal)}\t${decimalToComma(0)}\t\t${decimalToComma(0)}\n`;
 
         textCopy +=
             `1\tMPL1\tKilos\t${decimalToComma(totalNoPago)}\t${decimalToComma(0)}\t\t${decimalToComma(0)}\n`;
@@ -202,18 +201,18 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
                     </tr>
                 </thead>
                 <tbody>
-                    {props.lote.exportacionDetallada && Object.entries(props.lote.exportacionDetallada.any).map(([key, value], index) => {
-                        const contenedor = props.contenedores.find(item => item._id === key);
-                        return Object.entries(value as Record<string, unknown>).map(([keyCalidad, valueCalidad]) => {
+                    {lote.exportacion && Object.entries(lote.exportacion).map(([key, value], index) => {
+                        const contenedor = contenedores.find(item => item._id === key);
+                        return Object.entries(value).map(([keyCalidad, valueCalidad]) => {
                             if (contenedor && keyCalidad !== '_id') {
                                 return (
                                     <tr key={`${key}-${keyCalidad}`} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
                                         <td>{contenedor.numeroContenedor}</td>
-                                        {keyCalidad === '2' ?
-                                            <td>{props.lote.tipoFruta.codNacional}</td>
+                                        { ["689a05d0102fb4cb445579bc","68966eb849e7fd7eff70c74d"].includes(keyCalidad)  ?
+                                            <td>{lote.tipoFruta.codNacional}</td>
 
                                             :
-                                            <td>{props.lote.tipoFruta.codExportacion}</td>
+                                            <td>{lote.tipoFruta.codExportacion}</td>
                                         }
                                         <td>{valueCalidad as React.ReactNode}</td>
                                         <td>{new Intl.NumberFormat('es-CO', {
@@ -221,14 +220,14 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
                                             currency: 'COP',
                                             minimumFractionDigits: 0,
                                             maximumFractionDigits: 0
-                                        }).format(props.lote.precio[keyCalidad])}</td>
+                                        }).format(lote.precio.exportacion[keyCalidad])}</td>
                                         <td>
                                             {new Intl.NumberFormat('es-CO', {
                                                 style: 'currency',
                                                 currency: 'COP',
                                                 minimumFractionDigits: 0,
                                                 maximumFractionDigits: 0,
-                                            }).format(props.lote.precio[keyCalidad] * (valueCalidad as number))}
+                                            }).format(lote.precio.exportacion[keyCalidad] * (valueCalidad as number))}
                                         </td>
                                     </tr>
                                 );
@@ -254,41 +253,41 @@ export default function ResumenKilosFruta(props: propsType): JSX.Element {
                 <tbody>
                     <tr className={`fondo-par`}>
                         <td>Directo nacional</td>
-                        <td>{props.lote.tipoFruta.codNacional}</td>
+                        <td>{lote.tipoFruta.codNacional}</td>
 
-                        <td>{props.lote.directoNacional.toFixed(2)}</td>
+                        <td>{lote.directoNacional.toFixed(2)}</td>
                         <td>{new Intl.NumberFormat('es-CO', {
                             style: 'currency',
                             currency: 'COP',
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 0
-                        }).format(props.lote.precio.frutaNacional)}</td>
+                        }).format(lote.precio.frutaNacional)}</td>
                         <td>
                             {new Intl.NumberFormat('es-CO', {
                                 style: 'currency',
                                 currency: 'COP',
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0,
-                            }).format(props.lote.precio.frutaNacional * props.lote.directoNacional)}
+                            }).format(lote.precio.frutaNacional * lote.directoNacional)}
                         </td>
                     </tr>
                     <tr className={`fondo-impar`}>
                         <td>Fruta nacional</td>
-                        <td>{props.lote.tipoFruta.codNacional}</td>
-                        <td>{props.lote.frutaNacional?.toFixed(2) ?? '0'}</td>
+                        <td>{lote.tipoFruta.codNacional}</td>
+                        <td>{lote.frutaNacional?.toFixed(2) ?? '0'}</td>
                         <td>{new Intl.NumberFormat('es-CO', {
                             style: 'currency',
                             currency: 'COP',
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 0
-                        }).format(props.lote.precio.frutaNacional)}</td>
+                        }).format(lote.precio.frutaNacional)}</td>
                         <td>
                             {new Intl.NumberFormat('es-CO', {
                                 style: 'currency',
                                 currency: 'COP',
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0,
-                            }).format(props.lote.precio.frutaNacional * (props.lote.frutaNacional ?? 0))}
+                            }).format(lote.precio.frutaNacional * (lote.frutaNacional ?? 0))}
                         </td>
                     </tr>
                 </tbody>

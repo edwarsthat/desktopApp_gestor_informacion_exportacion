@@ -6,6 +6,8 @@ import './styles/ResumenExportaciones.css'
 import { useEffect, useState } from "react"
 import { KilosExportacionSchema } from "@renderer/types/indicadoresType"
 import { FaWeightHanging } from "react-icons/fa6";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
+import { nombreTipoFruta2, tipoCalidad } from "@renderer/utils/tipoFrutas"
 
 type propsType = {
     data: itemExportacionType[]
@@ -17,6 +19,7 @@ type propsType = {
 export default function ResumenExportaciones({
     data, filtrosTipoFruta, filtrosCalidad, filtrosCalibre
 }: propsType): JSX.Element {
+    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
     const [exportacionOriginal, setExportacionOriginal] = useState<number>(0);
     const [totalProcesado, setTotalProcesado] = useState<number>(0);
     const [porcentajeExportacion, setPorcentajeExportacion] = useState<number>(0);
@@ -151,7 +154,7 @@ export default function ResumenExportaciones({
                             <div className="json-level json-level-1">
                             <div className="json-line">
                                 <span className="json-icon">{obtenerEmojiTipoFruta(tipoFruta)}</span>
-                                <span className="json-key">{tipoFruta}:</span>
+                                <span className="json-key">{nombreTipoFruta2(tipoFruta, tiposFrutas)}:</span>
                                 <span className="json-value">{formatNumero(sumar_arbol_tipoFruta(arbolExportacion, tipoFruta))} kg</span>
                             </div>
 
@@ -160,7 +163,7 @@ export default function ResumenExportaciones({
                                     <div key={`calidad-${calidadIndex}`} className="json-level json-level-2">
                                         <div className="json-line">
                                             <span className="json-icon">⭐</span>
-                                            <span className="json-key">{calidad}:</span>
+                                            <span className="json-key">{tipoCalidad(calidad, tiposFrutas)}:</span>
                                             <span className="json-value">{formatNumero(sumar_arbol_calidad_tipoFruta(arbolExportacion, tipoFruta, calidad))} kg</span>
                                         </div>
 

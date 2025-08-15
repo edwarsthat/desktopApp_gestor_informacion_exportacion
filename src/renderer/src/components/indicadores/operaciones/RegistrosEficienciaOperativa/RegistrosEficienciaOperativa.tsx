@@ -6,6 +6,8 @@ import { indicadoresType } from "@renderer/types/indicadoresType";
 import { useEffect, useState } from "react"
 import { PiNotePencilDuotone } from "react-icons/pi";
 import ModalRegistroEficienciaOperativa from "./components/ModalRegistroEficienciaOperativa";
+import { nombreTipoFruta2 } from "@renderer/utils/tipoFrutas";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 
 const headers = [
     "Fecha",
@@ -19,7 +21,7 @@ const headers = [
 
 export default function RegistrosEficienciaOperativa(): JSX.Element {
     const [page, setPage] = useState<number>(1);
-
+    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta);
     const { obtenerCantidadElementos, obtenerData, data, numeroElementos } = useFetchPaginatedList<indicadoresType>({
         actionData: "get_indicadores_operaciones_eficienciaOperativa",
         actionNumberData: "get_indicadores_proceso_numero_items",
@@ -39,9 +41,14 @@ export default function RegistrosEficienciaOperativa(): JSX.Element {
     }, [page, open])
 
     const getTipoFruta = (registro: indicadoresType): string => {
-
+        const tipos:string[] = []
         if (registro.kilos_procesados && Object.keys(registro.kilos_procesados).length > 0) {
-            const tipos = Object.keys(registro.kilos_procesados);
+            for(const tipoId of Object.keys(registro.kilos_procesados)){
+                const nombreFruta: string = nombreTipoFruta2(tipoId, tiposFruta);
+                if (nombreFruta) {
+                    tipos.push(nombreFruta);
+                }
+            }
             return tipos.join(" - ");
         }
         return ''

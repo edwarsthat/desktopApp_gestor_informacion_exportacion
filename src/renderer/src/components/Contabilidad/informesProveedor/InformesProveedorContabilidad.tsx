@@ -1,58 +1,51 @@
 /* eslint-disable prettier/prettier */
 import { useEffect, useState } from "react";
-import { GrLinkNext } from "react-icons/gr";
-import { GrLinkPrevious } from "react-icons/gr";
 import { lotesType } from "@renderer/types/lotesType";
-import useAppContext from "@renderer/hooks/useAppContext";
 import "@renderer/css/components.css"
 import "@renderer/css/main.css"
 import "@renderer/css/table.css"
 import "./css/informesCalidad.css"
 
-import { requestObject } from "./functions/request";
 import TablaInformeCalidad from "./components/TablaInformeCalidad";
 import ViewInformeData from "./components/ViewInformeData";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { useFetchPaginatedList } from "@renderer/hooks/useFetchPaginatedList";
+import Filtros from "@renderer/components/UI/components/Filtros";
+import { useFiltroValue } from "@renderer/hooks/useFiltro";
+import BotonesPasarPaginas from "@renderer/components/UI/BotonesPasarPaginas";
 
 export default function InformesProveedorContabilidad(): JSX.Element {
-  const { messageModal } = useAppContext();
+  const [page, setPage] = useState<number>(1);
+  const { obtenerCantidadElementos, obtenerData, data, numeroElementos } = useFetchPaginatedList<lotesType>({
+    actionData: "get_contabilidad_informes_calidad",
+    actionNumberData: "get_contabilidad_informes_calidad_numeroElementos",
+    page: page
+  });
+  const { setCurrentFilters, currentFilters } = useFiltroValue();
 
-  const [datos, setDatos] = useState<lotesType[]>([]);
+
   const [datosFiltrados, setDatosFiltrados] = useState<lotesType[]>([]);
-  const [filtro, setFiltro] = useState('');
-  const [countPage, setCountPage] = useState<number>(1);
   const [showTable, setShowTable] = useState<boolean>(true)
   const [loteSeleccionado, setLoteSeleccionado] = useState<lotesType>()
-  const obtenerDatosDelServidor = async (): Promise<void> => {
-    try {
-      const request = requestObject(countPage)
-      const response = await window.api.server2(request);
-      if (response.status !== 200) {
-        throw new Error(response.message);
-      }
-      setDatos(response.data);
-      setDatosFiltrados(response.data);
-    } catch (error) {
-      if (error instanceof Error) {
-        messageModal("error", `${error.message}`)
-      }
-    }
-  };
+
 
   useEffect(() => {
-    obtenerDatosDelServidor();
-  }, [countPage, showTable]);
-
+    obtenerCantidadElementos()
+  }, [])
   useEffect(() => {
-    const datosFiltrados = datos.filter(
+    obtenerData()
+  }, [page])
+    useEffect(() => {
+    const datosFiltrados = data.filter(
       (item) =>
-        item._id && item._id.toLowerCase().includes(filtro.toLowerCase()) ||
-        item.predio && item.predio.PREDIO && item.predio.PREDIO.toLowerCase().includes(filtro.toLowerCase()) ||
-        item.tipoFruta && item.tipoFruta.tipoFruta.toLowerCase().includes(filtro.toLowerCase())
+        item.enf && item.enf.toLowerCase().includes(currentFilters.buscar.toLowerCase()) ||
+        item.predio && item.predio.PREDIO && item.predio.PREDIO.toLowerCase().includes(currentFilters.buscar.toLowerCase()) ||
+        item.tipoFruta && item.tipoFruta.tipoFruta.toLowerCase().includes(currentFilters.buscar.toLowerCase())
     );
+
     setDatosFiltrados(datosFiltrados);
-  }, [filtro, datos]);
+  }, [currentFilters, data]);
 
   const handleAccederDocumento = (lote): void => {
     setShowTable(false)
@@ -66,10 +59,7 @@ export default function InformesProveedorContabilidad(): JSX.Element {
     const lote = JSON.parse(JSON.stringify(loteSeleccionado));
     lote.predio.precio = newPrecios
     setLoteSeleccionado(lote);
-    
-  }
-  const casoFavorita = (newLote:lotesType): void  => {
-    setLoteSeleccionado(newLote);
+
   }
 
   const captureComponent = async (): Promise<void> => {
@@ -126,7 +116,7 @@ export default function InformesProveedorContabilidad(): JSX.Element {
         format: [FIXED_WIDTH, alturaDoc]
       });
       pdf.addImage(dataURL, 'PNG', 0, 0, FIXED_WIDTH, alturaDoc); // Ajusta las dimensiones según sea necesario
-      pdf.save(`${loteSeleccionado?.enf} ${loteSeleccionado?.predio.PREDIO} ${loteSeleccionado?.tipoFruta} ${loteSeleccionado?.kilos} ${new Date(loteSeleccionado?.fechaIngreso ?
+      pdf.save(`${loteSeleccionado?.enf} ${loteSeleccionado?.predio.PREDIO} ${loteSeleccionado?.tipoFruta.tipoFruta} ${loteSeleccionado?.kilos} ${new Date(loteSeleccionado?.fechaIngreso ?
         loteSeleccionado?.fechaIngreso : 0
       ).toLocaleDateString('es-CO', {
         year: 'numeric',
@@ -139,44 +129,38 @@ export default function InformesProveedorContabilidad(): JSX.Element {
 
   return (
     <div className="componentContainer">
-      <div className="navBar">
-        <div>
-          <input
-            type="text"
-            value={filtro}
-            onChange={(e): void => setFiltro(e.target.value)}
-            placeholder="Buscador ..."
-            className="defaultSelect"
-          />
-        </div>
-      </div>
+      <div className="navBar"></div>
       <h2>Informe proveedor</h2>
+      <hr />
+
+      <Filtros
+        showBuscar={true}
+        ggnId="informescalidadProveedor"
+        onFiltersChange={setCurrentFilters}
+      />
+
+
       {showTable ?
         <TablaInformeCalidad
           handleAccederDocumento={handleAccederDocumento}
           datosFiltrados={datosFiltrados} />
         :
 
-          <ViewInformeData
-            casoFavorita={casoFavorita}
-            modificarPrecios={modificarPrecios}
-            captureComponent={captureComponent}
-            handleVolverTabla={handleVolverTabla}
-            loteSeleccionado={loteSeleccionado}
-          />
+        <ViewInformeData
+          modificarPrecios={modificarPrecios}
+          captureComponent={captureComponent}
+          handleVolverTabla={handleVolverTabla}
+          loteSeleccionado={loteSeleccionado}
+        />
 
       }
       {showTable &&
-        <div className="informesCalidad-div-button">
-          {countPage === 0 ? null :
-            <button onClick={(): void => setCountPage(countPage - 1)}>
-              <GrLinkPrevious />
-            </button>}
-          {countPage === 0 ? null : countPage}
-          <button onClick={(): void => setCountPage(countPage + 1)}>
-            <GrLinkNext />
-          </button>
-        </div>
+        <BotonesPasarPaginas
+          division={50}
+          page={page}
+          numeroElementos={numeroElementos}
+          setPage={setPage}
+        />
       }
     </div>
   );

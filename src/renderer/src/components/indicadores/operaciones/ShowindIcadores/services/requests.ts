@@ -43,15 +43,14 @@ export const datosPredios = async (currentFilters: FilterValues, setLotes, setTo
     }
     console.log("Response data:", response.data);
     setLotes(response.data.lotes);
-    setFiltrosExportacion((prev) => ({ ...prev, calibre: response.data.calibres }));
+    setFiltrosExportacion((prev) => ({ ...prev, calibre: response.data.calibres, calidad: response.data.calidadesIds }));
     setTotalesLotes({
         totalKilosIngreso: response.data.totalKilosIngreso,
         totalKilosProcesados: response.data.totalKilosProcesados,
         totalKilosExportacion: response.data.totalKilosExportacion,
         totalKilosDescarte: response.data.totalKilosDescarte,
-        totalCalidad1: response.data.totalCalidad1,
-        totalCalidad2: response.data.totalCalidad2,
-        totalCalidad15: response.data.totalCalidad15,
-        calibresTotal: response.data.calibresTotal
+        calibresTotal: response.data.calibresTotal,
+        calidades: response.data.calidades,
+        calidadesIds: response.data.calidadesIds
     });
 }

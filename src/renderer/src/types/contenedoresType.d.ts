@@ -46,7 +46,7 @@ export type infoContendorType = {
   fechaFinalizado: string
   fechaSalida: string
   ultimaModificacion: string
-  tipoFruta: string
+  tipoFruta: string[]
   tipoCaja: string[]
   calidad: string[]
   cerrado: boolean

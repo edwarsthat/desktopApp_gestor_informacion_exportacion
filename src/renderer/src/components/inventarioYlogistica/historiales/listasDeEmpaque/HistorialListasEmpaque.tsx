@@ -28,7 +28,6 @@ export default function HistorialListaEmpaque(): JSX.Element {
     const [contenedor, setContenedor] = useState<contenedoresType>()
 
     useEffect(() => {
-        console.log("asasdas")
         obtenerData()
         obtenerCantidadElementos()
     }, [page])

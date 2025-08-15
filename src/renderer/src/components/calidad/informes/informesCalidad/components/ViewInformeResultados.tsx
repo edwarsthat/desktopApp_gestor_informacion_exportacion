@@ -17,28 +17,18 @@ export default function ViewInformeResultados({ loteSeleccionado }: propsType): 
 
     return (
         <>
-            {(contIds || []).map((id, index) => (
+            {(contIds || []).map((id) => (
                 <tr key={id}>
                     <td>{tipoCalidad(id, tipoFrutas)}</td>
                     <td>{kilosData[id]}</td>
                     <td>{
                         obtenerPorcentage(kilosData[id], loteSeleccionado.kilos).toFixed(2)
                     }% </td>
-                    {index === 0 ? (
-                        <td>$2500.00</td>
-                    ) : (
-                        <td>$1100.00</td>
-                    )}
-                    {index === 0 ? (
-                        <td>$2,928,750.00</td>
-                    ) : (
-                        <td>$1,009,800.00</td>
-                    )}
-                    {/* <MostrarPrecios
-                        loteSeleccionado={props.loteSeleccionado}
-                        tipoPrecio={data[key].tipo}
-                        kilosFruta={props.loteSeleccionado[key]}
-                    /> */}
+                    <MostrarPrecios
+                        loteSeleccionado={loteSeleccionado}
+                        tipoPrecio={id}
+                        kilosFruta={kilosData[id] || 0}
+                    />
                 </tr>
             ))}
 

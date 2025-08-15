@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
-import { tiposFrutasType } from '@renderer/types/tiposFrutas';
+import { calidadesType, tiposFrutasType } from '@renderer/types/tiposFrutas';
 import { create } from 'zustand'
 
 type FrutaStore = {
     tiposFruta: tiposFrutasType[];
+    tiposCalidades: calidadesType[]
     isLoading: boolean;
     error: string | null;
     cargarFruta: () => Promise<void>;
@@ -12,6 +13,7 @@ type FrutaStore = {
 
 const useTipoFrutaStore = create<FrutaStore>((set) => ({
     tiposFruta: [],
+    tiposCalidades: [],
     isLoading: false,
     error: null,
 
@@ -25,7 +27,8 @@ const useTipoFrutaStore = create<FrutaStore>((set) => ({
             if (response.status !== 200) {
                 throw new Error('Error al cargar los tipos de fruta');
             }
-            set({ tiposFruta: response.data, isLoading: false });
+
+            set({ tiposFruta: response.data, tiposCalidades: response.data.flatMap(item => item.calidades), isLoading: false });
         } catch (error) {
             set({ error: error instanceof Error ? error.message : 'Error desconocido', isLoading: false });
         }

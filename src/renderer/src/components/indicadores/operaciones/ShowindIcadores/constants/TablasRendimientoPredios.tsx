@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
 
+import { tipoCalidad } from "@renderer/utils/tipoFrutas";
 import { porcentajeCalibreLotes } from "../services/procesarData";
 import { filtroExportacionesSelectType, totalesLotesType } from "../validations/types";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 
 
 type propsType = {
@@ -15,7 +17,7 @@ type propsType = {
 export default function TablasRendimientoPredios({
     totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion }: propsType): JSX.Element {
     const header = ["Totales", "Kilos", "Porcentaje"]
-
+    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
     if (selectFiltroExportacion.calidad) {
         return (
             <table className="table-main"
@@ -42,27 +44,19 @@ export default function TablasRendimientoPredios({
                         <td>{totalLotes.totalKilosProcesados.toLocaleString('es-CO')}</td>
                         <td>{totalLotes.totalKilosProcesados > 0 ? ((totalLotes.totalKilosProcesados / totalLotes.totalKilosIngreso) * 100).toFixed(2) + '%' : '0%'}</td>
                     </tr>
-                    {filtrosCalidad.includes("calidad1") && (
-                        <tr className={'fondo-impar'}>
-                            <td>Calidad 1</td>
-                            <td>{totalLotes?.totalCalidad1 || 0}</td>
-                            <td>{totalLotes.totalCalidad1 > 0 ? ((totalLotes.totalCalidad1 / totalLotes.totalKilosProcesados) * 100).toFixed(2) + '%' : '0%'}</td>
-                        </tr>
-                    )}
-                    {filtrosCalidad.includes("calidad15") && (
-                        <tr className={'fondo-impar'}>
-                            <td>Calidad 1.5</td>
-                            <td>{totalLotes.totalCalidad15?.toLocaleString('es-CO') || 0}</td>
-                            <td>{totalLotes.totalCalidad15 > 0 ? ((totalLotes.totalCalidad15 / totalLotes.totalKilosProcesados) * 100).toFixed(2) + '%' : '0%'}</td>
-                        </tr>
-                    )}
-                    {filtrosCalidad.includes("calidad2") && (
-                        <tr className={'fondo-impar'}>
-                            <td>Calidad 2</td>
-                            <td>{totalLotes.totalCalidad2?.toLocaleString('es-CO') || 0}</td>
-                            <td>{totalLotes.totalCalidad2 > 0 ? ((totalLotes.totalCalidad2 / totalLotes.totalKilosProcesados) * 100).toFixed(2) + '%' : '0%'}</td>
-                        </tr>
-                    )}
+                    {Object.entries(totalLotes.calidades || {}).map(([key, value]) => {
+                        if(filtrosCalidad.includes(key)) {
+                            return (
+                                <tr className={'fondo-impar'} key={key + value + "tablaPredioIndicador"}>
+                                    <td>{tipoCalidad(key, tiposFruta)}</td>
+                                    <td>{value.toLocaleString('es-CO')}</td>
+                                    <td>{value > 0 ? ((value / totalLotes.totalKilosProcesados) * 100).toFixed(2) + '%' : '0%'}</td>
+                                </tr>
+                            )
+                        } else {
+                            return null
+                        }
+                    })}
 
                     <tr className={'fondo-par'}>
                         <td>Descartes</td>
@@ -71,8 +65,8 @@ export default function TablasRendimientoPredios({
                     </tr>
                     <tr className={'fondo-impar'}>
                         <td>Deshidratacion</td>
-                        <td>{(totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalLotes.totalCalidad1 + totalLotes.totalCalidad15 + totalLotes.totalCalidad2)).toLocaleString('es-CO')}</td>
-                        <td>{(totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalLotes.totalCalidad1 + totalLotes.totalCalidad15 + totalLotes.totalCalidad2)) > 0 ? (((totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalLotes.totalCalidad1 + totalLotes.totalCalidad15 + totalLotes.totalCalidad2)) / totalLotes.totalKilosProcesados) * 100).toFixed(2) + '%' : '0%'}</td>
+                        <td>{(totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalLotes.totalKilosExportacion)).toLocaleString('es-CO')}</td>
+                        <td>{(totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalLotes.totalKilosExportacion)) > 0 ? (((totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalLotes.totalKilosExportacion)) / totalLotes.totalKilosProcesados) * 100).toFixed(2) + '%' : '0%'}</td>
                     </tr>
                 </tbody>
             </table>

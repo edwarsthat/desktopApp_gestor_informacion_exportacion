@@ -1,5 +1,7 @@
 /* eslint-disable prettier/prettier */
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 import { filtroExportacionesSelectType, filtrosExportacionesType } from "../validations/types";
+import { tipoCalidad } from "@renderer/utils/tipoFrutas";
 
 type propsType = {
     setSelectFiltroExportacion: (filtros: filtroExportacionesSelectType) => void;
@@ -16,11 +18,8 @@ export default function FiltroRendimientoPredios({
     setFiltrosCalidad, filtrosCalidad,
     setFiltrosCalibre, filtrosCalibre,
 }: propsType): JSX.Element {
-    const calidades = {
-        calidad1: "Calidad 1",
-        calidad15: "Calidad 1.5",
-        calidad2: "Calidad 2",
-    }
+
+    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta);
     return (
         <div className="select-indicador-container">
             <div className="filtros-exportaciones-contenido">
@@ -50,18 +49,18 @@ export default function FiltroRendimientoPredios({
 
                     {selectFiltroExportacion.calidad && (
                         <div className="filtros-exportaciones-submenu">
-                            {Object.entries(calidades).map(([key, value]) => (
-                                <label key={key} className="filtros-exportaciones-item">
+                            {filtrosExportacion.calidad.map((calidad, index) => (
+                                <label key={calidad + index} className="filtros-exportaciones-item">
                                     <input type="checkbox"
                                         onChange={(): void => {
-                                            if (filtrosCalidad.includes(key)) {
-                                                setFiltrosCalidad(filtrosCalidad.filter(item => item !== key));
+                                            if (filtrosCalidad.includes(calidad)) {
+                                                setFiltrosCalidad(filtrosCalidad.filter(item => item !== calidad));
                                             } else {
-                                                setFiltrosCalidad([...filtrosCalidad, key]);
+                                                setFiltrosCalidad([...filtrosCalidad, calidad]);
                                             }
                                         }}
                                     />
-                                    <span>{value}</span>
+                                    <span>{tipoCalidad(calidad, tiposFruta)}</span>
                                 </label>
                             ))}
                         </div>

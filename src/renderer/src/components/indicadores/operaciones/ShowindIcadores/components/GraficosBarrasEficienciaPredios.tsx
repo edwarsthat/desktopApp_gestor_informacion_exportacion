@@ -2,39 +2,33 @@
 
 import { lotesType } from "@renderer/types/lotesType";
 import GraficoBarrasLotesDatos from "../graficos/GraficoBarrasLotesDatos";
+import { totalesLotesType } from "../validations/types";
 
 type propsType = {
     filtrosCalidad: string[];
     data: lotesType[];
+    totalLotes: totalesLotesType;
+
 }
 
-export default function GraficosBarrasEficienciaPredios({ data, filtrosCalidad }: propsType): JSX.Element {
+export default function GraficosBarrasEficienciaPredios({ data, filtrosCalidad, totalLotes }: propsType): JSX.Element {
     if (filtrosCalidad.length > 0) {
         return (
             <>
-                {filtrosCalidad.includes('calidad1') && (
-                    <div>
-                        <GraficoBarrasLotesDatos
-                            data={data}
-                            titulo="Kilos Calidad 1"
-                            elemento="calidad1" />
-                    </div>
-                )}
-                {filtrosCalidad.includes('calidad15') && (
-                    <div>
-                        <GraficoBarrasLotesDatos
-                            data={data}
-                            titulo="Kilos Calidad 1.5"
-                            elemento="calidad15" />
-                    </div>
-                )}
-                {filtrosCalidad.includes('calidad2') && (
-                    <div>
-                        <GraficoBarrasLotesDatos
-                            data={data}
-                            titulo="Kilos Calidad 2"
-                            elemento="calidad2" />
-                </div>)}
+                { Object.keys(totalLotes.calidades || {}).map(calidadId => {
+                    if(filtrosCalidad.includes(calidadId)) {
+                        return (
+                            <div key={calidadId}>
+                                <GraficoBarrasLotesDatos
+                                    data={data}
+                                    titulo={calidadId}
+                                    elemento={calidadId} />
+                            </div>
+                        );
+                    }
+                    return null
+                }) }
+
             </>
         )
     }
@@ -43,25 +37,25 @@ export default function GraficosBarrasEficienciaPredios({ data, filtrosCalidad }
             <div>
                 <GraficoBarrasLotesDatos
                     data={data}
-                    titulo="Kilos Ingresados"
+                    titulo="Ingresados"
                     elemento="kilos" />
             </div>
             <div>
                 <GraficoBarrasLotesDatos
                     data={data}
-                    titulo="Kilos Procesados"
+                    titulo="Procesados"
                     elemento="kilosVaciados" />
             </div>
             <div>
                 <GraficoBarrasLotesDatos
                     data={data}
-                    titulo="Kilos Exportacion"
+                    titulo="Exportacion"
                     elemento="kilosExportacion" />
             </div>
             <div>
                 <GraficoBarrasLotesDatos
                     data={data}
-                    titulo="Kilos Descarte"
+                    titulo="Descarte"
                     elemento="kilosDescarte" />
             </div>
         </>

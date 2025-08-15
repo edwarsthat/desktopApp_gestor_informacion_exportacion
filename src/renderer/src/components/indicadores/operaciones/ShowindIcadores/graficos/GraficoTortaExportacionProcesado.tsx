@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { itemExportacionType } from "../validations/types"
 import { Chart } from "chart.js";
 import { buildExportacionChartConfig } from "../config/chartConfig";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 
 type propsType = {
     data: itemExportacionType[]
@@ -19,6 +20,7 @@ type propsType = {
 export default function GraficoTortaExportacionProcesado({
     data, agrupacion, filtrosTipoFruta, filtrosCalidad, filtrosCalibre, dataOriginal
 }: propsType): JSX.Element {
+    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
     const chartRef = useRef<Chart | null>(null);
 
     useEffect(() => {
@@ -31,7 +33,7 @@ export default function GraficoTortaExportacionProcesado({
         chartRef.current?.destroy();
 
         // Usa el generador de config
-        const config = buildExportacionChartConfig( dataOriginal, data, filtrosTipoFruta, filtrosCalidad, filtrosCalibre);
+        const config = buildExportacionChartConfig( dataOriginal, data, filtrosTipoFruta, filtrosCalidad, filtrosCalibre, tiposFrutas);
 
         chartRef.current = new Chart(ctx, config);
 

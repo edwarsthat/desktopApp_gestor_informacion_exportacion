@@ -8,6 +8,8 @@ import { IoMdCloseCircle } from "react-icons/io";
 import { formatearFecha } from "@renderer/functions/fechas";
 import { MdEditDocument } from "react-icons/md";
 import { clienteType } from "@renderer/types/clientesType";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
+import { nombreTipoFruta2, tipoCalidad } from "@renderer/utils/tipoFrutas";
 
 type propsType = {
     contenedor: contenedoresType | undefined
@@ -18,6 +20,7 @@ const ids = ["66b6707777549ed0672a9029", "66db296f3d43194ad7a7f2b2", "66e06dff44
 
 export default function ModalInfoContenedor(props: propsType): JSX.Element {
     const { messageModal, seleccionWindow } = useAppContext();
+    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta);
     const [modificando, setModificando] = useState<boolean>(false);
     const [modificandoObservaciones, setModificandoObservaciones] = useState<boolean>(false)
     const [modificandoCLiente, setModificandoCliente] = useState<boolean>(false)
@@ -31,12 +34,12 @@ export default function ModalInfoContenedor(props: propsType): JSX.Element {
 
     useEffect(() => {
         if (props.contenedor !== undefined) {
-            setTipoFruta(props.contenedor?.infoContenedor.tipoFruta);
+            setTipoFruta(props.contenedor?.infoContenedor.tipoFruta.reduce((acu, item) => acu += nombreTipoFruta2(item, tiposFruta) + " , ", ''));
             setObservaciones(props.contenedor.infoContenedor.observaciones);
             setNumeroContenedor(String(props.contenedor.numeroContenedor));
             setTipoCaja(props.contenedor?.infoContenedor.tipoCaja.reduce((acu, item) => acu += item + " , ", ''));
             setCalibres(props.contenedor?.infoContenedor.calibres.reduce((acu, item) => acu += item + " , ", ''));
-            setCalidad(props.contenedor?.infoContenedor.calidad.reduce((acu, item) => acu += item + " , ", ''));
+            setCalidad(props.contenedor?.infoContenedor.calidad.reduce((acu, item) => acu += tipoCalidad(item, tiposFruta) + " , ", ''));
 
             if (typeof props.contenedor.infoContenedor.clienteInfo === 'object' ) 
                 setCliente(props.contenedor.infoContenedor.clienteInfo._id)

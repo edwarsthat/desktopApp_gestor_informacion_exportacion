@@ -6,6 +6,8 @@ import { useEffect, useRef } from "react";
 import { Chart } from "chart.js";
 import { buildEficienciaPrediosBarChartConfig } from "../config/chartConfig";
 import { lotesType } from "@renderer/types/lotesType";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
+import { tipoCalidad } from "@renderer/utils/tipoFrutas";
 
 
 type propsType = {
@@ -19,6 +21,8 @@ export default function GraficoBarrasLotesDatos({
     data, elemento, titulo
 }: propsType): JSX.Element {
     const chartRef = useRef<Chart | null>(null);
+    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta);
+    const trueTitulo = tipoCalidad(titulo, tiposFruta);
 
     useEffect(() => {
         const canvas = document.getElementById(`myChart_indicadores_operativo_eficiencia_predios_historigrama_${elemento}`) as HTMLCanvasElement;
@@ -30,7 +34,7 @@ export default function GraficoBarrasLotesDatos({
         chartRef.current?.destroy();
 
         // Usa el generador de config
-        const config = buildEficienciaPrediosBarChartConfig(data, elemento, titulo);
+        const config = buildEficienciaPrediosBarChartConfig(data, elemento, trueTitulo);
         chartRef.current = new Chart(ctx, config);
 
         // Limpieza al desmontar
@@ -41,7 +45,7 @@ export default function GraficoBarrasLotesDatos({
     }, [data]);
     return (
         <div className='indicadores-operativos-eficiencia-operativa-grafica-barras-container'>
-            <h2>Gráfico de {titulo}</h2>
+            <h2>Gráfico de Kilos {trueTitulo}</h2>
             <canvas id={`myChart_indicadores_operativo_eficiencia_predios_historigrama_${elemento}`} width="700" height="350"></canvas>
         </div>
     )

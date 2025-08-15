@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { Chart } from "chart.js";
 import { filtroExportacionesSelectType, totalesLotesType } from "../validations/types";
 import { buildEficienciaPrediosPieChartConfig } from "../config/chartConfig";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 
 
 type propsType = {
@@ -20,6 +21,7 @@ export default function GraficoTortaEficienciaPredios({
     totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion
 }: propsType): JSX.Element {
     const chartRef = useRef<Chart | null>(null);
+    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
 
     useEffect(() => {
         const canvas = document.getElementById('myChart_indicadores_operativo_eficiencia_predios') as HTMLCanvasElement;
@@ -29,9 +31,8 @@ export default function GraficoTortaEficienciaPredios({
 
         // Cleanup del chart anterior
         chartRef.current?.destroy();
-
         // Usa el generador de config
-        const config = buildEficienciaPrediosPieChartConfig(totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion);
+        const config = buildEficienciaPrediosPieChartConfig(totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion, tiposFrutas);
 
         chartRef.current = new Chart(ctx, config);
 

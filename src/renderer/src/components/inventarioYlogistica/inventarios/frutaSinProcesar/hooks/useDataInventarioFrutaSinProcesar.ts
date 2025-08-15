@@ -25,7 +25,6 @@ export default function useDataInventarioFrutaSinProcesar(): outType {
                 throw new Error(`Code ${response.status}: ${response.message}`)
             setData(response.data)
             setDatosOriginales(response.data)
-            console.log(response)
         } catch (e) {
             if (e instanceof Error) {
                 messageModal("error", e.message)

@@ -7,6 +7,7 @@ const PizZip = require('pizzip');
 const { format, parseISO } = require("date-fns");
 const { es } = require('date-fns/locale');
 const { toZonedTime } = require('date-fns-tz');
+const PAISES_DEL_CARIBE = ["Republica dominicana", "Puerto rico", "ISLAS DEL CARIBE", "GUADALUPE", "MARTINICA", "ISLAS FRANCESAS"]
 
 const mode = import.meta.env.MODE
 
@@ -22,8 +23,6 @@ function numeroALetras(num) {
    if (num <= 31) return decenas3[num - 30];
    return 'Número fuera de rango';
 }
-
-
 const formatearFecha = (fechaString, hora = false) => {
    if (!fechaString) {
       return '';
@@ -63,16 +62,6 @@ const mostrarKilose = (item) => {
    if (peso >= 13) return "30LB";
    if (peso > 4 && peso < 5) return ("4,5Kg");
 }
-// const ICAalterno = (id, proveedores) => {
-//    console.log(id)
-//    const prov = proveedores.find(pro => pro._id === id)
-//    console.log(prov)
-
-//    if (!prov) return "Predio no encontrado"
-//    return prov.SISPAP ? prov.ICA.code : 'Sin SISPAP';
-
-
-// }
 function aplicar_ggn_code(item, contenendor) {
    if (
       item.lote?.GGN &&
@@ -139,6 +128,18 @@ function resumenCalidad(contenedor, calidad) {
    })
    return out
 }
+function isPaisesCaribe(contenedor) {
+   if (contenedor.infoContenedor && contenedor.infoContenedor.clienteInfo) {
+      for (const pais of contenedor.infoContenedor.clienteInfo.PAIS_DESTINO) {
+         if (PAISES_DEL_CARIBE.includes(pais)) {
+            return false;
+         }
+      }
+   }
+   return true;
+}
+
+
 
 async function crearDocumento(data) {
    const table = await JSON.parse(data.data.data)
@@ -157,6 +158,23 @@ async function crearDocumento(data) {
 
 }
 
+const nombreTipoFruta2 = (tipoFruta, tiposFrutas) => {
+   if (!tipoFruta) return "N/A";
+   const fruta = tiposFrutas.find(item => item._id === tipoFruta);
+   return fruta ? fruta.tipoFruta : tipoFruta;
+}
+const tipoCalidad = (calidadId, tiposFrutas) => {
+   const calidad = "N/A";
+   if (!calidadId) return "N/A";
+   for (const tf of tiposFrutas) {
+      for (const calidad of tf.calidades) {
+         if (calidad._id === calidadId) {
+            return calidad.nombre;
+         }
+      }
+   }
+   return calidad;
+}
 
 //#region reporte_predios_lista_empaque
 async function crear_reporte_predios(data, pathDocument) {
@@ -360,6 +378,7 @@ const setCellPropertiesDatalogger = (cell, value, font = 14, bold = false) => {
 };
 async function crear_lista_empaque(data, pathDocument) {
    const cont = data.contenedor
+   const tipoFrutas = data.tiposFrutas
    // const proveedores = data.proveedores
    const fuente = 16
    const alto_celda = 50
@@ -385,7 +404,7 @@ async function crear_lista_empaque(data, pathDocument) {
          { cell: 'H2', value: "CONTAINER NUMBER:", font: fuente, bold: true },
          { cell: 'I2', value: cont.numeroContenedor, font: fuente, bold: false },
          { cell: 'J2', value: "REFERENCE N°:", font: fuente, bold: true },
-         { cell: 'K2', value: cont.infoContenedor.tipoFruta, font: fuente, bold: false },
+         { cell: 'K2', value: cont.infoContenedor.tipoFruta.reduce((acu, item) => acu + (nombreTipoFruta2(item, tipoFrutas) + " - " || ""), ""), font: fuente, bold: false },
       ]
 
       row3Cells = [
@@ -419,7 +438,7 @@ async function crear_lista_empaque(data, pathDocument) {
          { cell: 'G2', value: "CONTAINER NUMBER:", font: fuente, bold: true },
          { cell: 'H2', value: cont.numeroContenedor, font: fuente, bold: false },
          { cell: 'I2', value: "REFERENCE N°:", font: fuente, bold: true },
-         { cell: 'J2', value: cont.infoContenedor.tipoFruta, font: fuente, bold: false },
+         { cell: 'J2', value: cont.infoContenedor.tipoFruta.reduce((acu, item) => acu + (nombreTipoFruta2(item, tipoFrutas) + " - " || ""), ""), font: fuente, bold: false },
       ]
 
       row3Cells = [
@@ -565,10 +584,10 @@ async function crear_lista_empaque(data, pathDocument) {
             const newRow = worksheet.insertRow(row, [
                String(index + 1) + String(cont.numeroContenedor),
                formatearFecha(item.fecha, true),
-               label[item.tipoFruta],
+               label[nombreTipoFruta2(item.tipoFruta, tipoFrutas)],
                "COL-" + mostrarKilose(item) + (item.tipoFruta === 'Limon' ? 'Limes' : 'Oranges') + item.calibre + "ct",
                mostrarKilose(item),
-               item.calidad,
+               isPaisesCaribe(cont) ? tipoCalidad(item.calidad, tipoFrutas) : "Caribe",
                item.calibre,
                item.cajas,
                item.lote.SISPAP ? item.lote.ICA.code : 'Sin SISPAP',
@@ -583,9 +602,9 @@ async function crear_lista_empaque(data, pathDocument) {
             const newRow = worksheet.insertRow(row, [
                String(index + 1) + String(cont.numeroContenedor),
                formatearFecha(item.fecha, true),
-               label[item.tipoFruta],
+               label[nombreTipoFruta2(item.tipoFruta, tipoFrutas)],
                mostrarKilose(item),
-               item.calidad,
+               isPaisesCaribe(cont) ? tipoCalidad(item.calidad, tipoFrutas) : "Caribe",
                item.calibre,
                item.cajas,
                item.lote.SISPAP ? item.lote.ICA.code : 'Sin SISPAP',
@@ -649,112 +668,114 @@ async function crear_lista_empaque(data, pathDocument) {
    row += 2;
    worksheet.getRow(row).height = alto_celda
 
-   cont.infoContenedor.calidad.forEach(calidad => {
-      //head
-      worksheet.insertRow(row, [
-         "SUMMARY CATEGORY",
-         calidad,
-      ])
-      for (let i = 1; i <= 4; i++) {
-         const cell = worksheet.getCell(row, i);
-         cell.font = { bold: true, size: fuente };
-         cell.alignment = { horizontal: 'center', vertical: 'middle' };
-         cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FF5FD991' }
-         }
-         cell.border = styleNormalCell
-      }
-
-      row++;
-      worksheet.getRow(row).height = alto_celda
-
-      //columnas
-      worksheet.insertRow(row, [
-         "SIZE",
-         "QTY",
-         "N.PALLETS",
-         "% PERCENTAGE",
-      ])
-      for (let i = 1; i <= 4; i++) {
-         const cell = worksheet.getCell(row, i);
-         cell.font = { bold: true, size: fuente };
-         cell.alignment = { horizontal: 'center', vertical: 'middle' };
-         cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FF5FD991' }
-         }
-         cell.border = styleNormalCell
-      }
-      row++;
-      worksheet.getRow(row).height = alto_celda
-
-      const resumen = resumenCalidad(cont, calidad)
-      //datos
-      Object.entries(resumen).forEach(([key, value]) => {
+   if (isPaisesCaribe(cont)) {
+      cont.infoContenedor.calidad.forEach(calidad => {
+         //head
          worksheet.insertRow(row, [
-            key,
-            value.cantidad,
-            value.pallets,
-            value.porcentage.toFixed(2) + "%",
+            "SUMMARY CATEGORY",
+            tipoCalidad(calidad, tipoFrutas),
+
          ])
          for (let i = 1; i <= 4; i++) {
             const cell = worksheet.getCell(row, i);
-            cell.font = { size: 12 };
+            cell.font = { bold: true, size: fuente };
             cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            cell.fill = {
+               type: 'pattern',
+               pattern: 'solid',
+               fgColor: { argb: 'FF5FD991' }
+            }
             cell.border = styleNormalCell
          }
 
          row++;
          worksheet.getRow(row).height = alto_celda
 
+         //columnas
+         worksheet.insertRow(row, [
+            "SIZE",
+            "QTY",
+            "N.PALLETS",
+            "% PERCENTAGE",
+         ])
+         for (let i = 1; i <= 4; i++) {
+            const cell = worksheet.getCell(row, i);
+            cell.font = { bold: true, size: fuente };
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            cell.fill = {
+               type: 'pattern',
+               pattern: 'solid',
+               fgColor: { argb: 'FF5FD991' }
+            }
+            cell.border = styleNormalCell
+         }
+         row++;
+         worksheet.getRow(row).height = alto_celda
+
+         const resumen = resumenCalidad(cont, calidad)
+         //datos
+         Object.entries(resumen).forEach(([key, value]) => {
+            worksheet.insertRow(row, [
+               key,
+               value.cantidad,
+               value.pallets,
+               value.porcentage.toFixed(2) + "%",
+            ])
+            for (let i = 1; i <= 4; i++) {
+               const cell = worksheet.getCell(row, i);
+               cell.font = { size: 12 };
+               cell.alignment = { horizontal: 'center', vertical: 'middle' };
+               cell.border = styleNormalCell
+            }
+
+            row++;
+            worksheet.getRow(row).height = alto_celda
+
+         })
+
+         worksheet.insertRow(row, [
+            "TOTAL",
+            Object.keys(resumen).reduce((acu, item) => acu += resumen[item].cantidad, 0),
+            Object.keys(resumen).reduce((acu, item) => acu += resumen[item].pallets, 0),
+            resumen && Object.keys(resumen).reduce((acu, item) => acu += resumen[item].porcentage, 0).toFixed(2) + "%",
+         ])
+         for (let i = 1; i <= 4; i++) {
+            const cell = worksheet.getCell(row, i);
+            cell.font = { bold: true, size: 12 };
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            cell.fill = {
+               type: 'pattern',
+               pattern: 'solid',
+               fgColor: { argb: 'FF5FD991' }
+            }
+            cell.border = styleNormalCell
+         }
+
+
+         row += 2;
+         worksheet.getRow(row).height = alto_celda
+
+         if (coc_flag) {
+            if (cont.infoContenedor.clienteInfo._id === "659dbd9a347a42d89929340e") {
+               const cell = worksheet.getCell("K3")
+               cell.value = "4063061801296"
+               cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }
+               cell.font = { size: fuente, bold: false }
+               cell.border = styleNormalCell
+            } else {
+               const cell = worksheet.getCell("J3")
+               cell.value = "4063061801296"
+               cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }
+               cell.font = { size: fuente, bold: false }
+               cell.border = styleNormalCell
+            }
+
+         }
+
+
+
       })
-
-      worksheet.insertRow(row, [
-         "TOTAL",
-         Object.keys(resumen).reduce((acu, item) => acu += resumen[item].cantidad, 0),
-         Object.keys(resumen).reduce((acu, item) => acu += resumen[item].pallets, 0),
-         resumen && Object.keys(resumen).reduce((acu, item) => acu += resumen[item].porcentage, 0).toFixed(2) + "%",
-      ])
-      for (let i = 1; i <= 4; i++) {
-         const cell = worksheet.getCell(row, i);
-         cell.font = { bold: true, size: 12 };
-         cell.alignment = { horizontal: 'center', vertical: 'middle' };
-         cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FF5FD991' }
-         }
-         cell.border = styleNormalCell
-      }
-
-
-      row += 2;
-      worksheet.getRow(row).height = alto_celda
-
-      if (coc_flag) {
-         if (cont.infoContenedor.clienteInfo._id === "659dbd9a347a42d89929340e") {
-            const cell = worksheet.getCell("K3")
-            cell.value = "4063061801296"
-            cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }
-            cell.font = { size: fuente, bold: false }
-            cell.border = styleNormalCell
-         } else {
-            const cell = worksheet.getCell("J3")
-            cell.value = "4063061801296"
-            cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }
-            cell.font = { size: fuente, bold: false }
-            cell.border = styleNormalCell
-         }
-
-      }
-
-
-
-   })
-
+   }
    await workbook.xlsx.writeFile(pathDocument);
 
 }

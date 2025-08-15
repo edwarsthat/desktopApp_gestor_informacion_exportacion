@@ -652,7 +652,6 @@ const saveFile = async (defaultFileName): Promise<string> => {
 
 ipcMain.handle('crearDocumento', async (event, data) => {
   event.preventDefault()
-  console.log(data)
   if (data.action === 'crear_resporte_predios_lista_empaque' || data.action === "crear_lista_empaque") {
     const cont = data.data.contenedor
     const { filePath } = await dialog.showSaveDialog({
@@ -663,7 +662,7 @@ ipcMain.handle('crearDocumento', async (event, data) => {
 
     const child = utilityProcess.fork(join(__dirname, 'crearDocumentos.js'));
     // Enviar el action junto con el data y filePath
-    const request = JSON.stringify({ data: data.data, path: filePath, action: data.action })
+    const request = JSON.stringify({ data: data.data, path: filePath, action: data.action, tiposFrutas: data.tiposFrutas })
     child.postMessage(request);
   } else if (data.action === "crear_documentos_programacon_mula") {
 
@@ -692,9 +691,9 @@ ipcMain.handle('crearDocumento', async (event, data) => {
     child.postMessage(request);
 
     // quinto archivo
-    const filePath5 = await saveFile(`${cont.numeroContenedor} - ${cont.infoContenedor.clienteInfo.CLIENTE} - Check list.xlsx`);
-    request = JSON.stringify({ data: data.data, path: filePath5, action: "crear_check_list_transporte" });
-    child.postMessage(request);
+    // const filePath5 = await saveFile(`${cont.numeroContenedor} - ${cont.infoContenedor.clienteInfo.CLIENTE} - Check list.xlsx`);
+    // request = JSON.stringify({ data: data.data, path: filePath5, action: "crear_check_list_transporte" });
+    // child.postMessage(request);
 
 
     // Escucha el cierre del proceso hijo

@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 
-import { KilosExportacionSchema, kilosProcesadosSchema } from "@renderer/types/indicadoresType";
+import { KilosExportacionSchema, kilosProcesadosSchema } from "../../../../../types/indicadoresType";
+
 
 export type IndicadorKilosProcesados = {
     kilos_vaciados: number;
@@ -47,12 +48,10 @@ export type totalesLotesType = {
     totalKilosProcesados: number;
     totalKilosExportacion: number;
     totalKilosDescarte: number;
-    totalCalidad1: number;
-    totalCalidad2: number;
-    totalCalidad15: number;
     calibresTotal: {
         [key: string]: { kilos: number };
-    }
+    },
+    calidades: { [key: string]: number };
 }
 
 export type itemLotesExcelType = {

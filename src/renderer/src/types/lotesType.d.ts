@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 
+import { precioProveedorType } from "./preciosTypes";
 import { proveedoresType } from "./proveedoresType";
 import { tiposFrutasType } from "./tiposFrutas";
 
@@ -10,9 +11,6 @@ export type lotesType = {
     aprobacionComercial: boolean;
     aprobacionProduccion: boolean;
     calidad?: calidadType;
-    calidad1: number;
-    calidad15: number;
-    calidad2: number;
     canastillas: string;
     canastillas_estimadas: number,
     contenedores?: string[];
@@ -51,7 +49,7 @@ export type lotesType = {
     not_pass?: boolean;
     observaciones: string;
     placa: string;
-    precio: precioLoteType,
+    precio: precioProveedorType,
     predio: proveedoresType;
     promedio: number;
     rendimiento: number;
@@ -69,15 +67,6 @@ interface exportacionType {
     }
 }
 
-interface precioLoteType {
-    "1": number,
-    "15": number,
-    "2": number,
-    frutaNacional: number,
-    descarte: number,
-    zumex: number,
-    combinado: number,
-}
 
 interface ContenedorDetalle {
     1: number;

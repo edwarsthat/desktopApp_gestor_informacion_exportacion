@@ -3,6 +3,8 @@
 import { contenedoresType } from "@renderer/types/contenedoresType"
 import { useEffect, useState } from "react"
 import { obtenerResumen, obtenerResumenPredios, resultadoObtenerresumenContenedores } from "@renderer/functions/resumenContenedores"
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
+import { nombreTipoFruta2, tipoCalidad } from "@renderer/utils/tipoFrutas"
 
 type propsType = {
     setShowData: (e: boolean) => void
@@ -33,6 +35,7 @@ type calibreType = {
 }
 
 export default function DataHistorialContenedores(props: propsType): JSX.Element {
+    const tipoFrutas = useTipoFrutaStore(state => state.tiposFruta)
     const [fecha, setFecha] = useState<string>('');
     const [showCalibeCalidad, setShowCalibreCalidad] = useState<boolean>(false)
     const [verKilos, setVerKilos] = useState<boolean>(true)
@@ -65,7 +68,6 @@ export default function DataHistorialContenedores(props: propsType): JSX.Element
             setArrayCont(newArr)
         }
     }
-
     useEffect(() => {
         if (dataContenedores !== undefined) {
 
@@ -230,7 +232,7 @@ export default function DataHistorialContenedores(props: propsType): JSX.Element
                                                     <td>{Object.entries(lote.cont).map(([key, value]) => (
                                                         <div key={key}>
                                                             <div>{value.numero}: {value.cajas} Cajas - {value.kilos}Kg</div>
-                                                            <div>{lote.tipoFruta}</div>
+                                                            <div>{nombreTipoFruta2(lote.tipoFruta, tipoFrutas)}</div>
                                                         </div>
                                                     ))}</td>
                                                 </tr>
@@ -272,7 +274,7 @@ export default function DataHistorialContenedores(props: propsType): JSX.Element
                 <section>
                     {resumen && Object.keys(resumen).map(tipoFruta => (
                         <div key={tipoFruta}>
-                            <h2>{tipoFruta}</h2>
+                            <h2>{nombreTipoFruta2(tipoFruta, tipoFrutas)}</h2>
                             <hr />
                             <div className="table-container">
 
@@ -291,7 +293,7 @@ export default function DataHistorialContenedores(props: propsType): JSX.Element
                                         <tbody>
                                             {Object.entries(resumen[tipoFruta].calidad).map(([calidad, value], index) => (
                                                 <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={calidad}>
-                                                    <td>{calidad}</td>
+                                                    <td>{tipoCalidad(calidad, tipoFrutas)}</td>
                                                     {verKilos &&
                                                         <td>{value.kilos.toLocaleString('es-CO')} Kg</td>}
                                                     {verCajas &&

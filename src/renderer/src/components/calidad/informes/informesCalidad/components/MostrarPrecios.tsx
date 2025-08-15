@@ -6,12 +6,13 @@ type propsType = {
     tipoPrecio: string
     kilosFruta: number
 }
-export default function MostrarPrecios(props: propsType): JSX.Element {
+export default function MostrarPrecios({ loteSeleccionado, tipoPrecio, kilosFruta }: propsType): JSX.Element {
+    const precio = !["descarte", "frutaNacional"].includes(tipoPrecio) ?
+        loteSeleccionado.precio?.exportacion?.[tipoPrecio] ?? 0 : loteSeleccionado?.precio?.[tipoPrecio] ?? 0;
     return (
         <>
             <td>
                 {((): string => {
-                    const precio = props.loteSeleccionado.precio?.[props.tipoPrecio] ?? 0;
                     if (precio === undefined || precio === null) {
                         return 'N/A';
                     }
@@ -31,8 +32,8 @@ export default function MostrarPrecios(props: propsType): JSX.Element {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0
                     }).format(
-                        (props.loteSeleccionado.precio?.[props.tipoPrecio] ?? 0)
-                        * props.kilosFruta
+                        (precio)
+                        * kilosFruta
                     )
                 }
             </td>

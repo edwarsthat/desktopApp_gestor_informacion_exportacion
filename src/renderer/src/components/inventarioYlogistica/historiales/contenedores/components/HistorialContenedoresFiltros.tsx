@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import useAppContext from "@renderer/hooks/useAppContext";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 import { clienteType } from "@renderer/types/clientesType";
 import { useEffect, useState } from "react";
 import { IoAddCircleSharp } from "react-icons/io5";
@@ -16,6 +17,7 @@ type propsType = {
 
 export default function HistorialContenedoresFiltros(props:propsType): JSX.Element {
     const { messageModal } = useAppContext();
+    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
     const [inputNumeroContenedor, setInputNumeroContenedor] = useState<string>()
     const [arrContenedores, setArrContenedores] = useState<string[]>([]);
     const [fechaInicio, setFechaInicio] = useState<string>();
@@ -143,9 +145,11 @@ export default function HistorialContenedoresFiltros(props:propsType): JSX.Eleme
                 <hr />
                 <select className="defaultSelect" onChange={(e):void => settipoFruta(e.target.value)}>
                     <option value=""></option>
-                    <option value="Naranja">Naranja</option>
-                    <option value="Limon">Limon</option>
-                    <option value="Mixto">Mixto</option>
+                    {tiposFrutas && tiposFrutas.map(item => (
+                        <option value={item._id} key={item._id + "Historial_contenedores"}>
+                            {item.tipoFruta}
+                        </option>
+                    ))}
                 </select>
             </div>
 

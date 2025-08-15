@@ -1,6 +1,8 @@
 /* eslint-disable prettier/prettier */
 
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 import { filtroExportacionesSelectType, filtrosExportacionesType } from "../validations/types";
+import { nombreTipoFruta2, tipoCalidad } from "@renderer/utils/tipoFrutas";
 
 type propsType = {
     setSelectFiltroExportacion: (filtros: filtroExportacionesSelectType) => void;
@@ -20,6 +22,7 @@ export default function FiltrosExportaciones({
     setFiltrosCalidad, filtrosCalidad,
     setFiltrosCalibre, filtrosCalibre,
 }: propsType): JSX.Element {
+    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
     return (
         <div className="select-indicador-container">
             <div className="filtros-exportaciones-contenido">
@@ -57,7 +60,7 @@ export default function FiltrosExportaciones({
                                             setFiltrosTipoFruta([...filtrosTipoFruta, fruta]);
                                         }
                                     }} />
-                                    <span>{fruta}</span>
+                                    <span>{nombreTipoFruta2(fruta, tiposFrutas)}</span>
                                 </label>
                             ))}
                         </div>
@@ -98,7 +101,7 @@ export default function FiltrosExportaciones({
                                             }
                                         }}
                                     />
-                                    <span>{calidad}</span>
+                                    <span>{tipoCalidad(calidad, tiposFrutas)}</span>
                                 </label>
                             ))}
                         </div>

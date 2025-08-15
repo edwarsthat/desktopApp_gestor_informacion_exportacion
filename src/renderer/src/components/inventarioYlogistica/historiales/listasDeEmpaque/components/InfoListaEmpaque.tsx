@@ -1,12 +1,13 @@
 /* eslint-disable prettier/prettier */
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { contenedoresType } from "@renderer/types/contenedoresType"
 import InformeListaEmpaque from "./InformeListaEmpaque"
 import InformeReportePredios from "./InformeReportePredios"
 import { proveedoresType } from "@renderer/types/proveedoresType"
 import useAppContext from "@renderer/hooks/useAppContext"
 import { resumenPredioType } from "../functions/reportePredios"
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
 
 type propsType = {
     contenedor: contenedoresType | undefined
@@ -16,21 +17,11 @@ type propsType = {
 
 export default function InfoListaEmpaque(props: propsType): JSX.Element {
     const { messageModal } = useAppContext();
-    const [tipoFruta, setTipoFruta] = useState<string>()
+    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
     const [final, setFinal] = useState<boolean>(false)
     const [reportePredios, setReportePredios] = useState<boolean>(false)
     const [dataToExcel, setDataToExcel] = useState<resumenPredioType>()
-    useEffect(() => {
-        if (props.contenedor) {
-            if (props.contenedor.infoContenedor.tipoFruta === "Naranja") {
-                setTipoFruta("Naranja")
-            } else if (props.contenedor.infoContenedor.tipoFruta === "Limon") {
-                setTipoFruta("Limon")
-            } else if (props.contenedor.infoContenedor.tipoFruta === "Mixto") {
-                setTipoFruta("Limon - Naranja")
-            }
-        }
-    }, [])
+
     const generar_informe = async (): Promise<void> => {
         try {
             if (!props.contenedor) throw new Error("No hay contenedor seleccionado")
@@ -39,7 +30,8 @@ export default function InfoListaEmpaque(props: propsType): JSX.Element {
                     action: "crear_lista_empaque",
                     data:{
                         contenedor: props.contenedor,
-                        proveedores: props.proveedores
+                        proveedores: props.proveedores,
+                        tiposFrutas: tiposFrutas
                     }
                 }
                 console.log(data)
@@ -113,7 +105,6 @@ export default function InfoListaEmpaque(props: propsType): JSX.Element {
                     :
                     <InformeListaEmpaque
                         proveedores={props.proveedores}
-                        tipoFruta={tipoFruta}
                         final={final}
                         contenedor={props.contenedor} />
                 }
