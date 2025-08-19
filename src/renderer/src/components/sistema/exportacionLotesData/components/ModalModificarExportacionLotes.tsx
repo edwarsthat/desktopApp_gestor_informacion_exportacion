@@ -19,9 +19,6 @@ export default function ModalModificarExportacionLotes(props: propsType): JSX.El
     useEffect(() => {
         if (props.loteSeleccionado !== undefined) {
             const formData = { ...formState }
-            formData.calidad1 = Number(props.loteSeleccionado.calidad1)
-            formData.calidad15 = Number(props.loteSeleccionado.calidad15)
-            formData.calidad2 = Number(props.loteSeleccionado.calidad2)
             formData.contenedores = props.loteSeleccionado?.contenedores || [''];
             setFormState(formData)
         }

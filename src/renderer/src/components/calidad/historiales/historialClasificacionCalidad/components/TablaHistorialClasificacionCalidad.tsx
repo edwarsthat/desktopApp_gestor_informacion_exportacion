@@ -37,14 +37,14 @@ export default function TablaHistorialClasificacionCalidad(props: propsType): JS
                         <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={lote._id} >
                             <td>{lote.enf}</td>
                             <td>{lote.predio?.PREDIO}</td>
-                            <td>{lote.tipoFruta}</td>
+                            <td>{lote.tipoFruta.tipoFruta}</td>
                             <td className="historial-clasificacion-calidad-elementos-container">{lote.calidad?.clasificacionCalidad &&
                                 Object.keys(lote.calidad?.clasificacionCalidad).map(item => {
                                     if (lote.calidad?.clasificacionCalidad &&
                                         item !== "fecha" &&
                                         lote.calidad?.clasificacionCalidad[item] !== 0) {
                                         let objeto = {}
-                                        if (lote.tipoFruta === "Limon") {
+                                        if (lote.tipoFruta.tipoFruta === "Limon") {
                                             objeto = objetoLimon
                                         } else {
                                             objeto = objetoNaranja

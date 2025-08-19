@@ -33,13 +33,7 @@ const headers = [
 export default function TablaRegistroPreciosProveedores(props: propsType): JSX.Element {
     const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
     const [registroSeleccionado, setRegistroSeleccionado] = useState<precioProveedorType>();
-    const openModal = (item): void => {
-        const dialogSetting = document.getElementById("modal_comercial_precios_comentarios") as HTMLDialogElement;
-        if (dialogSetting) {
-            dialogSetting.showModal()
-            setRegistroSeleccionado(item)
-        }
-    }
+    const [open, setOpen] = useState<boolean>(false);
 
     if (props.data === undefined || props.proveedores === undefined) {
         return <div>Cargando...</div>
@@ -74,12 +68,20 @@ export default function TablaRegistroPreciosProveedores(props: propsType): JSX.E
                                     )}
                             </td>
                             <td>{item.comentario ?? ''}</td>
-                            <td><button onClick={():void => openModal(item)}><IoMdText color="blue" /></button></td>
+                            <td><button onClick={():void => { setOpen(true); setRegistroSeleccionado(item); }}><IoMdText color="blue" /></button></td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <ModalIngresarComentario obtenerPrecios={props.obtenerPrecios} data={registroSeleccionado}/>
+            <ModalIngresarComentario 
+            obtenerPrecios={props.obtenerPrecios} 
+            data={registroSeleccionado} 
+            open={open}
+            onClose={(): void => {
+                setOpen(false);
+                setRegistroSeleccionado(undefined);
+            }} 
+            />
         </div>
     )
 }

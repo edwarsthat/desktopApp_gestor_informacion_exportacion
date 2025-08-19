@@ -38,7 +38,7 @@ export default function TableHistorialCalidadInterna(props: propsType): JSX.Elem
           <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={lote._id} >
             <td>{lote.enf}</td>
             <td>{lote.predio?.PREDIO}</td>
-            <td>{lote.tipoFruta}</td>
+            <td>{lote.tipoFruta.tipoFruta}</td>
             <td>{lote.calidad?.calidadInterna?.acidez?.toLocaleString('es-ES')}</td>
             <td>{lote.calidad?.calidadInterna?.brix?.toLocaleString('es-ES')}</td>
             <td>{lote.calidad?.calidadInterna?.ratio ?

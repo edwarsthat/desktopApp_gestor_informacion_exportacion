@@ -79,7 +79,7 @@ export function generateMockContenedor(overrides = {}): contenedoresType {
             fechaEstimadaCargue: String(new Date()),
             fechaSalida: "",
             ultimaModificacion: String(new Date()),
-            tipoFruta: randomPick(frutas),
+            tipoFruta: [randomPick(frutas)],
             tipoCaja: [randomPick(cajas)],
             calidad: [randomPick(calidades)],
             sombra: `${randomInt(0, 100)}% `,

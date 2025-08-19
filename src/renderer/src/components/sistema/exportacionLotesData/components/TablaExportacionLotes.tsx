@@ -37,9 +37,7 @@ export default function TablaExportacionLotes(props: propsType): JSX.Element {
                         <td>{lote.enf}</td>
                         <td>{lote.predio?.PREDIO}</td>
                         <td>{lote.tipoFruta.tipoFruta}</td>
-                        <td>{lote.calidad1?.toLocaleString("es-ES")} Kg</td>
-                        <td>{lote.calidad15?.toLocaleString("es-ES")} Kg</td>
-                        <td>{lote.calidad2?.toLocaleString("es-ES")} Kg</td>
+
                         <td className="sistema-exportacion-lotes-elementos-container">{lote.contenedores?.map(item => (
                             <div key={item + lote._id} className="sistema-exportacion-lotes-elementos-div">
                                 {props.numeroContenedor && props.numeroContenedor[item]}

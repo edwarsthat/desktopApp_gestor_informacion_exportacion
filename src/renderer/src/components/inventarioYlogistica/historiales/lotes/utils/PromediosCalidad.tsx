@@ -2,7 +2,6 @@
 
 import { filtroColumnasCalidadType } from "../type/types"
 import {  KEY_FILTRO_COL_CALIDAD } from "../functions/constantes"
-import { promedioCalidad } from "../functions/functions"
 import { lotesType } from "@renderer/types/lotesType"
 
 type propsType = {
@@ -18,7 +17,7 @@ export default function PromediosCalidad(props: propsType): JSX.Element {
                 <div className="lotes-proceso-promedios-div2">
                     {Object.keys(props.columnVisibility).map((item, index) => {
                         if (props.columnVisibility[item] && item) {
-                            return (<p key={index}>{KEY_FILTRO_COL_CALIDAD[item]}: {promedioCalidad(props.data, item).toFixed(2)}</p>)
+                            return (<p key={index}>{KEY_FILTRO_COL_CALIDAD[item]}: {}</p>)
                         } else {
                             return null
                         }

@@ -49,6 +49,10 @@ const api = {
     const response = await ipcRenderer.invoke('obtenerFruta2')
     return response
   },
+  imprimirEtiqueta: async (datos): Promise<unknown> => {
+    const response = await ipcRenderer.invoke('imprimirEtiqueta', datos)
+    return response
+  },
 
   //para el proceso de descarga de excel
   mostrarMenuTabla: () => {

@@ -18,9 +18,9 @@ export default function ModalModificarHistorialClasificacionCalidad(props: props
     const [formState, setFormState] = useState(objetoLimonNaranja);
 
     useEffect(() => {
-        if (props.loteSeleccionado?.tipoFruta === "Limon") {
+        if (props.loteSeleccionado?.tipoFruta.tipoFruta === "Limon") {
             setFormulario(objetoLimon)
-        } else if (props.loteSeleccionado?.tipoFruta === "Naranja") {
+        } else if (props.loteSeleccionado?.tipoFruta.tipoFruta === "Naranja") {
             setFormulario(objetoNaranja)
         }
         if (props.loteSeleccionado !== undefined && props.loteSeleccionado.calidad?.clasificacionCalidad) {

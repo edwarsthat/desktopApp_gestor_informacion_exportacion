@@ -18,4 +18,5 @@ export type calidadesType = {
     _id: string;
     nombre: string;
     descripcion: string;
+    importancia: number;
 }

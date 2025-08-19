@@ -48,7 +48,7 @@ export default function IngresoFruta(): JSX.Element {
 
       const data = { ...datos }
       const request = {
-        dataLote: { ...data, GGN: data.GGN === 'true' },
+        dataLote: { ...data, GGN: data.GGN === 'true', enf: ef1 },
         dataCanastillas: {
           canastillasPropias:
             Number(formState.canastillasPropias ?? 0) +
@@ -59,8 +59,11 @@ export default function IngresoFruta(): JSX.Element {
         },
         action: 'post_inventarios_ingreso_lote'
       }
-      const response = await window.api.server2(request)
-      if (response.status !== 200) throw new Error(`Error ${response.status}: ${response.message}`)
+      // const response = await window.api.server2(request)
+      // if (response.status !== 200) throw new Error(`Error ${response.status}: ${response.message}`)
+
+      const impresion = await window.api.imprimirEtiqueta(request.dataLote)
+      if(!impresion) throw new Error('Error al imprimir etiqueta')
 
       resetForm()
       await obtenerEf1()

@@ -11,7 +11,7 @@ import { useState } from 'react'
 import { IoSaveSharp } from 'react-icons/io5'
 import { GiCancel } from 'react-icons/gi'
 import useAppContext from '@renderer/hooks/useAppContext'
-import { nombreTipoFruta2, tipoCalidad } from '@renderer/utils/tipoFrutas'
+import { tipoCalidad } from '@renderer/utils/tipoFrutas'
 import useTipoFrutaStore from '@renderer/store/useTipoFrutaStore'
 
 type propsType = {

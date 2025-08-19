@@ -4,9 +4,10 @@ import { filtroColumnasType } from "../type/types"
 import { KEYS_FILTROS_COL } from "../functions/constantes"
 import { lotesType } from "@renderer/types/lotesType"
 import { numeroContenedorType } from "../functions/request"
-import { obtener_porcentages_exportacion, total_porcentaje_calibre } from "../functions/functions"
+import {  total_porcentaje_calibre } from "../functions/functions"
 import { formatearFecha } from "@renderer/functions/fechas"
 import { PredioDatosType } from "@renderer/functions/resumenContenedores"
+import { totalExportacion } from "@renderer/functions/operacionesLotes"
 
 type propsType = {
   data: lotesType[]
@@ -103,17 +104,17 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                           onClick={(): void => handleDetails(index, index2)}>
 
                           {showDetailDescarte && (index === Number(indice1) && (index2 === Number(indice2))) ?
-                            <td>{
-                              <div className="lote-proceso-tabla-exportacion-div">
-                                <p> Calidad 1: {lote.calidad1}</p>
-                                <p> Calidad 1.5: {lote.calidad15}</p>
-                                <p> Calidad 2: {lote.calidad2}</p>
-                              </div>
+                            // <td>{
+                            //   <div className="lote-proceso-tabla-exportacion-div">
+                            //     <p> Calidad 1: {lote.calidad1}</p>
+                            //     <p> Calidad 1.5: {lote.calidad15}</p>
+                            //     <p> Calidad 2: {lote.calidad2}</p>
+                            //   </div>
 
-                            }</td>
+                            // }</td>
+                            <td></td>
                             :
-                            lote && lote.calidad1 !== undefined && lote.calidad15 !== undefined && lote.calidad2 !== undefined ?
-                              (lote.calidad1 + lote.calidad15 + lote.calidad2).toFixed(2) : 0}
+                            totalExportacion(lote).toFixed(2) ?? 0}
                         </td>
                       )
                     } else if (item === 'desverdizado') {
@@ -127,13 +128,13 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                         </td>
                       )
                     }
-                    else if (item === 'exportacionCalidad') {
-                      return (
-                        <td key={lote + item}>
-                          {obtener_porcentages_exportacion(lote)}
-                        </td>
-                      )
-                    }
+                    // else if (item === 'exportacionCalidad') {
+                    //   return (
+                    //     <td key={lote + item}>
+                    //       {obtener_porcentages_exportacion(lote)}
+                    //     </td>
+                    //   )
+                    // }
                     else if (item === 'calibreExportacion') {
                       return (
                         <td key={lote._id + item}>

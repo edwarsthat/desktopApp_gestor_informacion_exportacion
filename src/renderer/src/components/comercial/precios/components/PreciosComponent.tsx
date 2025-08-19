@@ -82,7 +82,7 @@ export default function PreciosComponent({ tiposFrutas, selectedProveedores, set
 
                 {formState?.tipoFruta && tiposFrutas.find(fruta => fruta._id === formState.tipoFruta)?.calidades.map(calidad => (
                     <div className="fila" key={calidad._id}>
-                        <label htmlFor={calidad._id}>{calidad.nombre}l</label>
+                        <label htmlFor={calidad._id}>{calidad.nombre}</label>
                         <input onChange={handleChange} name={"exportacion." + calidad._id}
                             type="text" id={calidad._id} placeholder={calidad.nombre} />
                         {formErrors?.[calidad._id] && <span className="error-text">{formErrors[calidad._id]}</span>}

@@ -18,6 +18,7 @@ export interface Api {
   updateProgress: (data, callback) => any
   obtenerFruta: () => Promise<any>
   obtenerFruta2: () => Promise<any>
+  imprimirEtiqueta: (datos) => Promise<any>
 
   //proceso para descargar excel
   mostrarMenuTabla: () => Promise<any>

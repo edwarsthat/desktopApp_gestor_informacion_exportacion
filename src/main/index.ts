@@ -580,6 +580,28 @@ ipcMain.handle('forgotPassword', async (event, data) => {
   }
 })
 
+ipcMain.handle("imprimirEtiqueta", async (event, data) => {
+  try {
+    event.preventDefault()
+    const child = utilityProcess.fork(join(__dirname, 'imprimirEtiqueta.js'));
+    child.postMessage({ data });
+
+    child.on('message', (msg) => {
+      if (msg.ok) {
+        console.log('Imprimiendo...:', msg.ruta);
+        mainWindow.webContents.send('Imprimiendo', { ruta: msg.ruta });
+      } else {
+        console.error('Error al imprimir:', msg.error);
+        mainWindow.webContents.send('Error al imprimir', { error: msg.error });
+      }
+    });
+    return true
+  } catch (e) {
+    console.error(e)
+    return false
+  }
+})
+
 // ipcMain.handle('imprimirRotulos', async (event, data) => {
 //   try {
 //     event.preventDefault()

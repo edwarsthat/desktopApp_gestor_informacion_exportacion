@@ -487,10 +487,10 @@ export default function ModalProveedores(props: propsType): JSX.Element {
                                     <div className="item-header">{fruit}</div>
                                     <div className="item-body">
                                         <h4 data-testid={`comercial-proveedores-predio-fruta_arboles-${index}`}>
-                                            Hectareas: {fruta[fruit] && fruta[fruit].Hectareas}
+                                            Hectareas: {fruta[fruit] && fruta[fruit].hectareas}
                                         </h4>
                                         <h4 data-testid={`comercial-proveedores-predio-fruta-hecatareas-${index}`}>
-                                            Arboles: {fruta[fruit] && fruta[fruit].Arboles}
+                                            Arboles: {fruta[fruit] && fruta[fruit].arboles}
                                         </h4>
 
                                     </div>

@@ -11,15 +11,22 @@ type propsType = {
 
 export default function ViewInformeResultados({ loteSeleccionado }: propsType): JSX.Element {
     const tipoFrutas = useTipoFrutaStore((state) => state.tiposFruta);
-    const contIds = Object.values(loteSeleccionado.exportacion).flatMap(c => Object.keys(c));
+    const fruta = tipoFrutas.find((f) => f._id === loteSeleccionado.tipoFruta._id);
+    if (!fruta) return <></>;
+
+    const contIds = [...new Set(Object.values(loteSeleccionado.exportacion).flatMap(c => Object.keys(c)))];
+    const calidadIds = fruta.calidades.sort((a, b) =>
+        a.importancia - b.importancia).map(c => c._id);
+    const calidades = calidadIds.filter(id => contIds.includes(id));
+    console.log("calidades", calidades);
     const kilosData = Object.assign({}, ...Object.values(loteSeleccionado.exportacion))
     // const total = Object.values(kilosData).reduce((acu, value) => acu += value, 0);
 
     return (
         <>
-            {(contIds || []).map((id) => (
+            {(calidades || []).map((id) => (
                 <tr key={id}>
-                    <td>{tipoCalidad(id, tipoFrutas)}</td>
+                    <td>Exportacion Tipo {tipoCalidad(id, tipoFrutas)}</td>
                     <td>{kilosData[id]}</td>
                     <td>{
                         obtenerPorcentage(kilosData[id], loteSeleccionado.kilos).toFixed(2)

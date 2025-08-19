@@ -61,7 +61,6 @@ import SistemaFormulariosCrearInformeProveedor from "../sistema/formatoInformePr
 import RegistroFrutaDescompuesta from "../inventarioYlogistica/historiales/registrosFrutaDescompuesta/RegistroFrutaDescompuesta"
 import InfoActualizacion from "../utils/InfoActualizacion"
 import RegistrosEficienciaOperativa from "../indicadores/operaciones/RegistrosEficienciaOperativa/RegistrosEficienciaOperativa"
-import ShowIndicadores from "../indicadores/operaciones/ShowindIcadores/ShowIndicadores"
 import PreciosProveedores from "../comercial/precios/PreciosProveedores"
 import RegistrosPreciosProveedores from "../comercial/registrosPreciosProveedores/RegistrosPreciosProveedores"
 import PreciosLotes from "../comercial/precioLote/PreciosLotes"
@@ -302,9 +301,6 @@ export default function Ventana(props: propsType): JSX.Element {
                     </div>
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "678542ef3a942eb3a4e562e4" ? 'block' : 'none' }}>
                         {activas.includes('678542ef3a942eb3a4e562e4') && <RegistrosEficienciaOperativa />}
-                    </div>
-                    <div className="componentContainer" style={{ display: props.pestañaActiva === "6793dfb319615dcbaf5b7a47" ? 'block' : 'none' }}>
-                        {activas.includes('6793dfb319615dcbaf5b7a47') && <ShowIndicadores />}
                     </div>
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "686548e53a30d3a485152968" ? 'block' : 'none' }}>
                         {activas.includes('686548e53a30d3a485152968') && <RegistroIndicadorExportacionProceso />}
