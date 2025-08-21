@@ -62,7 +62,7 @@ export default function ViewInformeDescarte(props: propsType): JSX.Element {
                 }
             })}
             <tr>
-                <td>Fruta con diámetro Ecuatorial superior a los requerido </td>
+                <td>Fruta con diámetro ecuatorial superior a lo requerido </td>
                 <td>
                     {(props.loteSeleccionado.descarteEncerado?.extra ?? 0).toFixed(2)} 
                 </td>
@@ -76,7 +76,7 @@ export default function ViewInformeDescarte(props: propsType): JSX.Element {
                     kilosFruta={(props.loteSeleccionado.descarteEncerado?.extra ?? 0)} />
             </tr>
             <tr>
-                <td>Fruta con diámetro Ecuatorial inferior a lo requerido (Balín)</td>
+                <td>Fruta con diámetro ecuatorial inferior a lo requerido (Balín)</td>
                 <td>
                     {((props.loteSeleccionado.descarteEncerado?.balin ?? 0)
                         + (props.loteSeleccionado.descarteLavado?.balin ?? 0)
@@ -104,7 +104,7 @@ export default function ViewInformeDescarte(props: propsType): JSX.Element {
                         ))} />}
             </tr>
             <tr>
-                <td>Fruta con diámetro Ecuatorial inferior a lo requerido (Pareja)</td>
+                <td>Fruta con diámetro ecuatorial inferior a lo requerido (Pareja)</td>
                 <td>
                     {((props.loteSeleccionado.descarteEncerado?.pareja ?? 0)
                         + (props.loteSeleccionado.descarteLavado?.pareja ?? 0)
@@ -126,7 +126,7 @@ export default function ViewInformeDescarte(props: propsType): JSX.Element {
                     )} />
             </tr>
             <tr>
-                <td>Descompuesta  (Geotrichum, daños mecánicos, oleocelosis severa, hongos, fruta rajada).</td>
+                <td>Descompuesta (Geotrichum, daños mecánicos, oleocelosis severa, hongos, fruta rajada).</td>
                 <td>
                     {((props.loteSeleccionado.descarteEncerado?.descompuesta ?? 0)
                         + (props.loteSeleccionado.descarteLavado?.descompuesta ?? 0)

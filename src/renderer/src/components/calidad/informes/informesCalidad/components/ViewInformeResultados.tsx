@@ -2,7 +2,7 @@
 import { lotesType } from "@renderer/types/lotesType"
 import MostrarPrecios from "./MostrarPrecios"
 import { obtenerPorcentage } from "@renderer/functions/informesLotes"
-import { tipoCalidad } from "@renderer/utils/tipoFrutas"
+import { tipoCalidadInforme } from "@renderer/utils/tipoFrutas"
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
 
 type propsType = {
@@ -18,7 +18,6 @@ export default function ViewInformeResultados({ loteSeleccionado }: propsType): 
     const calidadIds = fruta.calidades.sort((a, b) =>
         a.importancia - b.importancia).map(c => c._id);
     const calidades = calidadIds.filter(id => contIds.includes(id));
-    console.log("calidades", calidades);
     const kilosData = Object.assign({}, ...Object.values(loteSeleccionado.exportacion))
     // const total = Object.values(kilosData).reduce((acu, value) => acu += value, 0);
 
@@ -26,7 +25,7 @@ export default function ViewInformeResultados({ loteSeleccionado }: propsType): 
         <>
             {(calidades || []).map((id) => (
                 <tr key={id}>
-                    <td>Exportacion Tipo {tipoCalidad(id, tipoFrutas)}</td>
+                    <td>Exportación Tipo {tipoCalidadInforme(id, tipoFrutas)}</td>
                     <td>{kilosData[id]}</td>
                     <td>{
                         obtenerPorcentage(kilosData[id], loteSeleccionado.kilos).toFixed(2)

@@ -45,7 +45,7 @@
     "docx": "^9.1.0",
     "docxtemplater": "^3.54.1",
     "echarts": "^5.5.1",
-    "electron-edge-js": "^28.0.1",
+    "electron-edge-js": "^37.0.0",
     "electron-updater": "^6.3.9",
     "exceljs": "^4.4.0",
     "github-markdown-css": "^5.8.1",

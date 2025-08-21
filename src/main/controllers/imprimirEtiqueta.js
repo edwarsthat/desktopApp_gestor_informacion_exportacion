@@ -31,7 +31,7 @@ var setup
 
 try {
   openport = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'openport'
   })
@@ -41,7 +41,7 @@ try {
 
 try {
   setup = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'setup'
   })
@@ -50,7 +50,7 @@ try {
 }
 try {
   formfeed = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'formfeed'
   })
@@ -60,7 +60,7 @@ try {
 
 try {
   nobackfeed = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'nobackfeed'
   })
@@ -70,7 +70,7 @@ try {
 
 try {
   about = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'about'
   })
@@ -80,7 +80,7 @@ try {
 
 try {
   sendcommand = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'sendcommand'
   })
@@ -90,7 +90,7 @@ try {
 
 try {
   clearbuffer = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'clearbuffer'
   })
@@ -100,7 +100,7 @@ try {
 
 try {
   printerfont = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'printerfont'
   })
@@ -110,7 +110,7 @@ try {
 
 try {
   barcode = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'barcode'
   })
@@ -120,7 +120,7 @@ try {
 
 try {
   printlabel = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'printlabel'
   })
@@ -130,7 +130,7 @@ try {
 
 try {
   closeport = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'closeport'
   })
@@ -140,7 +140,7 @@ try {
 
 try {
   printer_status = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'printerstatus_string'
   })
@@ -150,7 +150,7 @@ try {
 
 try {
   sendcommand_utf8 = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'sendcommand_utf8'
   })
@@ -160,7 +160,7 @@ try {
 
 try {
   sendcommand_binary = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'sendcommand_binary'
   })
@@ -170,7 +170,7 @@ try {
 
 try {
   windowsfont = edge.func({
-    assemblyFile: './resources/app.asar.unpacked/tsclibnet.dll',
+    assemblyFile: path,
     typeName: 'TSCSDK.node_usb',
     methodName: 'windowsfont'
   })
@@ -181,10 +181,13 @@ try {
 
 process.parentPort.on('message', async (data) => {
   try {
-    console.log(path)
-    const datos = data.data
+    const datos = data.data.data
+    console.log(datos)
+    console.log( typeof datos)
 
-    // console.log("Datos recibidos en el proceso hijo:", datos);
+    for(const etiqueta of datos){
+      console.log("Etiqueta:", etiqueta);
+    }
 
     // Notifica al proceso padre (main)
     process.send && process.send({ ok: true });

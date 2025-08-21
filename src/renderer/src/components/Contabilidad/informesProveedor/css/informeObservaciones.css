@@ -1,3 +1,4 @@
+/* Estilos antiguos mantenidos para compatibilidad */
 .informe-calida-lote-div-calidad-interna {
     display: flex;
     flex-direction: row;
@@ -36,4 +37,140 @@
 .informe-calida-lote-div-observaciones p {
     border-bottom: 1px solid black;
     padding-bottom: 2px;
+}
+
+/* Nuevos estilos con diseño similar a las tablas */
+.observaciones-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.observaciones-calidad-interna,
+.observaciones-observaciones {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
+    width: 100%;
+}
+
+.observaciones-header {
+    background-color: var(--color-Celifrut, #4CAF50);
+    color: white;
+    padding: 12px 15px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.observaciones-header h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+}
+
+.observaciones-content {
+    background-color: white;
+}
+
+.observaciones-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    font-size: 14px;
+    color: black;
+    min-height: 40px;
+}
+
+/* Alternar colores de fondo igual que en las tablas */
+.observaciones-item.fondo-par {
+    background-color: rgb(251, 251, 251);
+}
+
+.observaciones-item.fondo-impar {
+    background-color: rgb(222, 223, 224);
+}
+
+.observaciones-label {
+    font-weight: bold;
+    color: black;
+    flex: 1;
+    text-align: left;
+}
+
+.observaciones-value {
+    color: black;
+    text-align: right;
+    font-weight: normal;
+}
+
+.observaciones-text {
+    color: black;
+    text-align: left;
+    width: 100%;
+    font-weight: normal;
+    line-height: 1.4;
+}
+
+/* Estilos para la tabla horizontal de calidad interna */
+.calidad-interna-tabla {
+    background-color: white;
+    width: 100%;
+}
+
+.tabla-calidad-interna {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: white;
+}
+
+.tabla-calidad-interna thead tr {
+    background-color: rgb(251, 251, 251); /* fondo-par */
+}
+
+.tabla-calidad-interna tbody tr {
+    background-color: rgb(222, 223, 224); /* fondo-impar */
+}
+
+.tabla-calidad-interna th,
+.tabla-calidad-interna td {
+    padding: 10px 15px;
+    text-align: center;
+    font-size: 14px;
+    color: black;
+    border: none;
+    min-height: 40px;
+}
+
+.tabla-calidad-interna th {
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.tabla-calidad-interna td {
+    font-weight: normal;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .observaciones-container {
+        gap: 15px;
+    }
+    
+    .observaciones-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        padding: 12px 15px;
+    }
+    
+    .observaciones-value {
+        text-align: left;
+    }
 }

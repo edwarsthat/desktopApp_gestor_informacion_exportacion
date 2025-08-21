@@ -66,54 +66,82 @@ export default function ViewInformeObservaciones(props: propsType): JSX.Element 
         setObservaciones(top4Keys)
     }
     return (
-        <div>
-            <div className="informe-calida-lote-div-calidad-interna">
-                {props.loteSeleccionado && props.loteSeleccionado.calidad && props.loteSeleccionado.calidad?.calidadInterna &&
-                    Object.entries(dataCalidadInterna).map(([key, value]) => {
-                        if(key === 'zumo'){
-                            if(props.loteSeleccionado.calidad?.calidadInterna !== undefined){
-                                return(
-                                    <div key={key}>
-                                    <h4>{value}:</h4>
-                                    <p>{
-                                    props.loteSeleccionado.calidad?.calidadInterna?.peso !== 0 ?
-                                    (
-                                        (props.loteSeleccionado.calidad?.calidadInterna.zumo 
-                                        / 
-                                        props.loteSeleccionado.calidad?.calidadInterna?.peso) * 100).toFixed(2) + '%'
-                                            :
-                                            "NaN"
-                                    }</p>
-                                </div>
-                                )
-                            } else {
-                                return null
-                            }
-                        } else if(
-                            props.loteSeleccionado && props.loteSeleccionado.calidad?.calidadInterna &&
-                            Object.prototype.hasOwnProperty.call(
-                            props.loteSeleccionado.calidad?.calidadInterna, key
-                        )){
-                            return (
-                                <div key={key}>
-                                    <h4>{value}:</h4>
-                                    <p>{props.loteSeleccionado.calidad?.calidadInterna?.[key].toFixed(2)}</p>
-                                </div>
-                            )
-                        } else {
-                            return(
-                                <div key={value}>
-                                    <h4>{value}</h4>
-                                    <p>{key}</p>
-                                </div>
-                            )
-                        }
-                    })}
+        <div className="observaciones-container">
+            {/* Contenedor de calidad interna con formato de tabla horizontal */}
+            <div className="observaciones-calidad-interna">
+                <div className="observaciones-header">
+                    <h4>Calidad Interna</h4>
+                </div>
+                <div className="calidad-interna-tabla">
+                    <table className="tabla-calidad-interna">
+                        <thead>
+                            <tr className="fondo-par">
+                                {props.loteSeleccionado && props.loteSeleccionado.calidad && props.loteSeleccionado.calidad?.calidadInterna &&
+                                    Object.entries(dataCalidadInterna).map(([key, value]) => {
+                                        if(key === 'zumo' && props.loteSeleccionado.calidad?.calidadInterna !== undefined){
+                                            return <th key={key}>{value}</th>
+                                        } else if(
+                                            props.loteSeleccionado && props.loteSeleccionado.calidad?.calidadInterna &&
+                                            Object.prototype.hasOwnProperty.call(props.loteSeleccionado.calidad?.calidadInterna, key)
+                                        ){
+                                            return <th key={key}>{value}</th>
+                                        }
+                                        return null;
+                                    })}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr className="fondo-impar">
+                                {props.loteSeleccionado && props.loteSeleccionado.calidad && props.loteSeleccionado.calidad?.calidadInterna &&
+                                    Object.entries(dataCalidadInterna).map(([key]) => {
+                                        if(key === 'zumo'){
+                                            if(props.loteSeleccionado.calidad?.calidadInterna !== undefined){
+                                                return(
+                                                    <td key={key}>
+                                                        {props.loteSeleccionado.calidad?.calidadInterna?.peso !== 0 ?
+                                                        (
+                                                            (props.loteSeleccionado.calidad?.calidadInterna.zumo 
+                                                            / 
+                                                            props.loteSeleccionado.calidad?.calidadInterna?.peso) * 100).toFixed(2) + '%'
+                                                                :
+                                                                "NaN"
+                                                        }
+                                                    </td>
+                                                )
+                                            } else {
+                                                return null
+                                            }
+                                        } else if(
+                                            props.loteSeleccionado && props.loteSeleccionado.calidad?.calidadInterna &&
+                                            Object.prototype.hasOwnProperty.call(
+                                            props.loteSeleccionado.calidad?.calidadInterna, key
+                                        )){
+                                            return (
+                                                <td key={key}>
+                                                    {props.loteSeleccionado.calidad?.calidadInterna?.[key].toFixed(2)}
+                                                </td>
+                                            )
+                                        }
+                                        return null;
+                                    })}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div className="informe-calida-lote-div-observaciones">
-                {dataObservaciones && observaciones.map(item => (
-                    <p key={item}>{dataObservaciones[item]}</p>
-                ))}
+            
+            {/* Contenedor de observaciones con estilo de tabla */}
+            <div className="observaciones-observaciones">
+                <div className="observaciones-header">
+                    <h4>Observaciones Principales</h4>
+                </div>
+                <div className="observaciones-content">
+                    {dataObservaciones && observaciones.map((item, index) => (
+                        <div key={item} className={`observaciones-item ${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
+                            <span className="observaciones-text">{dataObservaciones[item]}</span>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     )

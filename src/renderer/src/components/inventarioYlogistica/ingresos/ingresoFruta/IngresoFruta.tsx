@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { useEffect } from 'react'
 import * as strings from './json/strings_ES.json'
-import { crear_request_guardar } from './functions/functions'
+import { crear_request_guardar, impresion_etiquetas } from './functions/functions'
 import useAppContext from '@renderer/hooks/useAppContext'
 import '@renderer/css/components.css'
 import '@renderer/css/form.css'
@@ -59,10 +59,12 @@ export default function IngresoFruta(): JSX.Element {
         },
         action: 'post_inventarios_ingreso_lote'
       }
-      // const response = await window.api.server2(request)
-      // if (response.status !== 200) throw new Error(`Error ${response.status}: ${response.message}`)
+      const response = await window.api.server2(request)
+      if (response.status !== 200) throw new Error(`Error ${response.status}: ${response.message}`)
 
-      const impresion = await window.api.imprimirEtiqueta(request.dataLote)
+      const impresionArr = impresion_etiquetas(request.dataLote)
+      console.log(impresionArr)
+      const impresion = await window.api.imprimirEtiqueta(impresionArr)
       if(!impresion) throw new Error('Error al imprimir etiqueta')
 
       resetForm()

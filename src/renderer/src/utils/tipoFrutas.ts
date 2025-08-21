@@ -19,3 +19,16 @@ export const tipoCalidad = (calidadId: string, tiposFrutas:tiposFrutasType[]):st
     }
     return calidad;
 }
+
+export const tipoCalidadInforme = (calidadId: string, tiposFrutas:tiposFrutasType[]):string => {
+    const calidad = "N/A";
+    if(!calidadId) return "N/A";
+    for(const tf of tiposFrutas){
+        for(const calidad of tf.calidades){
+            if(calidad._id === calidadId){
+                return calidad.descripcion;
+            }
+        }
+    }
+    return calidad;
+}
