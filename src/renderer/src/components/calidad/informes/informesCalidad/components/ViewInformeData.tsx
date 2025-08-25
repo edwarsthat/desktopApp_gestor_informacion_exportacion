@@ -235,7 +235,6 @@ export default function ViewInformeData(props: propsType): JSX.Element {
                     <tbody>
 
                         <ViewInformeResultados loteSeleccionado={props.loteSeleccionado} />
-                        <ViewInformeDescarte loteSeleccionado={props.loteSeleccionado} />
                         <tr>
                             <td>Directo Nacional</td>
                             <td>{props.loteSeleccionado.directoNacional?.toFixed(2)} </td>
@@ -246,6 +245,8 @@ export default function ViewInformeData(props: propsType): JSX.Element {
                                 tipoPrecio="frutaNacional"
                                 kilosFruta={(props.loteSeleccionado.directoNacional)} />
                         </tr>
+                        <ViewInformeDescarte loteSeleccionado={props.loteSeleccionado} />
+
                         <tr className='informe-calidad-total-fila fondo-impar'>
                             <td>Total</td>
                             <td>

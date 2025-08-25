@@ -18,6 +18,18 @@ export function totalExportacion(lote: lotesType): number {
     }
     return total;
 }
+export function totalExportacionCalidad(lote: lotesType, calidad:string): number {
+    let total = 0;
+    if (!lote) return total;
+
+    for (const cont of Object.values(lote.exportacion)) {
+        for (const key of Object.keys(cont)) {
+            if(key === calidad)
+                total += cont[key];
+        }
+    }
+    return total;
+}
 export function totalDescarte(lote: lotesType): number {
     let descarteEncerado: number
     let descarteLavado: number
@@ -204,11 +216,7 @@ function precioExportacion(lote: lotesType): number {
     let total = 0
 
     for (const item of Object.values(lote.exportacion)) {
-        console.log(item)
         for (const [key, value] of Object.entries(item)) {
-        console.log(key)
-        console.log(value)
-
             total += (lote.precio.exportacion[key] * value)
         }
     }
