@@ -60,40 +60,6 @@ export default function ProcesoData(): JSX.Element {
 
     }, [])
 
-    // useEffect(() => {
-    //     const saved = localStorage.getItem("lotes_filtro_rows");
-    //     const savedCol = localStorage.getItem("lotes_filtro_col");
-    //     if (saved) {
-    //         setFiltro(JSON.parse(saved))
-    //     }
-    //     if (savedCol) {
-    //         // Migrar el objeto guardado para incluir el nuevo campo
-    //         const parsedCol = JSON.parse(savedCol);
-    //         const updatedCol = {
-    //             ...filtrosColumnasObj, // Esto asegura que todos los campos estén presentes
-    //             ...parsedCol, // Sobrescribe con los valores guardados
-    //         };
-    //         setColumnVisibility(updatedCol);
-
-    //         // Guardar el objeto actualizado de vuelta en localStorage
-    //         localStorage.setItem("lotes_filtro_col", JSON.stringify(updatedCol));
-    //     } else {
-    //         // Si no hay nada guardado, usar el objeto por defecto
-    //         setColumnVisibility(filtrosColumnasObj);
-    //         localStorage.setItem("lotes_filtro_col", JSON.stringify(filtrosColumnasObj));
-    //     }
-    //     window.api.reload(() => {
-    //         setReload(!reload)
-    //     });
-    //     window.api.Descargar(() => {
-    //         const dataOrdenada = ordenarDataExcel(data, columnVisibility, numeroContenedor)
-    //         const dataR = JSON.stringify(dataOrdenada)
-    //         window.api.crearDocumento(dataR)
-    //     })
-    //     return () => {
-    //         window.api.removeReload()
-    //     }
-    // }, [reload])
 
 
     const handleChange = (e): void => {
@@ -121,7 +87,7 @@ export default function ProcesoData(): JSX.Element {
             <Filtros
                 showFechaInicio={true}
                 showFechaFin={true}
-                showTipoFruta={true}
+                showTipoFruta2={true}
                 showGGN={true}
                 ggnId="proceso-data-lotes"
                 showProveedor={true}

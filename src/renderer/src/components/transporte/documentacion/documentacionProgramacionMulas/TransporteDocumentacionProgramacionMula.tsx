@@ -3,6 +3,7 @@
 import BotonesPasarPaginas from "@renderer/components/UI/BotonesPasarPaginas";
 import { formatearFecha } from "@renderer/functions/fechas";
 import useAppContext from "@renderer/hooks/useAppContext"
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 import { contenedoresType } from "@renderer/types/contenedoresType";
 import { useEffect, useState } from "react";
 import { IoDocumentTextSharp } from "react-icons/io5";
@@ -16,6 +17,7 @@ const headers = [
 
 export default function TransporteDocumentacionProgramacionMula(): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
+    const tipoFrutas = useTipoFrutaStore(state => state.tiposFruta)
     const [data, setData] = useState<contenedoresType[]>()
 
     //page navigator
@@ -64,7 +66,8 @@ export default function TransporteDocumentacionProgramacionMula(): JSX.Element {
             const data = {
                 action: "crear_documentos_programacon_mula",
                 data: {
-                    contenedor: contenedor
+                    contenedor: contenedor,
+                    tiposFrutas: tipoFrutas
                 }
             }
             window.api.crearDocumento(data)

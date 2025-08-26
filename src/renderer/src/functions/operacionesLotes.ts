@@ -32,6 +32,7 @@ export const promedioDescartes = (datos: lotesType[], llave: keyof lotesType & s
 export function totalExportacion(lote: lotesType): number {
     let total = 0;
     if (!lote) return total;
+    if(!lote.exportacion) return total;
 
     for (const cont of Object.values(lote.exportacion)) {
         for (const key of Object.keys(cont)) {

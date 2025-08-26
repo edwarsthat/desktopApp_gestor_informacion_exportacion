@@ -784,6 +784,8 @@ async function crear_lista_empaque(data, pathDocument) {
 
 async function crear_reporte_vehiculo(data, path) {
    const cont = data.contenedor
+   const tipoFrutas = data.tiposFrutas
+   
    const { infoTractoMula, infoExportacion, infoContenedor } = cont
    const workbook = new ExcelJS.Workbook();
    const worksheet = workbook.addWorksheet("Hoja 1")
@@ -823,7 +825,7 @@ async function crear_reporte_vehiculo(data, path) {
       { cell: 'B13', value: "Lugar Descargue", font: 12, bold: false },
       { cell: 'C13', value: infoExportacion.puerto, font: 12, bold: false },
       { cell: 'B14', value: "Mercancía", font: 12, bold: false },
-      { cell: 'C14', value: infoContenedor.tipoFruta, font: 12, bold: false },
+      { cell: 'C14', value: infoContenedor.tipoFruta.reduce((acu, item) => acu + (nombreTipoFruta2(item, tipoFrutas) + " - " || ""), ""), font: 12, bold: false },
       { cell: 'B15', value: "Temperatura", font: 12, bold: false },
       { cell: 'C15', value: infoTractoMula.temperatura, font: 12, bold: false },
    ]
@@ -866,8 +868,10 @@ function cajas_kilos_total(pallets) {
 }
 
 async function crear_reporte_datalogger(data, pathDocument) {
-   console.log("crear_reporte_datalogger")
+
    const cont = data.contenedor
+   const tipoFrutas = data.tiposFrutas
+
    const { infoTractoMula, infoContenedor, pallets } = cont
    const workbook = new ExcelJS.Workbook();
    const worksheet = workbook.addWorksheet("Hoja 1")
@@ -927,7 +931,7 @@ async function crear_reporte_datalogger(data, pathDocument) {
       { cell: 'D7', value: "DESPACHADO POR:", font: 12, bold: true },
       { cell: 'E7', value: "", font: 12, bold: true },
       { cell: 'B8', value: "PRODUCTO:", font: 12, bold: true },
-      { cell: 'C8', value: infoContenedor.tipoFruta.toUpperCase(), font: 12, bold: false },
+      { cell: 'C8', value: infoContenedor.tipoFruta.reduce((acu, item) => acu + (nombreTipoFruta2(item, tipoFrutas) + " - " || ""), ""), font: 12, bold: false },
       { cell: 'D8', value: "NOMBRE:", font: 12, bold: true },
       { cell: 'E8', value: "", font: 12, bold: false },
       { cell: 'B9', value: "CANTIDAD:", font: 12, bold: true },
@@ -985,7 +989,9 @@ async function crear_reporte_datalogger(data, pathDocument) {
 }
 
 async function crear_carta_instrucciones(data, pathDocument) {
-   const pathRelative = mode === 'development' ? './resources/app.asar.unpacked/Entrega_Instrucciones.docx'
+   const tipoFrutas = data.tiposFrutas
+   console.log(mode)
+   const pathRelative = mode !== 'development' ? './resources/app.asar.unpacked/Entrega_Instrucciones.docx'
       : path.resolve(
          __dirname,
          '..',
@@ -1014,7 +1020,7 @@ async function crear_carta_instrucciones(data, pathDocument) {
    // Renderizar el documento directamente con los datos
    doc.render({
       precinto: infoTractoMula.precinto,
-      tipo_fruta: infoContenedor.tipoFruta.toUpperCase(),
+      tipo_fruta: infoContenedor.tipoFruta.reduce((acu, item) => acu + (nombreTipoFruta2(item, tipoFrutas) + " - " || ""), ""),
       transportadora: infoTractoMula.transportadora,
       placa: infoTractoMula.placa,
       trailer: infoTractoMula.trailer,
@@ -1039,8 +1045,9 @@ async function crear_carta_instrucciones(data, pathDocument) {
 }
 
 async function crear_carta_responsabilidad(data, pathDocument) {
+   const tipoFrutas = data.tiposFrutas
 
-   const pathRelative = mode === 'development' ? './resources/app.asar.unpacked/carta_responsabilidad.docx'
+   const pathRelative = mode !== 'development' ? './resources/app.asar.unpacked/carta_responsabilidad.docx'
       : path.resolve(
          __dirname,
          '..',
@@ -1075,7 +1082,7 @@ async function crear_carta_responsabilidad(data, pathDocument) {
       direccion: infoContenedor.clienteInfo["DIRECCIÓN"] ?? 'N/A',
 
       placa: infoTractoMula.placa,
-      tipoFruta: infoContenedor.tipoFruta.toUpperCase(),
+      tipoFruta: infoContenedor.tipoFruta.reduce((acu, item) => acu + (nombreTipoFruta2(item, tipoFrutas) + " - " || ""), ""),
       transportadora: infoTractoMula.transportadora,
       precinto: infoTractoMula.precinto,
       trailer: infoTractoMula.trailer,
