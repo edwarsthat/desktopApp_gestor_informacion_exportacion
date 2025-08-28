@@ -45,46 +45,55 @@ export const crear_request_guardar = (formState): FormState => {
 
 export const impresion_etiquetas = (data): etiquetaType[][] => {
   const cantidad = Math.ceil(Number(data.canastillas) / 40);
-  let y = 40;
-  let x = 20;
+  let x = 40;
+  const sumador = 40;
   const etiquetas: etiquetaType[][] = [];
 
   for (let i = 0; i < cantidad; i++) {
+
+    console.log("cantidad de canastillas => ", i < cantidad - 1 ? '40' : String(Number(data.canastillas) % 40))
+    const estiva = i < cantidad - 1 ? '40' : String(Number(data.canastillas) % 40);
+    if(i % 2 === 0){
+      x = 40
+    } else {
+      x = 470
+    }
+
+    let y = 40;
+
     const etiqueta: etiquetaType[] = []
     etiqueta.push({
       x: String(x),
       y: String(y),
       fonttype: '1',
       rotation: '0',
-      xmul: '1',
-      ymul: '1',
+      xmul: '2',
+      ymul: '2',
       text: data.enf
     });
-    y += 40;
-    x = 40;
+    y += sumador;
     etiqueta.push({
       x: String(x),
       y: String(y),
       fonttype: '1',
       rotation: '0',
-      xmul: '1',
-      ymul: '1',
-      text: String(i + 1)
+      xmul: '2',
+      ymul: '2',
+      text: "ESTIBA " + String(i + 1)
     });
-    y += 40;
-    x = 20;
+    y += sumador;
     etiqueta.push({
       x: String(x),
       y: String(y),
       fonttype: '1',
       rotation: '0',
-      xmul: '1',
-      ymul: '1',
-      text: i === cantidad - 1 ? '40' : String(Number(data.canastillas) % 40)
+      xmul: '2',
+      ymul: '2',
+      text: estiva + " CANASTILLAS"
     });
-    y += 40;
+    // y += 40;
 
-   etiquetas.push(etiqueta);
+    etiquetas.push(etiqueta);
   }
   return etiquetas;
 }
