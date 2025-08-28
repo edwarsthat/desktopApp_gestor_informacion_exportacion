@@ -44,15 +44,15 @@ export const labels = {
 };
 
 
-export const sumarDatos = (datos: FormState, lote: datosPredioType,  tiposFruta2: tiposFrutasType[]): object => {
+export const sumarDatos = (datos: FormState, lote: datosPredioType, tipoFrutas:tiposFrutasType[]): Record<string, number> => {
     let mult;
-    const tipoFruta = tiposFruta2.find(item => item.tipoFruta === lote.tipoFruta);
+    const tipoFruta = tipoFrutas.find(item => item._id === lote.tipoFruta);
     if (tipoFruta) {
         mult = tipoFruta.valorPromedio;
     } else {
         mult = 1;
     }
-    const salida = {
+    const salida: Record<string, number> = {
         descarteGeneral: 0,
         pareja: 0,
         balin: 0,
@@ -61,9 +61,8 @@ export const sumarDatos = (datos: FormState, lote: datosPredioType,  tiposFruta2
         suelo: 0,
         frutaNacional: 0,
     };
-    ;
     Object.keys(datos).forEach(item => {
-        salida[item] = (Number(datos[item].canastillas) * mult) + Number(datos[item].kilos);
+        salida[item] = (Number(datos[item as keyof FormState].canastillas) * mult) + Number(datos[item as keyof FormState].kilos);
     });
     return salida;
 };

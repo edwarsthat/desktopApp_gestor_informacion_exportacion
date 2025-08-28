@@ -140,7 +140,7 @@ export default function CrearContenedor(): JSX.Element {
                 label={value}
                 onChange={handleArrayChange}
                 error={formErrors[key as keyof FormStateType]}
-                data={calidad.map((item) => ({ _id: item._id, name: item.descripcion }))}
+                data={calidad.map((item) => ({ _id: item._id, name: item.nombre }))}
               />
             )
           }

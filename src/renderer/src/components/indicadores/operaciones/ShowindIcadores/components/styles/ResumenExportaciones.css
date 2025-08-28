@@ -1,0 +1,630 @@
+/* Estilos para ResumenExportaciones */
+.resumen-exportaciones-container {
+    margin-bottom: 24px;
+    padding: 20px;
+    width: 100%;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 6rem;
+}
+
+.resumen-exportaciones-container h3 {
+    margin: 0 0 20px 0;
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.resumen-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.resumen-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    
+}
+
+.resumen-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.15);
+}
+
+.resumen-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--card-color);
+}
+
+.resumen-card.procesados {
+    --card-color: #3b82f6;
+}
+
+.resumen-card.exportados {
+    --card-color: #22c55e;
+}
+
+.resumen-card.eficiencia {
+    --card-color: #f59e0b;
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-color);
+    border-radius: 12px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.card-content {
+    flex: 1;
+}
+
+.card-content h4 {
+    margin: 0 0 8px 0;
+    color: #475569;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-content .number {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.card-content .percentage {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .resumen-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .resumen-card {
+        padding: 20px;
+        gap: 12px;
+    }
+    
+    .card-icon {
+        font-size: 2rem;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .card-content .number,
+    .card-content .percentage {
+        font-size: 1.5rem;
+    }
+}
+
+/* Animaciones */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.resumen-card {
+    animation: slideInUp 0.6s ease-out;
+}
+
+.resumen-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.resumen-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+/* Estilos para la estructura de árbol */
+.tree-structure {
+    margin-top: 30px;
+    padding: 15px 0;
+}
+
+.tree-level {
+    position: relative;
+    margin-bottom: 12px;
+}
+
+.tree-node {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+}
+
+.tree-connector {
+    position: relative;
+    width: 30px;
+    min-height: 60px;
+    flex-shrink: 0;
+    margin-right: 15px;
+}
+
+/* Líneas del árbol */
+.tree-line {
+    position: absolute;
+    background: #cbd5e1;
+    border-radius: 2px;
+}
+
+.tree-branch {
+    position: absolute;
+    background: #cbd5e1;
+    border-radius: 2px;
+}
+
+/* Nivel 1 - Tipo de Fruta */
+.level-1 .tree-line {
+    width: 3px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+}
+
+.level-1 .tree-content {
+    flex: 1;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 10px;
+    border-left: 3px solid #3b82f6;
+    box-shadow: 0 3px 5px -1px rgba(59, 130, 246, 0.1);
+}
+
+.tree-title.nivel-1 {
+    color: #1e40af;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Nivel 2 - Calidad */
+.level-2 {
+    margin-left: 30px;
+    margin-top: 15px;
+}
+
+.level-2 .tree-line {
+    width: 2px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: linear-gradient(180deg, #22c55e, #16a34a);
+}
+
+.level-2 .tree-branch {
+    width: 15px;
+    height: 2px;
+    left: 0;
+    top: 20px;
+    background: #22c55e;
+}
+
+.level-2 .tree-content {
+    flex: 1;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-radius: 8px;
+    border-left: 2px solid #22c55e;
+    box-shadow: 0 2px 4px -1px rgba(34, 197, 94, 0.1);
+}
+
+.tree-title.nivel-2 {
+    color: #166534;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Nivel 3 - Calibre */
+.level-3 {
+    margin-left: 30px;
+    margin-top: 12px;
+}
+
+.level-3 .tree-line {
+    width: 2px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: linear-gradient(180deg, #f59e0b, #d97706);
+}
+
+.level-3 .tree-branch {
+    width: 12px;
+    height: 2px;
+    left: 0;
+    top: 15px;
+    background: #f59e0b;
+}
+
+.level-3 .tree-content {
+    flex: 1;
+    padding: 8px 14px;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-radius: 6px;
+    border-left: 2px solid #f59e0b;
+    box-shadow: 0 1px 3px -1px rgba(245, 158, 11, 0.1);
+}
+
+.tree-title.nivel-3 {
+    color: #92400e;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0 0 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Iconos del árbol */
+.tree-icon {
+    font-size: 1em;
+    opacity: 0.8;
+}
+
+/* Tarjetas en diferentes niveles */
+.resumen-cards.nivel-1 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.resumen-cards.nivel-2 {
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+.resumen-cards.nivel-3 {
+    grid-template-columns: 1fr;
+    gap: 6px;
+}
+
+/* Ajustar el tamaño de las tarjetas por nivel */
+.resumen-card.nivel-1 {
+    padding: 14px;
+    border-radius: 8px;
+    transform: scale(0.9);
+}
+
+.resumen-card.nivel-2 {
+    padding: 12px;
+    border-radius: 6px;
+    transform: scale(0.85);
+}
+
+.resumen-card.nivel-3 {
+    padding: 10px;
+    border-radius: 5px;
+    transform: scale(0.8);
+}
+
+/* Ajustar tamaños de iconos y texto en tarjetas compactas */
+.resumen-card.nivel-1 .card-icon {
+    font-size: 1.8rem;
+    width: 45px;
+    height: 45px;
+}
+
+.resumen-card.nivel-2 .card-icon {
+    font-size: 1.6rem;
+    width: 40px;
+    height: 40px;
+}
+
+.resumen-card.nivel-3 .card-icon {
+    font-size: 1.4rem;
+    width: 35px;
+    height: 35px;
+}
+
+.resumen-card.nivel-1 .card-content .number {
+    font-size: 1.4rem;
+}
+
+.resumen-card.nivel-2 .card-content .number {
+    font-size: 1.2rem;
+}
+
+.resumen-card.nivel-3 .card-content .number {
+    font-size: 1.1rem;
+}
+
+.resumen-card.nivel-1 .card-content h4,
+.resumen-card.nivel-2 .card-content h4,
+.resumen-card.nivel-3 .card-content h4 {
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+}
+
+/* Conectores entre niveles */
+.tree-children {
+    position: relative;
+    margin-top: 10px;
+}
+
+.tree-children::before {
+    content: '';
+    position: absolute;
+    left: -45px;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background: #cbd5e1;
+    opacity: 0.4;
+}
+
+/* Efectos hover para la estructura del árbol */
+.tree-content:hover {
+    transform: translateX(3px);
+    transition: transform 0.2s ease;
+}
+
+.level-1 .tree-content:hover {
+    box-shadow: 0 4px 12px -2px rgba(59, 130, 246, 0.2);
+}
+
+.level-2 .tree-content:hover {
+    box-shadow: 0 3px 10px -2px rgba(34, 197, 94, 0.2);
+}
+
+.level-3 .tree-content:hover {
+    box-shadow: 0 2px 8px -2px rgba(245, 158, 11, 0.2);
+}
+
+/* Responsive para la estructura del árbol */
+@media (max-width: 768px) {
+    .tree-connector {
+        width: 25px;
+        margin-right: 12px;
+    }
+    
+    .level-2 {
+        margin-left: 25px;
+    }
+    
+    .level-3 {
+        margin-left: 25px;
+    }
+    
+    .tree-title.nivel-1 {
+        font-size: 1rem;
+    }
+    
+    .tree-title.nivel-2 {
+        font-size: 0.95rem;
+    }
+    
+    .tree-title.nivel-3 {
+        font-size: 0.85rem;
+    }
+    
+    .tree-content {
+        padding: 8px 12px !important;
+    }
+    
+    .resumen-card.nivel-1,
+    .resumen-card.nivel-2,
+    .resumen-card.nivel-3 {
+        padding: 8px !important;
+        transform: scale(0.95) !important;
+    }
+    
+    .resumen-card .card-icon {
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 1.2rem !important;
+    }
+    
+    .resumen-card .card-content .number {
+        font-size: 1rem !important;
+    }
+}
+
+/* Estilos para estructura JSON compacta */
+.tree-structure-json {
+    margin-top: 25px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    color: #343a40;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 6rem;
+}
+
+.json-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.json-fruta-group {
+    flex: 1;
+    min-width: 350px;
+    max-width: 48%;
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.json-level {
+    margin-bottom: 3px;
+}
+
+.json-level-1 {
+    margin-left: 0;
+}
+
+.json-level-2 {
+    margin-left: 20px;
+}
+
+.json-level-3 {
+    margin-left: 40px;
+}
+
+.json-line {
+    display: flex;
+    align-items: center;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.json-line:hover {
+    background: rgba(0, 123, 255, 0.05);
+}
+
+/* Iconos en la estructura JSON */
+.json-icon {
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+/* Claves del JSON con colores por nivel */
+.json-level-1 .json-key {
+    color: #0056b3;
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+.json-level-2 .json-key {
+    color: #28a745;
+    font-weight: 500;
+    margin-right: 6px;
+}
+
+.json-level-3 .json-key {
+    color: #fd7e14;
+    font-weight: 500;
+    margin-right: 6px;
+}
+
+/* Valores del JSON */
+.json-value {
+    color: #6f42c1;
+    font-weight: 700;
+    margin-left: auto;
+    background: rgba(111, 66, 193, 0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+/* Conectores visuales tipo JSON */
+.json-level-1::before {
+    content: '🔸';
+    color: #0056b3;
+    margin-right: 6px;
+    font-size: 12px;
+}
+
+.json-level-2::before {
+    content: '├─';
+    color: #28a745;
+    margin-right: 4px;
+    font-family: monospace;
+}
+
+.json-level-3::before {
+    content: '└─';
+    color: #fd7e14;
+    margin-right: 4px;
+    font-family: monospace;
+}
+
+/* Responsive para JSON */
+@media (max-width: 768px) {
+    .tree-structure-json {
+        padding: 15px;
+        font-size: 12px;
+    }
+    
+    .json-container {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .json-fruta-group {
+        min-width: auto;
+        max-width: 100%;
+        padding: 12px;
+    }
+    
+    .json-level-2 {
+        margin-left: 15px;
+    }
+    
+    .json-level-3 {
+        margin-left: 30px;
+    }
+    
+    .json-line {
+        padding: 3px 4px;
+        font-size: 11px;
+    }
+    
+    .json-value {
+        font-size: 10px;
+        padding: 1px 4px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .json-fruta-group {
+        max-width: 100%;
+        min-width: 300px;
+    }
+}

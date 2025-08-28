@@ -78,6 +78,7 @@ import TransporteRegistroEntregaPrecinto from "../transporte/registros/entreguaP
 import RegistroIndicadorExportacionProceso from "../indicadores/operaciones/RegistroExportacionProceso/RegistroIndicadorExportacionProceso"
 import IngresoEf8 from "../inventarioYlogistica/ingresos/ingresoEF8/IngresoEf8"
 import RegistrosInventarioDescartes from "../inventarioYlogistica/historiales/historialRegistroinventarioDescarte/RegistrosInventarioDescartes"
+import ShowIndicadores from "../indicadores/operaciones/ShowindIcadores/ShowIndicadores"
 import { FrutaLoader } from "@renderer/loader/FrutaLoader"
 
 
@@ -305,7 +306,9 @@ export default function Ventana(props: propsType): JSX.Element {
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "686548e53a30d3a485152968" ? 'block' : 'none' }}>
                         {activas.includes('686548e53a30d3a485152968') && <RegistroIndicadorExportacionProceso />}
                     </div>
-
+                    <div className="componentContainer" style={{ display: props.pestañaActiva === "6793dfb319615dcbaf5b7a47" ? 'block' : 'none' }}>
+                        {activas.includes('6793dfb319615dcbaf5b7a47') && <ShowIndicadores />}
+                    </div>
                     {/* !Comercial */}
                     {/* precios */}
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "67af75050344b3872a88c556" ? 'block' : 'none' }}>

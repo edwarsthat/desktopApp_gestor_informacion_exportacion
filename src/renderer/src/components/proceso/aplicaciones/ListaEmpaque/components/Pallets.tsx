@@ -280,7 +280,7 @@ export default function Pallets(): JSX.Element {
                                                         <option value=""></option>
                                                         {calidadSeleccionada.map(caItem => (
                                                             <option value={caItem._id} key={caItem._id + index}>
-                                                                {caItem.descripcion}
+                                                                {caItem.nombre}
                                                             </option>
                                                         ))}
                                                     </select>
@@ -351,7 +351,7 @@ export default function Pallets(): JSX.Element {
                                                     <option value=""></option>
                                                     {calidadSeleccionada.map(caItem => (
                                                         <option value={caItem._id} key={caItem._id + index}>
-                                                            {caItem.descripcion}
+                                                            {caItem.nombre}
                                                         </option>
                                                     ))}
                                                 </select>
