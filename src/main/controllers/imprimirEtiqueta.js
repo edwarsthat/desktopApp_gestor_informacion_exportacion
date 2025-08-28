@@ -8,7 +8,6 @@ if (mode === 'development') {
 
 }
 
-console.log(path)
 
 const edge = require('electron-edge-js')
 
@@ -178,23 +177,90 @@ try {
   console.log(error)
 }
 
+const label_setup = {
+  width: '102',
+  height: '24',
+  speed: '4',
+  density: '8',
+  sensor: '0',
+  vertical: '4',
+  offset: '0'
+}
+
+
 
 process.parentPort.on('message', async (data) => {
   try {
     const datos = data.data.data
-    console.log(datos)
-    console.log( typeof datos)
 
-    for(const etiqueta of datos){
-      console.log("Etiqueta:", etiqueta);
+    var label_variable = { quantity: '1', copy: '1' }
+
+
+
+    openport('TSC TE200', true)
+    setup(label_setup, true)
+    clearbuffer('', true)
+    let contador = 0;
+
+    for (const etiquetaRaw of datos) {
+      for (const item of etiquetaRaw) {
+        const etiqueta = toPrinterfontItem(item);
+        printerfont(etiqueta, true);
+      }
+      if (contador > 0) {
+        printlabel(label_variable, true)
+        clearbuffer('', true)
+        contador = 0;
+      } else {
+          contador += 1;
+      }
     }
 
+    printlabel(label_variable, true)
+    clearbuffer('', true)
+
     // Notifica al proceso padre (main)
+    console.log("Etiqueta impresa correctamente")
     process.send && process.send({ ok: true });
   } catch (err) {
     console.log(err)
     process.send && process.send({ error: err.message });
   } finally {
+    closeport('', true)
+
     process.exit(0); // se asegura que muera el hijo
   }
 })
+
+
+function toPrinterfontItem(raw) {
+  // Si viene como array [x, y, fonttype, rotation, xmul, ymul, text]
+  if (Array.isArray(raw)) {
+    const [x, y, fonttype, rotation, xmul, ymul, text] = raw;
+    return {
+      x: String(x ?? ''),
+      y: String(y ?? ''),
+      fonttype: String(fonttype ?? ''),
+      rotation: String(rotation ?? '0'),
+      xmul: String(xmul ?? '1'),
+      ymul: String(ymul ?? '1'),
+      text: String(text ?? ''),
+    };
+  }
+
+  // Si viene como objeto, forzamos strings y limpiamos espacios
+  if (raw && typeof raw === 'object') {
+    const norm = {
+      x: String(raw.x ?? '').trim(),
+      y: String(raw.y ?? '').trim(),
+      fonttype: String(raw.fonttype ?? '').trim(),
+      rotation: String(raw.rotation ?? '0').trim(),
+      xmul: String(raw.xmul ?? '1').trim(),
+      ymul: String(raw.ymul ?? '1').trim(),
+      text: String(raw.text ?? '').toString(),
+    };
+    return norm;
+  }
+
+  return null; // inválido
+}

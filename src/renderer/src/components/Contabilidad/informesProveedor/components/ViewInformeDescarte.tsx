@@ -17,6 +17,20 @@ export default function ViewInformeDescarte(props: propsType): JSX.Element {
 
     return (
         <>
+            <tr>
+                <td>Fruta nacional</td>
+                <td>
+                    {(props.loteSeleccionado.frutaNacional ?? 0).toFixed(2)} Kg
+                </td>
+                <td>{obtenerPorcentage(
+                    (props.loteSeleccionado.frutaNacional ?? 0),
+                    props.loteSeleccionado.kilos ?? 1).toFixed(2)} %
+                </td>
+                <MostrarPrecios
+                    loteSeleccionado={props.loteSeleccionado}
+                    tipoPrecio="frutaNacional"
+                    kilosFruta={(props.loteSeleccionado.frutaNacional ?? 0)} />
+            </tr>
             {Object.entries(clasificacionCalidad).map(([key, value]) => {
                 if (key === 'fecha') {
                     return null
@@ -28,23 +42,23 @@ export default function ViewInformeDescarte(props: propsType): JSX.Element {
                                 {(
                                     (value as number) *
                                     ((props.loteSeleccionado.descarteLavado?.descarteGeneral ?? 0) +
-                                    (props.loteSeleccionado.descarteEncerado?.suelo ?? 0) +
+                                        (props.loteSeleccionado.descarteEncerado?.suelo ?? 0) +
                                         (props.loteSeleccionado.descarteEncerado?.descarteGeneral ?? 0) +
                                         ((props.loteSeleccionado.deshidratacion === 0 ? 0 : (props.loteSeleccionado.deshidratacion / 100)) * (props.loteSeleccionado.kilos)))
 
                                 ).toFixed(2)} Kg
                             </td>
                             <td>
-                            {obtenerPorcentage(
-                        (
-                            (value as number) *
-                            ((props.loteSeleccionado.descarteLavado?.descarteGeneral ?? 0) +
-                            (props.loteSeleccionado.descarteEncerado?.suelo ?? 0) +
-                                (props.loteSeleccionado.descarteEncerado?.descarteGeneral ?? 0) +
-                                ((props.loteSeleccionado.deshidratacion === 0 ? 0 : (props.loteSeleccionado.deshidratacion / 100)) * (props.loteSeleccionado.kilos)))
-                        ),
-                        (props.loteSeleccionado.kilos ?? 1)
-                    ).toFixed(2)}%
+                                {obtenerPorcentage(
+                                    (
+                                        (value as number) *
+                                        ((props.loteSeleccionado.descarteLavado?.descarteGeneral ?? 0) +
+                                            (props.loteSeleccionado.descarteEncerado?.suelo ?? 0) +
+                                            (props.loteSeleccionado.descarteEncerado?.descarteGeneral ?? 0) +
+                                            ((props.loteSeleccionado.deshidratacion === 0 ? 0 : (props.loteSeleccionado.deshidratacion / 100)) * (props.loteSeleccionado.kilos)))
+                                    ),
+                                    (props.loteSeleccionado.kilos ?? 1)
+                                ).toFixed(2)}%
                             </td>
                             <MostrarPrecios
                                 loteSeleccionado={props.loteSeleccionado}
@@ -52,7 +66,7 @@ export default function ViewInformeDescarte(props: propsType): JSX.Element {
                                 kilosFruta={
                                     (value as number) *
                                     ((props.loteSeleccionado.descarteLavado?.descarteGeneral ?? 0) +
-                                    (props.loteSeleccionado.descarteEncerado?.suelo ?? 0) +
+                                        (props.loteSeleccionado.descarteEncerado?.suelo ?? 0) +
                                         (props.loteSeleccionado.descarteEncerado?.descarteGeneral ?? 0) +
                                         ((props.loteSeleccionado.deshidratacion === 0 ? 0 : (props.loteSeleccionado.deshidratacion / 100)) * (props.loteSeleccionado.kilos)))} />
                         </tr>
@@ -177,20 +191,7 @@ export default function ViewInformeDescarte(props: propsType): JSX.Element {
                 }).format(0)}
                 </td>
             </tr>
-            <tr>
-                <td>Fruta nacional</td>
-                <td>
-                    {(props.loteSeleccionado.frutaNacional ?? 0).toFixed(2)} Kg
-                </td>
-                <td>{obtenerPorcentage(
-                    (props.loteSeleccionado.frutaNacional ?? 0),
-                    props.loteSeleccionado.kilos ?? 1).toFixed(2)} %
-                </td>
-                <MostrarPrecios
-                    loteSeleccionado={props.loteSeleccionado}
-                    tipoPrecio="frutaNacional"
-                    kilosFruta={(props.loteSeleccionado.frutaNacional ?? 0)} />
-            </tr>
+
             <tr style={{ height: 30 }}>
                 <td>Total descarte</td>
                 <td>
