@@ -2,6 +2,8 @@
 import { useContext, useEffect, useState } from "react"
 import { contenedoresContext, contenedorSeleccionadoContext } from "../ProcesoListaEmpaque"
 import { obtenerResumenPredios } from "@renderer/functions/resumenContenedores";
+import { nombreTipoFruta2 } from "@renderer/utils/tipoFrutas";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 
 
 type PredioDatosType = {
@@ -30,6 +32,7 @@ type calibreType = {
 export default function ListaEmpaquePredios(): JSX.Element {
     const contenedores = useContext(contenedoresContext)
     const contenedorID = useContext(contenedorSeleccionadoContext)
+    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
     const [soloHoy, setSoloHoy] = useState<boolean>(false)
     const [predios, setPredios] = useState<PredioDatosType>()
     const [filtro, setFiltro] = useState<string>('')
@@ -104,7 +107,7 @@ export default function ListaEmpaquePredios(): JSX.Element {
                                                     <td>{Object.entries(lote.cont).map(([key, value]) => (
                                                         <div key={key}>
                                                             <div>{value.numero}: {value.cajas} Cajas - {value.kilos}Kg</div>
-                                                            <div>{lote.tipoFruta}</div>
+                                                            <div>{nombreTipoFruta2(lote.tipoFruta, tiposFruta)}</div>
                                                         </div>
                                                     ))}</td>
                                                 </tr>
@@ -126,7 +129,7 @@ export default function ListaEmpaquePredios(): JSX.Element {
                                                 <td>{Object.entries(lote.calibres).map(([key, value]) => (
                                                     <div key={key}>
                                                         <div>{key}: {value.cajas} Cajas - {value.kilos}Kg</div>
-                                                        <div>{lote.tipoFruta}</div>
+                                                        <div>{nombreTipoFruta2(lote.tipoFruta, tiposFruta)}</div>
                                                     </div>
                                                 ))}</td>
                                             </tr>)

@@ -3,6 +3,8 @@
 import { useContext, useEffect, useState } from "react"
 import { contenedoresContext, contenedorSeleccionadoContext } from "../ProcesoListaEmpaque"
 import { obtenerResumen, resultadoObtenerresumenContenedores } from "@renderer/functions/resumenContenedores";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
+import { nombreTipoFruta2, tipoCalidad } from "@renderer/utils/tipoFrutas";
 
 
 
@@ -10,6 +12,7 @@ import { obtenerResumen, resultadoObtenerresumenContenedores } from "@renderer/f
 export default function Resumen(): JSX.Element {
     const contenedores = useContext(contenedoresContext)
     const contenedorID = useContext(contenedorSeleccionadoContext)
+    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta)
 
     const [resumen, setResumen] = useState<resultadoObtenerresumenContenedores>();
     const [soloHoy, setSoloHoy] = useState<string>('')
@@ -96,7 +99,7 @@ export default function Resumen(): JSX.Element {
             <section>
                 {resumen && Object.keys(resumen).map(tipoFruta => (
                     <div key={tipoFruta}>
-                        <h2>{tipoFruta}</h2>
+                        <h2>{nombreTipoFruta2(tipoFruta, tiposFrutas)}</h2>
                         <hr />
                         <div className="table-container">
                             <table className="table-main" >
@@ -113,7 +116,7 @@ export default function Resumen(): JSX.Element {
                                     <tbody>
                                         {Object.entries(resumen[tipoFruta].calidad).map(([calidad, value], index) => (
                                             <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={calidad}>
-                                                <td>{calidad}</td>
+                                                <td>{tipoCalidad(calidad, tiposFrutas)}</td>
                                                 {verKilos &&
                                                     <td>{value.kilos.toLocaleString('es-CO')} Kg</td>}
                                                 {verCajas &&

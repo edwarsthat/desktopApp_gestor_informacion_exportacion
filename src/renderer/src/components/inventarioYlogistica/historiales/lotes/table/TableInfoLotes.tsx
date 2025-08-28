@@ -155,7 +155,7 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                     else {
                       return (
                         <td key={lote + item}>
-                          {typeof lote[item] === 'number' ? lote[item].toFixed(2) : lote[item]}
+                          {typeof lote[item] === 'number' ? lote[item]?.toFixed(2) || 0 : lote[item] || "N/A"}
                         </td>
                       )
                     }
