@@ -98,7 +98,9 @@ export default function ShowIndicadores(): JSX.Element {
                     dataExcel = arreglar_datos_excel_exportaciones(exportRef.current, filtrosTipoFrutaRef.current);
                     break;
                 case 'rendimiento-predios':
-                    dataExcel = arreglar_datos_excel_eficienciaPredios(totalesLotesRef.current, selectFiltroExportacionRef.current, filtrosCalibreRef.current);
+                    dataExcel = arreglar_datos_excel_eficienciaPredios(
+                        // totalesLotesRef.current, selectFiltroExportacionRef.current, filtrosCalibreRef.current
+                    );
                     console.log("dataExcel", dataExcel)
                     break;
             }

@@ -7,9 +7,11 @@ import { formInit, formKeyValue, formSchema, FormType } from "./validations/vali
 import FormInput from "@renderer/components/UI/components/Forminput";
 import FormSelect from "@renderer/components/UI/components/FormSelect";
 import { tiposFrutasType } from "@renderer/types/tiposFrutas";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 export default function IngresoVolanteCalidad(): JSX.Element {
     const { messageModal, setLoading, loading } = useAppContext();
-    const { obtenerTipoFruta2, tiposFruta2, obtenerOperarios, operarios } = useGetSysData({});
+    const tipoFrutas = useTipoFrutaStore(state => state.tiposFruta)
+    const { obtenerOperarios, operarios } = useGetSysData({});
     const { formState, handleChange, formErrors, validateForm, resetForm } = useForm<FormType>(formInit)
     const [frutaSeleccionada, setFrutaSeleccionada] = useState<tiposFrutasType | null>(null);
 
@@ -18,7 +20,6 @@ export default function IngresoVolanteCalidad(): JSX.Element {
             try {
                 setLoading(true);
                 await obtenerOperarios();
-                await obtenerTipoFruta2();
             } catch (err) {
                 if (err instanceof Error) {
                     messageModal("error", err.message);
@@ -84,11 +85,11 @@ export default function IngresoVolanteCalidad(): JSX.Element {
                                 label="Tipo de fruta"
                                 onChange={(e):void => {
                                     handleChange(e);
-                                    const selectedFruta = tiposFruta2.find(item => item._id === e.target.value);
+                                    const selectedFruta = tipoFrutas.find(item => item._id === e.target.value);
                                     setFrutaSeleccionada(selectedFruta || null);
                                 }}
                                 error={formErrors.tipoFruta}
-                                data={tiposFruta2.map((item) => ({ _id: item._id, name: item.tipoFruta }))}
+                                data={tipoFrutas.map((item) => ({ _id: item._id, name: item.tipoFruta }))}
                             />
                         )
                     } else if(key === "calibre") {

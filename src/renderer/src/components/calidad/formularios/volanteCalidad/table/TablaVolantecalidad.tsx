@@ -3,14 +3,14 @@
 import { format } from "date-fns"
 import { registrosType } from "../type/type"
 import { es } from 'date-fns/locale';
-import { tiposFrutasType } from "@renderer/types/tiposFrutas";
 import { nombreTipoFruta2 } from "@renderer/utils/tipoFrutas";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 
 type propsType = {
     data: registrosType[]
-    tipoFruta2: tiposFrutasType[]
 }
 export default function TablaVolantecalidad(props: propsType): JSX.Element {
+    const tipoFrutas = useTipoFrutaStore(state => state.tiposFruta)
     const headers = ["Nombre", "Apellido", "Tipo fruta", "Unidades revisadas", "Numero de defectos", "Calibre", "Fecha"]
     return (
         <div className="table-container">
@@ -32,7 +32,7 @@ export default function TablaVolantecalidad(props: propsType): JSX.Element {
                                 {item.operario.apellido}
                             </td>
                             <td>
-                                {nombreTipoFruta2(item.tipoFruta, props.tipoFruta2)}
+                                {nombreTipoFruta2(item.tipoFruta, tipoFrutas)}
                             </td>
                             <td>
                                 {item.unidades}

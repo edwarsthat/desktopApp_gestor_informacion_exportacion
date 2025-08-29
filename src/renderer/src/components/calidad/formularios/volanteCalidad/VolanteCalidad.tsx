@@ -14,7 +14,7 @@ import { useFiltroValue } from "@renderer/hooks/useFiltro";
 
 export default function VolanteCalidad(): JSX.Element {
     const { messageModal, setLoading } = useAppContext()
-    const { obtenerOperarios, operarios, tiposFruta2, obtenerTipoFruta2 } = useGetSysData({});
+    const { obtenerOperarios, operarios } = useGetSysData({});
     const { setCurrentFilters, currentFilters } = useFiltroValue();
 
     const [data, setData] = useState<registrosType[]>([])
@@ -26,7 +26,6 @@ export default function VolanteCalidad(): JSX.Element {
             try {
                 setLoading(true);
                 await obtenerOperarios();
-                await obtenerTipoFruta2();
             } catch (err) {
                 if (err instanceof Error) {
                     messageModal("error", err.message);
@@ -48,7 +47,6 @@ export default function VolanteCalidad(): JSX.Element {
                 }
             }
             const response = await window.api.server2(request);
-            console.log("response", response)
             if (response.status !== 200) {
                 throw new Error(response.message)
             }
@@ -79,7 +77,7 @@ export default function VolanteCalidad(): JSX.Element {
             <Filtros
                 showFechaInicio={true}
                 showFechaFin={true}
-                showTipoFruta={true}
+                showTipoFruta2={true}
                 showButton={true}
                 findFunction={obtenerDatos}
                 ggnId="volanteCalidad"
@@ -117,7 +115,7 @@ export default function VolanteCalidad(): JSX.Element {
                 <div >
                     <TableResumenVolanteCalidad data={data} />
                 </div> : <div>
-                    <TablaVolantecalidad data={data} tipoFruta2={tiposFruta2} />
+                    <TablaVolantecalidad data={data} />
                 </div>
             }
 

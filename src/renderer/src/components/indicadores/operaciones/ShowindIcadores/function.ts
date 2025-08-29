@@ -4,8 +4,8 @@ import { volanteCalidadType } from "@renderer/types/formulariosCalidad";
 import { indicadoresType, KilosExportacionSchema } from "@renderer/types/indicadoresType";
 import { lotesType } from "@renderer/types/lotesType";
 import { getISOWeek } from "date-fns";
-import { filtroExportacionesSelectType, filtrosExportacionesType, IndicadoresKilosProcesadosExcelView, IndicadorKilosProcesados, itemExportacionExcelType, itemExportacionType, itemLotesExcelType, totalesLotesType } from "./validations/types";
-import { porcentajeCalibreLotes } from "./services/procesarData";
+import {  filtrosExportacionesType, IndicadoresKilosProcesadosExcelView, IndicadorKilosProcesados, itemExportacionExcelType, itemExportacionType, itemLotesExcelType } from "./validations/types";
+// import { porcentajeCalibreLotes } from "./services/procesarData";
 
 export const eficiencia_operativa = (
     kilos_procesados: number,
@@ -505,103 +505,105 @@ export const arreglar_datos_excel_exportaciones = (data: itemExportacionType[], 
     }
     return out;
 };
-export const arreglar_datos_excel_eficienciaPredios = (data: totalesLotesType, selectFiltroExportacion: filtroExportacionesSelectType, filtrosCalibre: string[]): itemLotesExcelType[] => {
-    let outArr: itemLotesExcelType[] = [];
-    console.log("selectFiltroExportacion", selectFiltroExportacion)
-    if (selectFiltroExportacion.calidad) {
-        outArr = [
-            {
-                Totales: "kilos Ingresado",
-                Kilos: Number(data.totalKilosIngreso),
-                Porcentage: 1
-            },
-            {
-                Totales: "Procesados",
-                Kilos: Number(data.totalKilosProcesados),
-                Porcentage: data.totalKilosProcesados > 0 ? Number(data.totalKilosProcesados / data.totalKilosIngreso) : 0
-            },
-            {
-                Totales: "Calidad 1",
-                Kilos: Number(data.totalCalidad1),
-                Porcentage: data.totalCalidad1 > 0 ? Number(data.totalCalidad1 / data.totalKilosProcesados) : 0
-            },
-            {
-                Totales: "Calidad 1.5",
-                Kilos: Number(data.totalCalidad15),
-                Porcentage: data.totalCalidad15 > 0 ? Number(data.totalCalidad15 / data.totalKilosProcesados) : 0
-            },
-            {
-                Totales: "Calidad 2",
-                Kilos: Number(data.totalCalidad2),
-                Porcentage: data.totalCalidad2 > 0 ? Number(data.totalCalidad2 / data.totalKilosProcesados) : 0
-            },
-            {
-                Totales: "Descartes",
-                Kilos: Number(data.totalKilosDescarte),
-                Porcentage: data.totalKilosDescarte > 0 ? (data.totalKilosDescarte / data.totalKilosProcesados) : 0
-            },
-            {
-                Totales: "Deshidratacion",
-                Kilos: data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2),
-                Porcentage: (data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) > 0 ? ((data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) / data.totalKilosProcesados) : 0
-            },
-        ]
-    } else if (selectFiltroExportacion.calibre) {
-        outArr = [
-            {
-                Totales: "kilos Ingresado",
-                Kilos: Number(data.totalKilosIngreso),
-                Porcentage: 1
-            },
-            {
-                Totales: "Procesados",
-                Kilos: Number(data.totalKilosProcesados),
-                Porcentage: data.totalKilosProcesados > 0 ? Number(data.totalKilosProcesados / data.totalKilosIngreso) : 0
-            },
-        ]
+export const arreglar_datos_excel_eficienciaPredios = (
+    // data: totalesLotesType, selectFiltroExportacion: filtroExportacionesSelectType, filtrosCalibre: string[]
+): itemLotesExcelType[] => {
+    const outArr: itemLotesExcelType[] = [];
+    // console.log("selectFiltroExportacion", selectFiltroExportacion)
+    // if (selectFiltroExportacion.calidad) {
+    //     outArr = [
+    //         {
+    //             Totales: "kilos Ingresado",
+    //             Kilos: Number(data.totalKilosIngreso),
+    //             Porcentage: 1
+    //         },
+    //         {
+    //             Totales: "Procesados",
+    //             Kilos: Number(data.totalKilosProcesados),
+    //             Porcentage: data.totalKilosProcesados > 0 ? Number(data.totalKilosProcesados / data.totalKilosIngreso) : 0
+    //         },
+    //         {
+    //             Totales: "Calidad 1",
+    //             Kilos: Number(data.totalCalidad1),
+    //             Porcentage: data.totalCalidad1 > 0 ? Number(data.totalCalidad1 / data.totalKilosProcesados) : 0
+    //         },
+    //         {
+    //             Totales: "Calidad 1.5",
+    //             Kilos: Number(data.totalCalidad15),
+    //             Porcentage: data.totalCalidad15 > 0 ? Number(data.totalCalidad15 / data.totalKilosProcesados) : 0
+    //         },
+    //         {
+    //             Totales: "Calidad 2",
+    //             Kilos: Number(data.totalCalidad2),
+    //             Porcentage: data.totalCalidad2 > 0 ? Number(data.totalCalidad2 / data.totalKilosProcesados) : 0
+    //         },
+    //         {
+    //             Totales: "Descartes",
+    //             Kilos: Number(data.totalKilosDescarte),
+    //             Porcentage: data.totalKilosDescarte > 0 ? (data.totalKilosDescarte / data.totalKilosProcesados) : 0
+    //         },
+    //         {
+    //             Totales: "Deshidratacion",
+    //             Kilos: data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2),
+    //             Porcentage: (data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) > 0 ? ((data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) / data.totalKilosProcesados) : 0
+    //         },
+    //     ]
+    // } else if (selectFiltroExportacion.calibre) {
+    //     outArr = [
+    //         {
+    //             Totales: "kilos Ingresado",
+    //             Kilos: Number(data.totalKilosIngreso),
+    //             Porcentage: 1
+    //         },
+    //         {
+    //             Totales: "Procesados",
+    //             Kilos: Number(data.totalKilosProcesados),
+    //             Porcentage: data.totalKilosProcesados > 0 ? Number(data.totalKilosProcesados / data.totalKilosIngreso) : 0
+    //         },
+    //     ]
 
-        filtrosCalibre.map((calibre) => (
-            outArr.push({
-                Totales: calibre,
-                Kilos: Number(data.calibresTotal[calibre]?.kilos || 0),
-                Porcentage: Number(porcentajeCalibreLotes(data, calibre).split('%')[0]) / 100
-            })
-        ))
+    //     filtrosCalibre.map((calibre) => (
+    //         outArr.push({
+    //             Totales: calibre,
+    //             Kilos: Number(data.calibresTotal[calibre]?.kilos || 0),
+    //             Porcentage: Number(porcentajeCalibreLotes(data, calibre).split('%')[0]) / 100
+    //         })
+    //     ))
 
-        outArr.push({
-            Totales: "Deshidratacion",
-            Kilos: data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2),
-            Porcentage: (data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) > 0 ? ((data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) / data.totalKilosProcesados) : 0
-        })
-    } else {
-        outArr = [
-            {
-                Totales: "kilos Ingresado",
-                Kilos: Number(data.totalKilosIngreso),
-                Porcentage: 1
-            },
-            {
-                Totales: "Procesados",
-                Kilos: Number(data.totalKilosProcesados),
-                Porcentage: data.totalKilosProcesados > 0 ? Number(data.totalKilosProcesados / data.totalKilosIngreso) : 0
-            },
-            {
-                Totales: "Exportacion",
-                Kilos: Number(data.totalKilosExportacion),
-                Porcentage: data.totalKilosProcesados > 0 ? (data.totalKilosProcesados / data.totalKilosIngreso) : 0
-            },
-            {
-                Totales: "Descartes",
-                Kilos: Number(data.totalKilosDescarte),
-                Porcentage: data.totalKilosDescarte > 0 ? (data.totalKilosDescarte / data.totalKilosProcesados) : 0
-            },
-            {
-                Totales: "Deshidratacion",
-                Kilos: data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2),
-                Porcentage: (data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) > 0 ? ((data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) / data.totalKilosProcesados) : 0
-            },
-        ]
-    }
+    //     outArr.push({
+    //         Totales: "Deshidratacion",
+    //         Kilos: data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2),
+    //         Porcentage: (data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) > 0 ? ((data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) / data.totalKilosProcesados) : 0
+    //     })
+    // } else {
+    //     outArr = [
+    //         {
+    //             Totales: "kilos Ingresado",
+    //             Kilos: Number(data.totalKilosIngreso),
+    //             Porcentage: 1
+    //         },
+    //         {
+    //             Totales: "Procesados",
+    //             Kilos: Number(data.totalKilosProcesados),
+    //             Porcentage: data.totalKilosProcesados > 0 ? Number(data.totalKilosProcesados / data.totalKilosIngreso) : 0
+    //         },
+    //         {
+    //             Totales: "Exportacion",
+    //             Kilos: Number(data.totalKilosExportacion),
+    //             Porcentage: data.totalKilosProcesados > 0 ? (data.totalKilosProcesados / data.totalKilosIngreso) : 0
+    //         },
+    //         {
+    //             Totales: "Descartes",
+    //             Kilos: Number(data.totalKilosDescarte),
+    //             Porcentage: data.totalKilosDescarte > 0 ? (data.totalKilosDescarte / data.totalKilosProcesados) : 0
+    //         },
+    //         {
+    //             Totales: "Deshidratacion",
+    //             Kilos: data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2),
+    //             Porcentage: (data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) > 0 ? ((data.totalKilosProcesados - (data.totalKilosDescarte + data.totalCalidad1 + data.totalCalidad15 + data.totalCalidad2)) / data.totalKilosProcesados) : 0
+    //         },
+    //     ]
+    // }
     return outArr;
 }
 //exportaciones
