@@ -15,10 +15,10 @@ export default function TablaHistorialIngresoFruta(props: propsType): JSX.Elemen
     const headers = ["EF1", "Predio", "Numero de canastillas", "Kilos", "Fecha creación", "Fecha estimada de llegada", "Tipo de fruta", "GGN", "Observaciones", "Placa", "User", ""]
     const handleButton = (lote): void => {
         props.setLoteSeleccionado(lote)
-        if (!('documento' in lote)) {
-            props.setOpenModalEf8(true)
-        } else {
+        if (lote.enf.startsWith("EF1")) {
             props.setOpenModal(true)
+        } else {
+            props.setOpenModalEf8(true)
         }
     }
     return (
@@ -35,7 +35,7 @@ export default function TablaHistorialIngresoFruta(props: propsType): JSX.Elemen
                     {props.data.map((lote, index) => (
                         <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={lote._id} >
                             <>
-                                {typeof lote === 'object' && Object.hasOwnProperty.call(lote, "kilos") ? (
+                                {lote.enf.startsWith("EF1") ? (
                                     TABLE_COLUMNS_INGRESOS.ef1.map(col => (
                                         <td key={col.header + index}>{col.value(lote as lotesType)}</td>
                                     ))

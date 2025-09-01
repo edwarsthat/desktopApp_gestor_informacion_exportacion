@@ -69,14 +69,14 @@ export default function HistorialIngresoFruta(): JSX.Element {
 
       <ModalModificarLote
         obtenerData={obtenerData}
-        loteSeleccionado={loteSeleccionado}
+        loteSeleccionado={loteSeleccionado as lotesType | undefined}
         setOpenModal={setOpenModal}
         openModal={openModal}
       />
 
       <ModalModificarLoteEf8
         obtenerData={obtenerData}
-        loteSeleccionado={loteSeleccionado}
+        loteSeleccionado={loteSeleccionado as loteEF8Type | undefined}
         setOpenModal={setOpenModalEf8}
         openModal={openModalEf8}
       />

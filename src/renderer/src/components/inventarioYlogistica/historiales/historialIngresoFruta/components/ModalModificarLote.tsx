@@ -2,22 +2,22 @@
 import { useEffect } from "react";
 import { formInit, formInitType, formSchema } from "../validations/form";
 import useAppContext from "@renderer/hooks/useAppContext";
-import { request_guardar_cambios } from "../services/request";
-import { recordLotesType } from "@renderer/types/recorLotesType";
 import useGetSysData from "@renderer/hooks/useGetSysData";
 import useForm from "@renderer/hooks/useForm";
 import FormInput from "@renderer/components/UI/components/Forminput";
 import FormSelect from "@renderer/components/UI/components/FormSelect";
-import { loteEF8Type } from "@renderer/types/loteEf8";
+import { lotesType } from "@renderer/types/lotesType";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 
 type propsType = {
     setOpenModal: (e) => void
-    loteSeleccionado: recordLotesType | undefined | loteEF8Type
+    loteSeleccionado: lotesType | undefined
     obtenerData: () => void
     openModal: boolean
 }
 
 export default function ModalModificarLote(props: propsType): JSX.Element {
+    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta)
     const { messageModal, setLoading, loading } = useAppContext()
     const {
         formState,
@@ -31,15 +31,12 @@ export default function ModalModificarLote(props: propsType): JSX.Element {
     const {
         obtenerPredios,
         proveedores,
-        obtenerTipoFruta,
-        tiposFruta
     } = useGetSysData({})
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             try {
                 setLoading(true)
-                await obtenerTipoFruta()
                 await obtenerPredios()
             } catch (err) {
                 if (err instanceof Error)
@@ -53,17 +50,17 @@ export default function ModalModificarLote(props: propsType): JSX.Element {
     useEffect(() => {
         if (props.loteSeleccionado !== undefined) {
             const formData = { ...formState }
-            if ('documento' in props.loteSeleccionado) {
-                formData.enf = String(props.loteSeleccionado.documento.enf)
-                formData.predio = String(props.loteSeleccionado.documento.predio?._id)
-                formData.observaciones = String(props.loteSeleccionado.documento.observaciones)
-                formData.placa = String(props.loteSeleccionado.documento.placa)
-                formData.tipoFruta = String(props.loteSeleccionado.documento.tipoFruta)
-                formData.fecha_ingreso_inventario = String(props.loteSeleccionado.documento.fecha_ingreso_inventario)
-                formData.canastillas = String(props.loteSeleccionado.documento.canastillas)
-                formData.kilos = String(props.loteSeleccionado.documento.kilos)
-                formData.GGN = String(props.loteSeleccionado.documento.GGN)
-            } 
+            if (props.loteSeleccionado.enf.startsWith("EF1")) {
+                formData.enf = String(props.loteSeleccionado.enf)
+                formData.predio = String(props.loteSeleccionado.predio?._id)
+                formData.observaciones = String(props.loteSeleccionado.observaciones)
+                formData.placa = String(props.loteSeleccionado.placa)
+                formData.tipoFruta = String(props.loteSeleccionado.tipoFruta._id)
+                formData.fecha_ingreso_inventario = String(props.loteSeleccionado.fecha_ingreso_inventario)
+                formData.canastillas = String(props.loteSeleccionado.canastillas)
+                formData.kilos = String(props.loteSeleccionado.kilos)
+                formData.GGN = String(props.loteSeleccionado.GGN)
+            }
             fillForm(formData)
         }
     }, [props.loteSeleccionado])
@@ -75,8 +72,16 @@ export default function ModalModificarLote(props: propsType): JSX.Element {
             setLoading(true)
             const result = validateForm(formSchema)
             if (!result) return
-            const request = request_guardar_cambios(props.loteSeleccionado, formState)
+
+            const request = {
+                action: 'put_inventarios_historiales_ingresoFruta_modificar',
+                type: "loteEF1",
+                _id: props.loteSeleccionado?._id || '',
+                data: formState
+            }
+
             const response = await window.api.server2(request)
+            console.log(response)
 
             if (response.status !== 200)
                 throw new Error(response.message)
@@ -148,7 +153,7 @@ export default function ModalModificarLote(props: propsType): JSX.Element {
                         label="Tipo de fruta"
                         onChange={handleChange}
                         error={formErrors.tipoFruta}
-                        data={tiposFruta.map((item) => ({ _id: item, name: item }))}
+                        data={tiposFrutas.map((item) => ({ _id: item._id, name: item.tipoFruta }))}
                     />
                 </div>
                 <div className="form-field">

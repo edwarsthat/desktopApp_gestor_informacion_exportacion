@@ -11,7 +11,7 @@ import FormInput from "@renderer/components/UI/components/Forminput";
 
 export default function IngresoEf8(): JSX.Element {
     const { messageModal, setLoading, loading } = useAppContext()
-    const { obtenerPredios, proveedores, obtenerEf8, ef8, obtenerTipoFruta2, tiposFruta2 } = useGetSysData({});
+    const { obtenerPredios, proveedores, obtenerEf8, ef8, obtenerTipoFruta2, tiposFruta2 } = useGetSysData({proveedoresProp:"activos"});
     const { formState, handleChange, resetForm, formErrors, validateForm } = useForm<formType>(initialValues)
 
     useEffect(() => {

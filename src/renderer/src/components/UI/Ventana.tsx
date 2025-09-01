@@ -80,6 +80,7 @@ import IngresoEf8 from "../inventarioYlogistica/ingresos/ingresoEF8/IngresoEf8"
 import RegistrosInventarioDescartes from "../inventarioYlogistica/historiales/historialRegistroinventarioDescarte/RegistrosInventarioDescartes"
 import ShowIndicadores from "../indicadores/operaciones/ShowindIcadores/ShowIndicadores"
 import { FrutaLoader } from "@renderer/loader/FrutaLoader"
+import ModificarSistema from "../sistema/modificarSistema/ModificarSistema"
 
 
 type propsType = {
@@ -294,6 +295,9 @@ export default function Ventana(props: propsType): JSX.Element {
                     </div>
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "67ffddd658173c8d904ca83f" ? 'block' : 'none' }}>
                         {activas.includes('67ffddd658173c8d904ca83f') && <HabilitarInstancias />}
+                    </div>
+                    <div className="componentContainer" style={{ display: props.pestañaActiva === "68b306532348b244052a4305" ? 'block' : 'none' }}>
+                        {activas.includes('68b306532348b244052a4305') && <ModificarSistema />}
                     </div>
 
                     {/* indicadores */}

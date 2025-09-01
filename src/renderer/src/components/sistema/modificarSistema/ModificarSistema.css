@@ -1,0 +1,86 @@
+.modificar-sistema-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card-reiniciar-orden {
+    background-color: var(--color-fondo);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    max-width: 500px;
+}
+
+.card-reiniciar-orden:hover {
+    transform: translateY(-2px);
+    box-shadow: rgba(0, 0, 0, 0.32) 0px 6px 16px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-texto);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-description {
+    color: var(--color-texto);
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.btn-reiniciar-orden {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background-color: var(--color-Celifrut);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
+    min-width: 180px;
+}
+
+.btn-reiniciar-orden:hover {
+    background-color: var(--color-Celifrut-dark);
+    transform: translateY(-1px);
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 8px;
+}
+
+.btn-reiniciar-orden:active {
+    background-color: var(--color-Celifrut);
+    transform: translateY(0);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
+}
+
+.btn-reiniciar-orden:focus {
+    outline: 2px solid var(--color-Celifrut);
+    outline-offset: 2px;
+}
+
+/* Modo oscuro específico */
+@media (prefers-color-scheme: dark) {
+    .card-reiniciar-orden {
+        border-color: rgba(255, 255, 255, 0.15);
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .card-description {
+        opacity: 0.9;
+    }
+}

@@ -13,7 +13,7 @@ import useGetSysData from '@renderer/hooks/useGetSysData'
 
 export default function IngresoFruta(): JSX.Element {
   const { messageModal, setLoading, loading } = useAppContext()
-  const { obtenerTipoFruta2, tiposFruta2, obtenerEf1, ef1, proveedores, obtenerPredios } = useGetSysData({});
+  const { obtenerTipoFruta2, tiposFruta2, obtenerEf1, ef1, proveedores, obtenerPredios } = useGetSysData({ proveedoresProp: "activos"});
   const { formState, handleChange, resetForm, formErrors, validateForm } =
     useForm<formType>(initialValues)
 

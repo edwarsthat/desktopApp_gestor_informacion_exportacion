@@ -3,20 +3,21 @@
 import useAppContext from "@renderer/hooks/useAppContext"
 import useForm from "@renderer/hooks/useForm"
 import { loteEF8Type } from "@renderer/types/loteEf8"
-import { recordLotesType } from "@renderer/types/recorLotesType"
 import { formInitEF8, formLabelsEF8, formSchemaEF8, formTypeEF8 } from "../validations/form"
 import useGetSysData from "@renderer/hooks/useGetSysData"
 import { useEffect } from "react"
 import FormSelect from "@renderer/components/UI/components/FormSelect"
 import FormInput from "@renderer/components/UI/components/Forminput"
 import { formatearParaDatetimeLocal } from "@renderer/functions/fechas"
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
 type propsType = {
     setOpenModal: (e) => void
-    loteSeleccionado: recordLotesType | undefined | loteEF8Type
+    loteSeleccionado:  undefined | loteEF8Type
     obtenerData: () => void
     openModal: boolean
 }
 export default function ModalModificarLoteEf8({ setOpenModal, loteSeleccionado, obtenerData, openModal }: propsType): JSX.Element {
+    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta)
     const { messageModal, setLoading, loading } = useAppContext()
     const {
         formState,
@@ -30,15 +31,12 @@ export default function ModalModificarLoteEf8({ setOpenModal, loteSeleccionado, 
     const {
         obtenerPredios,
         proveedores,
-        obtenerTipoFruta2,
-        tiposFruta2
     } = useGetSysData({})
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             try {
                 setLoading(true)
-                await obtenerTipoFruta2()
                 await obtenerPredios()
             } catch (err) {
                 if (err instanceof Error)
@@ -52,7 +50,7 @@ export default function ModalModificarLoteEf8({ setOpenModal, loteSeleccionado, 
     useEffect(() => {
         if (loteSeleccionado !== undefined) {
             const formData = { ...formState }
-            if (!('documento' in loteSeleccionado)) {
+            if (loteSeleccionado.enf.startsWith("EF8")) {
                 formData.enf = String(loteSeleccionado.enf)
                 formData.predio = String(loteSeleccionado.predio?._id)
                 formData.observaciones = String(loteSeleccionado.observaciones)
@@ -120,7 +118,7 @@ export default function ModalModificarLoteEf8({ setOpenModal, loteSeleccionado, 
                                 error={formErrors[key as keyof formTypeEF8]}
                                 data={
                                     key === "tipoFruta" ? 
-                                        tiposFruta2.map((item) => ({ _id: item._id, name: item.tipoFruta })) : 
+                                        tiposFrutas.map((item) => ({ _id: item._id, name: item.tipoFruta })) : 
                                         proveedores.map((item) => ({ _id: item._id, name: item.PREDIO }))
                                 }
                             />

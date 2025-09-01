@@ -161,6 +161,7 @@ export function totalPrecios(lote: lotesType): number {
 
     const nacional = lote.frutaNacional ? lote.frutaNacional * (lote.precio?.frutaNacional ?? 0) : 0
 
+
     return (
         descarteEncerado +
         descarteLavado +
@@ -217,7 +218,8 @@ function precioExportacion(lote: lotesType): number {
 
     for (const item of Object.values(lote.exportacion)) {
         for (const [key, value] of Object.entries(item)) {
-            total += (lote.precio.exportacion[key] * value)
+            console.log("exportacion", key)
+            total += (lote.precio.exportacion[key] * value || 0)
         }
     }
     return total
