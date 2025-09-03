@@ -17,6 +17,7 @@ export type formType = {
     placa: string,
     fecha_estimada_llegada: string
     numeroPrecintos: string
+    numeroRemision: string
     observaciones: string
 }
 
@@ -32,6 +33,7 @@ export const initialValues: formType = {
     placa: "",
     fecha_estimada_llegada: "",
     numeroPrecintos: "",
+    numeroRemision: "",
     observaciones: ""
 }
 
@@ -47,6 +49,7 @@ export const labelsForms = {
     placa: "Placa",
     fecha_estimada_llegada: "Fecha estimada de llegada",
     numeroPrecintos: "Número de precintos",
+    numeroRemision: "Número de remisión",
 }
 
 
@@ -56,6 +59,7 @@ export const formSchema = z.object({
     GGN: z.string().min(1, "El GGN es obligatorio").transform(val => val === "true"),
     placa: z.string().min(1, "La placa es obligatoria"),
     numeroPrecintos: z.string().min(1, "El número de precintos es obligatorio"),
+    numeroRemision: z.string().min(1, "El número de remisión es obligatorio"),
 
     fecha_estimada_llegada: z.string()
         .min(1, "La fecha estimada de llegada es obligatoria")

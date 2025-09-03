@@ -53,7 +53,9 @@ export default function ViewInformeDatosGenerales(props: propsType): JSX.Element
             </div>
             <div>
                 <p>Cantidad Ingreso Kg: <span>{props.loteSeleccionado.kilos}</span></p>
+                <p>Cantidad Ingreso Canastillas: <span>{props.loteSeleccionado.canastillas}</span></p>
                 <p>Orden de compra N° <span>{props.loteSeleccionado.enf}</span></p>
+                <p>Remision de Campo #: <span>{props.loteSeleccionado?.numeroRemision || ''}</span></p>
             </div>
             <div>
                 <p>TRZ:

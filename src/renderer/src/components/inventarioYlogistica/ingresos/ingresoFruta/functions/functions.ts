@@ -5,6 +5,7 @@ interface FormState {
   predio: string
   promedio: number
   numeroPrecintos: string
+  numeroRemision: string
   canastillas: number
   kilos: string
   placa: string
@@ -33,6 +34,7 @@ export const crear_request_guardar = (formState): FormState => {
     predio: formState.nombrePredio,
     promedio: Number(formState.kilos) / Number(canastillas),
     numeroPrecintos: formState.numeroPrecintos,
+    numeroRemision: formState.numeroRemision,
     canastillas: canastillas,
     kilos: formState.kilos,
     placa: formState.placa,

@@ -10,6 +10,7 @@ export function obtenerPorcentage(dato: number, total: number): number {
 export function totalExportacion(lote: lotesType): number {
     let total = 0;
     if (!lote) return total;
+    if(!lote.exportacion) return total;
 
     for (const cont of Object.values(lote.exportacion)) {
         for (const key of Object.keys(cont)) {
@@ -215,7 +216,7 @@ export function total_precio_descarte(lote: lotesType): number {
 }
 function precioExportacion(lote: lotesType): number {
     let total = 0
-
+    if (!lote.exportacion) return total
     for (const item of Object.values(lote.exportacion)) {
         for (const [key, value] of Object.entries(item)) {
             console.log("exportacion", key)
