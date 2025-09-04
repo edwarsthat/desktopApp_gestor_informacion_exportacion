@@ -1,0 +1,330 @@
+/* Estilos para el componente CostosContenedoresFiltros */
+
+/* Contenedor principal */
+.costos-contenedores-filtros {
+  background-color: var(--color-card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--color-card-shadow);
+  padding: 24px;
+  margin: 16px;
+  border: 1px solid var(--color-input-border);
+}
+
+/* Sección de filtro */
+.filtro-section {
+  margin-bottom: 28px;
+}
+
+.filtro-section:last-child {
+  margin-bottom: 0;
+}
+
+.filtro-section h3 {
+  color: var(--color-title);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+.filtro-section hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, var(--color-Celifrut), transparent);
+  margin-bottom: 16px;
+}
+
+/* Contenedor de búsqueda por número de contenedor */
+.busqueda-contenedor-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.busqueda-contenedor-div1 {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.busqueda-contenedor-div1 input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 2px solid var(--color-input-border);
+  border-radius: 8px;
+  background-color: var(--color-input-bg);
+  color: var(--color-texto);
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.busqueda-contenedor-div1 input:focus {
+  outline: none;
+  border-color: var(--color-input-focus);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.busqueda-contenedor-div1 button {
+  background-color: var(--color-Celifrut);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  font-size: 18px;
+}
+
+.busqueda-contenedor-div1 button:hover {
+  background-color: var(--color-Celifrut-dark);
+}
+
+.busqueda-contenedor-div1 button:active {
+  transform: scale(0.95);
+  background-color: var(--color-Celifrut-brigth);
+}
+
+.busqueda-contenedor-div3 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.busqueda-contenedor-div3 button {
+  background-color: var(--color-ListaEmpaqueFondo);
+  color: var(--color-ListaEmpaqueTexto);
+  border: 1px solid var(--color-input-border);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  font-family: 'Roboto', sans-serif;
+}
+
+.busqueda-contenedor-div3 button:hover {
+  background-color: var(--color-fondo-hover);
+  transform: translateY(-1px);
+}
+
+.busqueda-contenedor-div3 button:active {
+  transform: scale(0.95);
+}
+
+/* Contenedor de búsqueda por fecha */
+.busqueda-fecha-container {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.busqueda-fecha-item {
+  flex: 1;
+  min-width: 200px;
+}
+
+.busqueda-fecha-item label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--color-subtitle);
+  font-weight: 500;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.busqueda-fecha-item input[type="date"] {
+  padding: 10px 12px;
+  border: 2px solid var(--color-input-border);
+  border-radius: 8px;
+  background-color: var(--color-input-bg);
+  color: var(--color-texto);
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.busqueda-fecha-item input[type="date"]:focus {
+  outline: none;
+  border-color: var(--color-input-focus);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* Contenedor de búsqueda por cliente */
+.busqueda-cliente-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.busqueda-cliente-select {
+  margin-bottom: 12px;
+}
+
+.busqueda-cliente-select select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid var(--color-input-border);
+  border-radius: 8px;
+  background-color: var(--color-input-bg);
+  color: var(--color-texto);
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  min-height: 120px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.busqueda-cliente-select select:focus {
+  outline: none;
+  border-color: var(--color-input-focus);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.busqueda-cliente-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.busqueda-cliente-tags button {
+  background-color: var(--color-ListaEmpaqueFondo);
+  color: var(--color-ListaEmpaqueTexto);
+  border: 1px solid var(--color-input-border);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  font-family: 'Roboto', sans-serif;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.busqueda-cliente-tags button:hover {
+  background-color: var(--color-fondo-hover);
+  transform: translateY(-1px);
+}
+
+.busqueda-cliente-tags button:active {
+  transform: scale(0.95);
+}
+
+/* Selector de tipo de fruta */
+.tipo-fruta-container select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid var(--color-input-border);
+  border-radius: 8px;
+  background-color: var(--color-input-bg);
+  color: var(--color-texto);
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.tipo-fruta-container select:focus {
+  outline: none;
+  border-color: var(--color-input-focus);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* Contenedor del botón de búsqueda */
+.buscar-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-input-border);
+}
+
+.buscar-button-container button {
+  background-color: var(--color-Celifrut);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(126, 186, 39, 0.3);
+  min-width: 140px;
+}
+
+.buscar-button-container button:hover {
+  background-color: var(--color-Celifrut-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(126, 186, 39, 0.4);
+}
+
+.buscar-button-container button:active {
+  transform: translateY(0);
+  background-color: var(--color-Celifrut-brigth);
+  box-shadow: 0 2px 8px rgba(126, 186, 39, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .costos-contenedores-filtros {
+    margin: 8px;
+    padding: 16px;
+  }
+  
+  .busqueda-fecha-container {
+    flex-direction: column;
+  }
+  
+  .busqueda-fecha-item {
+    min-width: auto;
+  }
+  
+  .busqueda-contenedor-div1 {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .busqueda-contenedor-div1 button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Estados de loading y disabled */
+.filtro-section input:disabled,
+.filtro-section select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.filtro-section button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Animaciones adicionales */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.costos-contenedores-filtros {
+  animation: fadeIn 0.3s ease-out;
+}

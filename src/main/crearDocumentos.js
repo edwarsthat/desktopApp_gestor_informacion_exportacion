@@ -128,6 +128,38 @@ function resumenCalidad(contenedor, calidad) {
    })
    return out
 }
+function resumenCalidadTipoCaribe(contenedor) {
+   const out = {}
+   let total = 0;
+
+   contenedor.pallets.forEach((pallet) => {
+      let palletFlag = false
+      const calibre = new Set()
+      pallet.EF1.forEach(item => {
+         total += item.cajas
+         if (!Object.prototype.hasOwnProperty.call(out, item.calibre)) {
+            out[item.calibre] = {
+               cantidad: 0,
+               pallets: 0,
+            }
+         }
+         out[item.calibre].cantidad += item.cajas
+         palletFlag = true
+         calibre.add(item.calibre)
+      })
+      if (palletFlag) {
+         const arrCalibre = [...calibre]
+         arrCalibre.forEach(cal => {
+            out[cal].pallets += 1
+         })
+      }
+   })
+
+   Object.keys(out).forEach(item => {
+      out[item].porcentage = (out[item].cantidad * 100) / total
+   })
+   return out
+}
 function isPaisesCaribe(contenedor) {
    if (contenedor.infoContenedor && contenedor.infoContenedor.clienteInfo) {
       for (const pais of contenedor.infoContenedor.clienteInfo.PAIS_DESTINO) {
@@ -379,6 +411,7 @@ const setCellPropertiesDatalogger = (cell, value, font = 14, bold = false) => {
 async function crear_lista_empaque(data, pathDocument) {
    const cont = data.contenedor
    const tipoFrutas = data.tiposFrutas
+   const isNotCaribe = isPaisesCaribe(cont);
    // const proveedores = data.proveedores
    const fuente = 16
    const alto_celda = 50
@@ -587,7 +620,7 @@ async function crear_lista_empaque(data, pathDocument) {
                label[nombreTipoFruta2(item.tipoFruta, tipoFrutas)],
                "COL-" + mostrarKilose(item) + (item.tipoFruta === 'Limon' ? 'Limes' : 'Oranges') + item.calibre + "ct",
                mostrarKilose(item),
-               isPaisesCaribe(cont) ? tipoCalidad(item.calidad, tipoFrutas) : "Caribe",
+               isNotCaribe ? tipoCalidad(item.calidad, tipoFrutas) : "Caribe",
                item.calibre,
                item.cajas,
                item.lote.SISPAP ? item.lote.ICA.code : 'Sin SISPAP',
@@ -604,7 +637,7 @@ async function crear_lista_empaque(data, pathDocument) {
                formatearFecha(item.fecha, true),
                label[nombreTipoFruta2(item.tipoFruta, tipoFrutas)],
                mostrarKilose(item),
-               isPaisesCaribe(cont) ? tipoCalidad(item.calidad, tipoFrutas) : "Caribe",
+               isNotCaribe ? tipoCalidad(item.calidad, tipoFrutas) : "Caribe",
                item.calibre,
                item.cajas,
                item.lote.SISPAP ? item.lote.ICA.code : 'Sin SISPAP',
@@ -668,114 +701,114 @@ async function crear_lista_empaque(data, pathDocument) {
    row += 2;
    worksheet.getRow(row).height = alto_celda
 
-   if (isPaisesCaribe(cont)) {
-      cont.infoContenedor.calidad.forEach(calidad => {
-         //head
-         worksheet.insertRow(row, [
-            "SUMMARY CATEGORY",
-            tipoCalidad(calidad, tipoFrutas),
+   for (const calidad of cont.infoContenedor.calidad) {
+      //head
+      worksheet.insertRow(row, [
+         "SUMMARY CATEGORY",
+         isNotCaribe ? tipoCalidad(calidad, tipoFrutas) : "Caribe",
 
+      ])
+      for (let i = 1; i <= 4; i++) {
+         const cell = worksheet.getCell(row, i);
+         cell.font = { bold: true, size: fuente };
+         cell.alignment = { horizontal: 'center', vertical: 'middle' };
+         cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF5FD991' }
+         }
+         cell.border = styleNormalCell
+      }
+
+      row++;
+      worksheet.getRow(row).height = alto_celda
+
+      //columnas
+      worksheet.insertRow(row, [
+         "SIZE",
+         "QTY",
+         "N.PALLETS",
+         "% PERCENTAGE",
+      ])
+      for (let i = 1; i <= 4; i++) {
+         const cell = worksheet.getCell(row, i);
+         cell.font = { bold: true, size: fuente };
+         cell.alignment = { horizontal: 'center', vertical: 'middle' };
+         cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF5FD991' }
+         }
+         cell.border = styleNormalCell
+      }
+      row++;
+      worksheet.getRow(row).height = alto_celda
+
+      const resumen = isNotCaribe ? resumenCalidad(cont, calidad) : resumenCalidadTipoCaribe(cont)
+
+      //datos
+      Object.entries(resumen).forEach(([key, value]) => {
+         worksheet.insertRow(row, [
+            key,
+            value.cantidad,
+            value.pallets,
+            value.porcentage.toFixed(2) + "%",
          ])
          for (let i = 1; i <= 4; i++) {
             const cell = worksheet.getCell(row, i);
-            cell.font = { bold: true, size: fuente };
+            cell.font = { size: 12 };
             cell.alignment = { horizontal: 'center', vertical: 'middle' };
-            cell.fill = {
-               type: 'pattern',
-               pattern: 'solid',
-               fgColor: { argb: 'FF5FD991' }
-            }
             cell.border = styleNormalCell
          }
 
          row++;
          worksheet.getRow(row).height = alto_celda
-
-         //columnas
-         worksheet.insertRow(row, [
-            "SIZE",
-            "QTY",
-            "N.PALLETS",
-            "% PERCENTAGE",
-         ])
-         for (let i = 1; i <= 4; i++) {
-            const cell = worksheet.getCell(row, i);
-            cell.font = { bold: true, size: fuente };
-            cell.alignment = { horizontal: 'center', vertical: 'middle' };
-            cell.fill = {
-               type: 'pattern',
-               pattern: 'solid',
-               fgColor: { argb: 'FF5FD991' }
-            }
-            cell.border = styleNormalCell
-         }
-         row++;
-         worksheet.getRow(row).height = alto_celda
-
-         const resumen = resumenCalidad(cont, calidad)
-         //datos
-         Object.entries(resumen).forEach(([key, value]) => {
-            worksheet.insertRow(row, [
-               key,
-               value.cantidad,
-               value.pallets,
-               value.porcentage.toFixed(2) + "%",
-            ])
-            for (let i = 1; i <= 4; i++) {
-               const cell = worksheet.getCell(row, i);
-               cell.font = { size: 12 };
-               cell.alignment = { horizontal: 'center', vertical: 'middle' };
-               cell.border = styleNormalCell
-            }
-
-            row++;
-            worksheet.getRow(row).height = alto_celda
-
-         })
-
-         worksheet.insertRow(row, [
-            "TOTAL",
-            Object.keys(resumen).reduce((acu, item) => acu += resumen[item].cantidad, 0),
-            Object.keys(resumen).reduce((acu, item) => acu += resumen[item].pallets, 0),
-            resumen && Object.keys(resumen).reduce((acu, item) => acu += resumen[item].porcentage, 0).toFixed(2) + "%",
-         ])
-         for (let i = 1; i <= 4; i++) {
-            const cell = worksheet.getCell(row, i);
-            cell.font = { bold: true, size: 12 };
-            cell.alignment = { horizontal: 'center', vertical: 'middle' };
-            cell.fill = {
-               type: 'pattern',
-               pattern: 'solid',
-               fgColor: { argb: 'FF5FD991' }
-            }
-            cell.border = styleNormalCell
-         }
-
-
-         row += 2;
-         worksheet.getRow(row).height = alto_celda
-
-         if (coc_flag) {
-            if (cont.infoContenedor.clienteInfo._id === "659dbd9a347a42d89929340e") {
-               const cell = worksheet.getCell("K3")
-               cell.value = "4063061801296"
-               cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }
-               cell.font = { size: fuente, bold: false }
-               cell.border = styleNormalCell
-            } else {
-               const cell = worksheet.getCell("J3")
-               cell.value = "4063061801296"
-               cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }
-               cell.font = { size: fuente, bold: false }
-               cell.border = styleNormalCell
-            }
-
-         }
-
-
 
       })
+
+      worksheet.insertRow(row, [
+         "TOTAL",
+         Object.keys(resumen).reduce((acu, item) => acu += resumen[item].cantidad, 0),
+         Object.keys(resumen).reduce((acu, item) => acu += resumen[item].pallets, 0),
+         resumen && Object.keys(resumen).reduce((acu, item) => acu += resumen[item].porcentage, 0).toFixed(2) + "%",
+      ])
+      for (let i = 1; i <= 4; i++) {
+         const cell = worksheet.getCell(row, i);
+         cell.font = { bold: true, size: 12 };
+         cell.alignment = { horizontal: 'center', vertical: 'middle' };
+         cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF5FD991' }
+         }
+         cell.border = styleNormalCell
+      }
+
+
+      row += 2;
+      worksheet.getRow(row).height = alto_celda
+
+      if (coc_flag) {
+         if (cont.infoContenedor.clienteInfo._id === "659dbd9a347a42d89929340e") {
+            const cell = worksheet.getCell("K3")
+            cell.value = "4063061801296"
+            cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }
+            cell.font = { size: fuente, bold: false }
+            cell.border = styleNormalCell
+         } else {
+            const cell = worksheet.getCell("J3")
+            cell.value = "4063061801296"
+            cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }
+            cell.font = { size: fuente, bold: false }
+            cell.border = styleNormalCell
+         }
+
+      }
+
+      if (!isNotCaribe) break;
+
    }
+
    await workbook.xlsx.writeFile(pathDocument);
 
 }
@@ -785,7 +818,7 @@ async function crear_lista_empaque(data, pathDocument) {
 async function crear_reporte_vehiculo(data, path) {
    const cont = data.contenedor
    const tipoFrutas = data.tiposFrutas
-   
+
    const { infoTractoMula, infoExportacion, infoContenedor } = cont
    const workbook = new ExcelJS.Workbook();
    const worksheet = workbook.addWorksheet("Hoja 1")

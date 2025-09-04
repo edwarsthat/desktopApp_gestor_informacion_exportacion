@@ -81,6 +81,7 @@ import RegistrosInventarioDescartes from "../inventarioYlogistica/historiales/hi
 import ShowIndicadores from "../indicadores/operaciones/ShowindIcadores/ShowIndicadores"
 import { FrutaLoader } from "@renderer/loader/FrutaLoader"
 import ModificarSistema from "../sistema/modificarSistema/ModificarSistema"
+import CostosContenedores from "../comercial/costosContenedores/CostosContenedores"
 
 
 type propsType = {
@@ -363,6 +364,10 @@ export default function Ventana(props: propsType): JSX.Element {
                     </div>
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "67f8384a54a33e235e2f6bf9" ? 'block' : 'none' }}>
                         {activas.includes('67f8384a54a33e235e2f6bf9') && <IngresoClienteNacional />}
+                    </div>
+                    {/* indicadores */}
+                    <div className="componentContainer" style={{ display: props.pestañaActiva === "68b8ac7f7cbaefd8b4c0fa61" ? 'block' : 'none' }}>
+                        {activas.includes('68b8ac7f7cbaefd8b4c0fa61') && <CostosContenedores />}
                     </div>
 
                     {/* contabilidad */}
