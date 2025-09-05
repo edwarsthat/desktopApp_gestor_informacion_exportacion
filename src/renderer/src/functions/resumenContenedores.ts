@@ -2,29 +2,28 @@
 
 import { contenedoresType } from "@renderer/types/contenedoresType"
 
-export type PredioDatosType = {
-    [key: string]: {
-        enf: string;
-        predio: string;
-        cont: contType,
-        tipoFruta: string,
-        calibres: calibreType
-    }
+export type resultadoObtenerresumenContenedores = Record<string, ResumenFruta>;
+export type ResumenFruta = {
+  totalCajas: number;
+  totalKilos: number;
+  fechas: Record<string, resumenPorfruta>;
 };
-
-type calibreType = {
-    [key:string]:{
+type resumenPorfruta = {
+    calibre: datosType,
+    calidad: datosType,
+}
+type datosType = {
+    [key: string]: {
         cajas: number,
-        kilos:number
+        cajasP: number,
+        kilos: number,
+        kilosP: number,
+        pallet: number
     }
 }
-
-type contType = {
-    [key: string]: {
-        numero: number,
-        cajas: number,
-        kilos: number
-    }
+export type resumenContenedores = {
+    resumen: resultadoObtenerresumenContenedores
+    totalCalidades: string[]
 }
 
 export const obtenerResumenPredios = (cont: contenedoresType[], soloHoy: boolean): PredioDatosType => {
@@ -118,27 +117,6 @@ export const obtenerResumenPredios = (cont: contenedoresType[], soloHoy: boolean
     return predios
 }
 
-export type resultadoObtenerresumenContenedores = {
-    [key: string]: resumenPorfruta
-}
-
-type resumenPorfruta = {
-    calibre: datosType,
-    calidad: datosType,
-    totalCajas: number,
-    totalKilos: number
-}
-
-type datosType = {
-    [key: string]: {
-        cajas: number,
-        cajasP: number,
-        kilos: number,
-        kilosP: number,
-        pallet: number
-    }
-
-}
 
 export const obtenerResumen = (cont: contenedoresType[], soloHoy = '')
     : resultadoObtenerresumenContenedores | null => {
@@ -293,4 +271,19 @@ export const obtenerResumen = (cont: contenedoresType[], soloHoy = '')
 
     // console.log(resumen)
     return resumen
+}
+
+export const fechasSeleccionarDia = (data:resultadoObtenerresumenContenedores, fecha: string): resultadoObtenerresumenContenedores => {
+    console.log("fecha",fecha)
+    const tipoFrutaKeys = Object.keys(data)
+    for(let i=0; i<tipoFrutaKeys.length; i++){
+        const fechasKeys = Object.keys(data[tipoFrutaKeys[i]])
+        for(let j=0; j<fechasKeys.length; j++){
+            if(fechasKeys[j] === 'totalCajas' || fechasKeys[j] === 'totalKilos') continue;
+            if(fechasKeys[j] !== fecha){
+                delete data[tipoFrutaKeys[i]][fechasKeys[j]]
+            }
+        }
+    } 
+    return data
 }

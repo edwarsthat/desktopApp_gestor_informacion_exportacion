@@ -2,13 +2,15 @@
 
 import { contenedoresType } from "@renderer/types/contenedoresType"
 import { useEffect, useState } from "react"
-import { obtenerResumen, obtenerResumenPredios, resultadoObtenerresumenContenedores } from "@renderer/functions/resumenContenedores"
+import { fechasSeleccionarDia } from "@renderer/functions/resumenContenedores"
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
 import { nombreTipoFruta2, tipoCalidad } from "@renderer/utils/tipoFrutas"
+import { resultadoObtenerresumenContenedores, resumenContenedores } from "../types"
 
 type propsType = {
     setShowData: (e: boolean) => void
     dataContenedores: contenedoresType[] | undefined
+    resumen: resumenContenedores | undefined
 }
 
 type PredioDatosType = {
@@ -34,7 +36,8 @@ type calibreType = {
     }
 }
 
-export default function DataHistorialContenedores(props: propsType): JSX.Element {
+export default function DataHistorialContenedores({ resumen, setShowData }: propsType): JSX.Element {
+
     const tipoFrutas = useTipoFrutaStore(state => state.tiposFruta)
     const [fecha, setFecha] = useState<string>('');
     const [showCalibeCalidad, setShowCalibreCalidad] = useState<boolean>(false)
@@ -44,68 +47,97 @@ export default function DataHistorialContenedores(props: propsType): JSX.Element
     const [verPorcentajeCajas, setVerPorcentajeCajas] = useState<boolean>(true)
     const [numeroPallets, setNumeroPallets] = useState<boolean>(true)
     const [arrayCont, setArrayCont] = useState<string[]>([])
-    const [dataContenedores, setDataContenedores] = useState<contenedoresType[]>();
+    // const [dataContenedores, setDataContenedores] = useState<contenedoresType[]>();
 
-    const [resumen, setResumen] = useState<resultadoObtenerresumenContenedores>();
+    const [dataResumen, setDataResumen] = useState<resultadoObtenerresumenContenedores>();
     const [showPredios, setShowPredios] = useState<boolean>(false)
+    const [showCalidadEnCalibre, setShowCalidadEnCalibre] = useState<string>("")
     const [predios, setPredios] = useState<PredioDatosType>()
     const [filtro, setFiltro] = useState<string>('')
 
     useEffect(() => {
-        if (props.dataContenedores !== undefined) {
-            setDataContenedores(props.dataContenedores);
-            const resumenv = obtenerResumen(props.dataContenedores, fecha)
-            if (resumenv)
-                setResumen(resumenv);
-        }
-    }, [props.dataContenedores, fecha]);
-    const handleClickContenedores = (e: string): void => {
-        if (arrayCont.includes(e)) {
-            const newArr = arrayCont.filter(id => !(id === e));
-            setArrayCont(newArr)
+        if (resumen === undefined) return
+        const dataClone = structuredClone(resumen?.resumen)
+        if (fecha === '') {
+            setDataResumen(dataClone);
         } else {
-            const newArr = [...arrayCont, e];
-            setArrayCont(newArr)
+            if (resumen === undefined) return
+            const dataFiltrada = fechasSeleccionarDia(dataClone, fecha)
+            setDataResumen(dataFiltrada);
         }
+    }, [fecha]);
+
+    // const handleClickContenedores = (e: string): void => {
+    //     if (arrayCont.includes(e)) {
+    //         const newArr = arrayCont.filter(id => !(id === e));
+    //         setArrayCont(newArr)
+    //     } else {
+    //         const newArr = [...arrayCont, e];
+    //         setArrayCont(newArr)
+    //     }
+    // }
+    // useEffect(() => {
+    //     if (dataContenedores !== undefined) {
+
+    //         const contenedoresFiltrados = dataContenedores
+    //             .filter(item => arrayCont.includes(item._id as string))
+
+    //     }
+    // }, [arrayCont])
+
+    // useEffect(() => {
+    //     if (dataContenedores !== undefined) {
+
+    //         const contenedoresFiltrados = dataContenedores
+    //             .filter(item => arrayCont.includes(item._id as string))
+    //         const data = obtenerResumenPredios(contenedoresFiltrados, false)
+    //         setPredios(data);
+    //     }
+    // }, [props.dataContenedores, arrayCont])
+
+    const mostrarDataResumenTotal = (data: resultadoObtenerresumenContenedores | undefined, tipoValor: string): string => {
+        if (data === undefined) return ''
+        let total = 0;
+        for (const fruta in data) {
+            total += data[fruta]?.[tipoValor] ?? 0;
+        }
+        return new Intl.NumberFormat('es-CO').format(total);
+    };
+    const mostrarDataResumenPorElementoCalidad = (fruta: string, ca: string, can: string, tipo: string): string => {
+        if (dataResumen === undefined) return ''
+        let total = 0;
+        for (const fecha in dataResumen[fruta]) {
+            if (fecha === 'totalCajas' || fecha === 'totalKilos') continue;
+            total += dataResumen[fruta][fecha]?.[ca][can]?.[tipo] ?? 0;
+        }
+        return new Intl.NumberFormat('es-CO').format(total);
     }
-    useEffect(() => {
-        if (dataContenedores !== undefined) {
-
-            const contenedoresFiltrados = dataContenedores
-                .filter(item => arrayCont.includes(item._id as string))
-
-            const resumenv = obtenerResumen(contenedoresFiltrados, fecha)
-            if (resumenv)
-                setResumen(resumenv);
-
+    const mostrarCalidadPorCalibre = (fruta: string, calibre: string, calidad: string, tipo): number => {
+        if (dataResumen === undefined) return 0
+        let total = 0;
+        for (const fecha in dataResumen[fruta]) {
+            if (fecha === 'totalCajas' || fecha === 'totalKilos') continue;
+            total += dataResumen[fruta][fecha]?.calibre?.[calibre]?.calidad?.[calidad]?.[tipo] ?? 0;
         }
-    }, [arrayCont])
-
-    useEffect(() => {
-        if (dataContenedores !== undefined) {
-
-            const contenedoresFiltrados = dataContenedores
-                .filter(item => arrayCont.includes(item._id as string))
-            const data = obtenerResumenPredios(contenedoresFiltrados, false)
-            setPredios(data);
-        }
-    }, [props.dataContenedores, arrayCont])
-
-    if (props.dataContenedores === undefined) {
-        return (
-            <div>
-                <div className="historial-listasempaque-busqueda">
-                    <button onClick={(): void => props.setShowData(false)} className="defaulButtonAgree">Volver a buscar</button>
-                </div>
-                <h2>Cargando contenedores...</h2>
-            </div>
-        )
+        return total
     }
+
+
+    // if (dataContenedores === undefined) {
+    //     return (
+    //         <div>
+    //             <div className="historial-listasempaque-busqueda">
+    //                 <button onClick={(): void => props.setShowData(false)} className="defaulButtonAgree">Volver a buscar</button>
+    //             </div>
+    //             <h2>Cargando contenedores...</h2>
+    //         </div>
+    //     )
+    // }
 
     return (
         <div>
             <div className="historial-listasempaque-busqueda">
-                <button onClick={(): void => props.setShowData(false)} className="defaulButtonAgree">Volver a buscar</button>
+                <button onClick={(): void => setShowData(false)} className="defaulButtonAgree">Volver a buscar</button>
                 <button
                     className="defaulButtonAgree"
                     onClick={(): void => setShowPredios(!showPredios)}>
@@ -189,9 +221,9 @@ export default function DataHistorialContenedores(props: propsType): JSX.Element
                     </div>
                 </div>
             }
-            <section className="historial-contenedores-mostrar-numero-contenedor">
+            {/* <section className="historial-contenedores-mostrar-numero-contenedor">
                 Contenedores:
-                {props.dataContenedores.map(cont => (
+                {dataContenedores.map(cont => (
                     <button
                         className={arrayCont.includes(cont._id as string)
                             ? 'historial-contenedores-contenedor-select' : ''}
@@ -201,13 +233,11 @@ export default function DataHistorialContenedores(props: propsType): JSX.Element
                         {cont.numeroContenedor}
                     </button>
                 ))}
-            </section>
+            </section> */}
             <section className="historial-contenedores-mostrar-total-cajas-kilos-section">
                 <h3>Total:</h3>
-                {<h4>{
-                    resumen && Object.values(resumen).reduce((acu, item) => acu += item.totalCajas, 0).toLocaleString('es-CO')
-                } cajas</h4>}
-                {resumen && <h4>{Object.values(resumen).reduce((acu, item) => acu += item.totalKilos, 0).toLocaleString('es-CO')} Kg</h4>}
+                {<h4>{mostrarDataResumenTotal(dataResumen, 'totalCajas')} cajas</h4>}
+                {<h4>{mostrarDataResumenTotal(dataResumen, 'totalKilos')} Kilos</h4>}
             </section>
             {showPredios ?
                 <section>
@@ -249,7 +279,7 @@ export default function DataHistorialContenedores(props: propsType): JSX.Element
                                             lote.predio.toLowerCase().startsWith(filtro.toLowerCase()) ||
                                             lote.enf.toLocaleLowerCase().startsWith(filtro.toLocaleLowerCase())
                                         ) {
-                                            return(<tr key={lote.enf} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
+                                            return (<tr key={lote.enf} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
                                                 <td>{lote.enf} - {lote.predio}</td>
                                                 <td>{Object.entries(lote.calibres).map(([key, value]) => (
                                                     <div key={key}>
@@ -272,7 +302,7 @@ export default function DataHistorialContenedores(props: propsType): JSX.Element
                 </section>
                 :
                 <section>
-                    {resumen && Object.keys(resumen).map(tipoFruta => (
+                    {dataResumen && Object.keys(dataResumen).map(tipoFruta => (
                         <div key={tipoFruta}>
                             <h2>{nombreTipoFruta2(tipoFruta, tipoFrutas)}</h2>
                             <hr />
@@ -291,37 +321,83 @@ export default function DataHistorialContenedores(props: propsType): JSX.Element
                                     </thead>
                                     {showCalibeCalidad ?
                                         <tbody>
-                                            {Object.entries(resumen[tipoFruta].calidad).map(([calidad, value], index) => (
+                                            {resumen && resumen.totalCalidades.map((calidad, index) => (
                                                 <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={calidad}>
                                                     <td>{tipoCalidad(calidad, tipoFrutas)}</td>
                                                     {verKilos &&
-                                                        <td>{value.kilos.toLocaleString('es-CO')} Kg</td>}
+                                                        <td>{mostrarDataResumenPorElementoCalidad(tipoFruta, "calidad", calidad, "kilos")} Kg</td>}
                                                     {verCajas &&
-                                                        <td>{value.cajas.toLocaleString('es-CO')} </td>}
+                                                        <td>{mostrarDataResumenPorElementoCalidad(tipoFruta, "calidad", calidad, "cajas")}</td>}
                                                     {verPorcentaje &&
-                                                        <td>{value.kilosP.toLocaleString('es-CO')} %</td>}
+                                                        <td>{mostrarDataResumenPorElementoCalidad(tipoFruta, "calidad", calidad, "kilosP")} %</td>}
                                                     {verPorcentajeCajas &&
-                                                        <td>{value.cajasP.toLocaleString('es-CO')} %</td>}
+                                                        <td>{mostrarDataResumenPorElementoCalidad(tipoFruta, "calidad", calidad, "cajasP")} %</td>}
                                                     {numeroPallets &&
-                                                        <td>{value.pallet.toLocaleString('es-CO')}</td>}
+                                                        <td>{mostrarDataResumenPorElementoCalidad(tipoFruta, "calidad", calidad, "pallet")}</td>}
                                                 </tr>
                                             ))}
                                         </tbody>
                                         :
                                         <tbody>
-                                            {Object.entries(resumen[tipoFruta].calibre).map(([calibre, value], index) => (
-                                                <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={calibre}>
+                                            {resumen && resumen.totalCalibres.map((calibre, index) => (
+                                                <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}
+                                                    key={calibre}
+                                                    onClick={(): void => {
+                                                        if(showCalidadEnCalibre === `${tipoFruta}-${calibre}`){
+                                                            setShowCalidadEnCalibre("")
+                                                        } else {
+                                                            setShowCalidadEnCalibre(`${tipoFruta}-${calibre}`)
+                                                        }
+                                                    }}>
                                                     <td>{calibre}</td>
-                                                    {verKilos &&
-                                                        <td>{value.kilos.toLocaleString('es-CO')} Kg</td>}
-                                                    {verCajas &&
-                                                        <td>{value.cajas.toLocaleString('es-CO')} </td>}
-                                                    {verPorcentaje &&
-                                                        <td>{value.cajasP.toLocaleString('es-CO')} %</td>}
-                                                    {verPorcentajeCajas &&
-                                                        <td>{value.cajasP.toLocaleString('es-CO')} %</td>}
+
+                                                    {showCalidadEnCalibre === `${tipoFruta}-${calibre}` ?
+                                                        <>
+                                                            {verKilos && <td>
+                                                                {resumen && resumen.totalCalidades.map((calidad) => (
+                                                                    <div key={calidad + calibre + tipoFruta}>
+                                                                        {tipoCalidad(calidad, tipoFrutas)}:{mostrarCalidadPorCalibre(tipoFruta, calibre, calidad, "kilos")} Kg
+                                                                    </div>
+                                                                ))}
+                                                            </td>}
+                                                            {verCajas && <td>
+                                                                {resumen && resumen.totalCalidades.map((calidad) => (
+                                                                    <div key={calidad + calibre + tipoFruta}>
+                                                                        {tipoCalidad(calidad, tipoFrutas)}:{mostrarCalidadPorCalibre(tipoFruta, calibre, calidad, "cajas")}
+                                                                    </div>
+                                                                ))}
+                                                            </td>}
+                                                            {verPorcentaje &&  <td>
+                                                                {resumen && resumen.totalCalidades.map((calidad) => (
+                                                                    <div key={calidad + calibre + tipoFruta}>
+                                                                        {tipoCalidad(calidad, tipoFrutas)}:{mostrarCalidadPorCalibre(tipoFruta, calibre, calidad, "kilosP")?.toFixed(2) ?? "N/A"} %
+                                                                    </div>
+                                                                ))}
+                                                            </td>}
+                                                            { verPorcentajeCajas && <td>
+                                                                {resumen && resumen.totalCalidades.map((calidad) => (
+                                                                    <div key={calidad + calibre + tipoFruta}>
+                                                                        {tipoCalidad(calidad, tipoFrutas)}:{mostrarCalidadPorCalibre(tipoFruta, calibre, calidad, "cajasP")?.toFixed(2) ?? "N/A"} %
+                                                                    </div>
+                                                                ))}
+                                                            </td>}
+
+                                                        </>
+                                                        :
+                                                        <>
+                                                            {verKilos &&
+                                                                <td>{(mostrarDataResumenPorElementoCalidad(tipoFruta, "calibre", calibre, "kilos"))} Kg</td>}
+                                                            {verCajas &&
+                                                                <td>{mostrarDataResumenPorElementoCalidad(tipoFruta, "calibre", calibre, "cajas")}</td>}
+                                                            {verPorcentaje &&
+                                                                <td>{mostrarDataResumenPorElementoCalidad(tipoFruta, "calibre", calibre, "cajasP")} %</td>}
+                                                            {verPorcentajeCajas &&
+                                                                <td>{mostrarDataResumenPorElementoCalidad(tipoFruta, "calibre", calibre, "cajasP")} %</td>}
+
+                                                        </>
+                                                    }
                                                     {numeroPallets &&
-                                                        <td>{value.pallet.toLocaleString('es-CO')}</td>}
+                                                        <td>{mostrarDataResumenPorElementoCalidad(tipoFruta, "calibre", calibre, "pallet")}</td>}
                                                 </tr>
                                             ))}
                                         </tbody>}

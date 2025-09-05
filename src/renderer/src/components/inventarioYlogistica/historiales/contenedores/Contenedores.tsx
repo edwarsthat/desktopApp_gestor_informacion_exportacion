@@ -6,11 +6,14 @@ import './style/data_styles.css'
 import { useState } from "react";
 import { contenedoresType } from "@renderer/types/contenedoresType";
 import DataHistorialContenedores from "./components/DataHistorialContenedores";
+import { resumenContenedores } from "./types";
 
 export default function Contenedores():JSX.Element{
     const { messageModal } = useAppContext();
     const [showData, setShowData] = useState<boolean>(false);
     const [dataContenedores, setDataContenedores] = useState<contenedoresType[]>();
+    const [resumen, setResumen] = useState<resumenContenedores>();
+
 
     const handlebuscar = async (
         numeroContenedor: string[],
@@ -32,7 +35,10 @@ export default function Contenedores():JSX.Element{
 
             if(response.status !== 200)
                 throw new Error(`Code ${response.status}: ${response.message}`)
-            setDataContenedores(response.data);
+
+            console.log(response.data)
+            setDataContenedores(response.data.contenedores);
+            setResumen(response.data);
             setShowData(true);
         } catch(err){
             if(err instanceof Error){
@@ -47,6 +53,7 @@ export default function Contenedores():JSX.Element{
             <hr />
             {showData ?
             <DataHistorialContenedores
+                resumen={resumen}
                 dataContenedores={dataContenedores} 
                 setShowData={setShowData} /> :
             <HistorialContenedoresFiltros handlebuscar={handlebuscar}/>
