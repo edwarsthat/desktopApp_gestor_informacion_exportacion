@@ -1,32 +1,11 @@
 /* eslint-disable prettier/prettier */
 
 import { contenedoresType } from "@renderer/types/contenedoresType"
+import { resultadoObtenerresumenContenedores, resumenPredios } from "@renderer/types/responses/resumenContenedores"
 
-export type resultadoObtenerresumenContenedores = Record<string, ResumenFruta>;
-export type ResumenFruta = {
-  totalCajas: number;
-  totalKilos: number;
-  fechas: Record<string, resumenPorfruta>;
-};
-type resumenPorfruta = {
-    calibre: datosType,
-    calidad: datosType,
-}
-type datosType = {
-    [key: string]: {
-        cajas: number,
-        cajasP: number,
-        kilos: number,
-        kilosP: number,
-        pallet: number
-    }
-}
-export type resumenContenedores = {
-    resumen: resultadoObtenerresumenContenedores
-    totalCalidades: string[]
-}
 
-export const obtenerResumenPredios = (cont: contenedoresType[], soloHoy: boolean): PredioDatosType => {
+
+export const obtenerResumenPredios = (cont: contenedoresType[], soloHoy: boolean): resumenPredios => {
     const predios = {}
     cont.forEach(contenedor => {
         contenedor.pallets.forEach(pallet => {
@@ -116,7 +95,6 @@ export const obtenerResumenPredios = (cont: contenedoresType[], soloHoy: boolean
     console.log(predios)
     return predios
 }
-
 
 export const obtenerResumen = (cont: contenedoresType[], soloHoy = '')
     : resultadoObtenerresumenContenedores | null => {

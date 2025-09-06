@@ -5,35 +5,12 @@ import { useEffect, useState } from "react"
 import { fechasSeleccionarDia } from "@renderer/functions/resumenContenedores"
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
 import { nombreTipoFruta2, tipoCalidad } from "@renderer/utils/tipoFrutas"
-import { resultadoObtenerresumenContenedores, resumenContenedores } from "../types"
+import { resultadoObtenerresumenContenedores, resumenContenedores } from "@renderer/types/responses/resumenContenedores"
 
 type propsType = {
     setShowData: (e: boolean) => void
     dataContenedores: contenedoresType[] | undefined
     resumen: resumenContenedores | undefined
-}
-
-type PredioDatosType = {
-    [key: string]: {
-        enf: string;
-        predio: string;
-        cont: contType,
-        tipoFruta: string,
-        calibres: calibreType
-    }
-};
-type contType = {
-    [key: string]: {
-        numero: number,
-        cajas: number,
-        kilos: number
-    }
-}
-type calibreType = {
-    [key: string]: {
-        cajas: number,
-        kilos: number
-    }
 }
 
 export default function DataHistorialContenedores({ resumen, setShowData }: propsType): JSX.Element {
@@ -46,13 +23,10 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
     const [verPorcentaje, setVerPorcentaje] = useState<boolean>(true)
     const [verPorcentajeCajas, setVerPorcentajeCajas] = useState<boolean>(true)
     const [numeroPallets, setNumeroPallets] = useState<boolean>(true)
-    const [arrayCont, setArrayCont] = useState<string[]>([])
-    // const [dataContenedores, setDataContenedores] = useState<contenedoresType[]>();
 
     const [dataResumen, setDataResumen] = useState<resultadoObtenerresumenContenedores>();
     const [showPredios, setShowPredios] = useState<boolean>(false)
     const [showCalidadEnCalibre, setShowCalidadEnCalibre] = useState<string>("")
-    const [predios, setPredios] = useState<PredioDatosType>()
     const [filtro, setFiltro] = useState<string>('')
 
     useEffect(() => {
@@ -85,15 +59,6 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
     //     }
     // }, [arrayCont])
 
-    // useEffect(() => {
-    //     if (dataContenedores !== undefined) {
-
-    //         const contenedoresFiltrados = dataContenedores
-    //             .filter(item => arrayCont.includes(item._id as string))
-    //         const data = obtenerResumenPredios(contenedoresFiltrados, false)
-    //         setPredios(data);
-    //     }
-    // }, [props.dataContenedores, arrayCont])
 
     const mostrarDataResumenTotal = (data: resultadoObtenerresumenContenedores | undefined, tipoValor: string): string => {
         if (data === undefined) return ''
@@ -123,16 +88,16 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
     }
 
 
-    // if (dataContenedores === undefined) {
-    //     return (
-    //         <div>
-    //             <div className="historial-listasempaque-busqueda">
-    //                 <button onClick={(): void => props.setShowData(false)} className="defaulButtonAgree">Volver a buscar</button>
-    //             </div>
-    //             <h2>Cargando contenedores...</h2>
-    //         </div>
-    //     )
-    // }
+    if (resumen === undefined) {
+        return (
+            <div>
+                <div className="historial-listasempaque-busqueda">
+                    <button onClick={(): void => setShowData(false)} className="defaulButtonAgree">Volver a buscar</button>
+                </div>
+                <h2>Cargando contenedores...</h2>
+            </div>
+        )
+    }
 
     return (
         <div>
@@ -221,19 +186,14 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                     </div>
                 </div>
             }
-            {/* <section className="historial-contenedores-mostrar-numero-contenedor">
+            <section className="historial-contenedores-mostrar-numero-contenedor">
                 Contenedores:
-                {dataContenedores.map(cont => (
-                    <button
-                        className={arrayCont.includes(cont._id as string)
-                            ? 'historial-contenedores-contenedor-select' : ''}
-                        key={cont._id}
-                        onClick={(): void => handleClickContenedores(cont._id as string)}
-                    >
-                        {cont.numeroContenedor}
-                    </button>
+                {resumen && resumen.contenedores.map(cont => (
+                    <div key={cont} className="'historial-contenedores-contenedor-select'">
+                        {cont} -
+                    </div>
                 ))}
-            </section> */}
+            </section>
             <section className="historial-contenedores-mostrar-total-cajas-kilos-section">
                 <h3>Total:</h3>
                 {<h4>{mostrarDataResumenTotal(dataResumen, 'totalCajas')} cajas</h4>}
@@ -249,9 +209,9 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                                     <th>Contenedores</th>
                                 </tr>
                             </thead>
-                            {predios && !showCalibeCalidad ?
+                            {resumen && !showCalibeCalidad ?
                                 <tbody>
-                                    {predios && Object.values(predios).map((lote, index) => {
+                                    {resumen && Object.values(resumen.resumenPredios).map((lote, index) => {
                                         if (
                                             lote.predio.toLowerCase().startsWith(filtro.toLowerCase()) ||
                                             lote.enf.toLocaleLowerCase().startsWith(filtro.toLocaleLowerCase())
@@ -274,7 +234,7 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                                 </tbody>
                                 :
                                 <tbody>
-                                    {predios && Object.values(predios).map((lote, index) => {
+                                    {resumen && Object.values(resumen.resumenPredios).map((lote, index) => {
                                         if (
                                             lote.predio.toLowerCase().startsWith(filtro.toLowerCase()) ||
                                             lote.enf.toLocaleLowerCase().startsWith(filtro.toLocaleLowerCase())
@@ -284,7 +244,7 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                                                 <td>{Object.entries(lote.calibres).map(([key, value]) => (
                                                     <div key={key}>
                                                         <div>{key}: {value.cajas} Cajas - {value.kilos}Kg</div>
-                                                        <div>{lote.tipoFruta}</div>
+                                                        <div>{nombreTipoFruta2(lote.tipoFruta, tipoFrutas)}</div>
                                                     </div>
                                                 ))}</td>
                                             </tr>)
@@ -321,7 +281,7 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                                     </thead>
                                     {showCalibeCalidad ?
                                         <tbody>
-                                            {resumen && resumen.totalCalidades.map((calidad, index) => (
+                                            {resumen && resumen.totalCalidades[tipoFruta].map((calidad, index) => (
                                                 <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={calidad}>
                                                     <td>{tipoCalidad(calidad, tipoFrutas)}</td>
                                                     {verKilos &&
@@ -339,7 +299,7 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                                         </tbody>
                                         :
                                         <tbody>
-                                            {resumen && resumen.totalCalibres.map((calibre, index) => (
+                                            {resumen && resumen.totalCalibres[tipoFruta].map((calibre, index) => (
                                                 <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}
                                                     key={calibre}
                                                     onClick={(): void => {
@@ -354,28 +314,28 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                                                     {showCalidadEnCalibre === `${tipoFruta}-${calibre}` ?
                                                         <>
                                                             {verKilos && <td>
-                                                                {resumen && resumen.totalCalidades.map((calidad) => (
+                                                                {resumen && resumen.totalCalidades[tipoFruta].map((calidad) => (
                                                                     <div key={calidad + calibre + tipoFruta}>
                                                                         {tipoCalidad(calidad, tipoFrutas)}:{mostrarCalidadPorCalibre(tipoFruta, calibre, calidad, "kilos")} Kg
                                                                     </div>
                                                                 ))}
                                                             </td>}
                                                             {verCajas && <td>
-                                                                {resumen && resumen.totalCalidades.map((calidad) => (
+                                                                {resumen && resumen.totalCalidades[tipoFruta].map((calidad) => (
                                                                     <div key={calidad + calibre + tipoFruta}>
                                                                         {tipoCalidad(calidad, tipoFrutas)}:{mostrarCalidadPorCalibre(tipoFruta, calibre, calidad, "cajas")}
                                                                     </div>
                                                                 ))}
                                                             </td>}
                                                             {verPorcentaje &&  <td>
-                                                                {resumen && resumen.totalCalidades.map((calidad) => (
+                                                                {resumen && resumen.totalCalidades[tipoFruta].map((calidad) => (
                                                                     <div key={calidad + calibre + tipoFruta}>
                                                                         {tipoCalidad(calidad, tipoFrutas)}:{mostrarCalidadPorCalibre(tipoFruta, calibre, calidad, "kilosP")?.toFixed(2) ?? "N/A"} %
                                                                     </div>
                                                                 ))}
                                                             </td>}
                                                             { verPorcentajeCajas && <td>
-                                                                {resumen && resumen.totalCalidades.map((calidad) => (
+                                                                {resumen && resumen.totalCalidades[tipoFruta].map((calidad) => (
                                                                     <div key={calidad + calibre + tipoFruta}>
                                                                         {tipoCalidad(calidad, tipoFrutas)}:{mostrarCalidadPorCalibre(tipoFruta, calibre, calidad, "cajasP")?.toFixed(2) ?? "N/A"} %
                                                                     </div>

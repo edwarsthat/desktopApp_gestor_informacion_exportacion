@@ -6,7 +6,7 @@ import './style/data_styles.css'
 import { useState } from "react";
 import { contenedoresType } from "@renderer/types/contenedoresType";
 import DataHistorialContenedores from "./components/DataHistorialContenedores";
-import { resumenContenedores } from "./types";
+import { resumenContenedores } from "@renderer/types/responses/resumenContenedores";
 
 export default function Contenedores():JSX.Element{
     const { messageModal } = useAppContext();
