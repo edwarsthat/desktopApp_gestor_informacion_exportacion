@@ -2,19 +2,20 @@
 
 import useAppContext from "@renderer/hooks/useAppContext";
 import { useState } from "react";
-import { obtenerResumenPredios, PredioDatosType } from "@renderer/functions/resumenContenedores";
+import { obtenerResumenPredios } from "@renderer/functions/resumenContenedores";
 import { numeroContenedorType } from "../functions/request";
 import { lotesType } from "@renderer/types/lotesType";
 import { FilterValues } from "@renderer/hooks/useFiltro";
 import { validateRequestLotes } from "../validations/requestValidations";
 import { proveedoresType } from "@renderer/types/proveedoresType";
+import { resumenPredios } from "@renderer/types/responses/resumenContenedores";
 
 type typeOut = {
     obtenerProveedores: () => Promise<void>
     prediosData: proveedoresType[]
     obtenerData: () => Promise<void>
     data: lotesType[]
-    prediosInfo: PredioDatosType | undefined
+    prediosInfo: resumenPredios | undefined
     numeroContenedor: numeroContenedorType | undefined
 }
 
@@ -25,7 +26,7 @@ type propsType = {
 export default function useLotes({currentFilters}: propsType): typeOut {
     const { messageModal } = useAppContext();
     const [prediosData, setPrediosData] = useState<proveedoresType[]>([])
-    const [prediosInfo, setPrediosInfo] = useState<PredioDatosType>()
+    const [prediosInfo, setPrediosInfo] = useState<resumenPredios>()
 const [numeroContenedor, setNumeroContenedor] = useState<numeroContenedorType>()
 const [data, setData] = useState<lotesType[]>([])
 

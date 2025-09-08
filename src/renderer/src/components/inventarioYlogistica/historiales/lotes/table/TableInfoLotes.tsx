@@ -4,19 +4,20 @@ import { filtroColumnasType } from "../type/types"
 import { KEYS_FILTROS_COL } from "../functions/constantes"
 import { lotesType } from "@renderer/types/lotesType"
 import { numeroContenedorType } from "../functions/request"
-import { total_porcentaje_calibre } from "../functions/functions"
+// import { total_porcentaje_calibre } from "../functions/functions"
 import { formatearFecha } from "@renderer/functions/fechas"
-import { PredioDatosType } from "@renderer/functions/resumenContenedores"
+// import { PredioDatosType } from "@renderer/functions/resumenContenedores"
 import { totalExportacion } from "@renderer/functions/operacionesLotes"
 import { tipoCalidadInforme } from "@renderer/utils/tipoFrutas"
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
 import { totalExportacionCalidad } from "@renderer/functions/informesLotes"
+import { resumenPredios } from "@renderer/types/responses/resumenContenedores"
 
 type propsType = {
   data: lotesType[]
   numeroContenedor: numeroContenedorType | undefined
   columnVisibility: filtroColumnasType
-  prediosInfo: PredioDatosType | undefined
+  prediosInfo: resumenPredios | undefined
 }
 export default function TableInfoLotes(props: propsType): JSX.Element {
   const tipoFrutas = useTipoFrutaStore(state => state.tiposFruta);
@@ -165,23 +166,23 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                       //     </td>
                       //   )
                       // }
-                      else if (item === 'calibreExportacion') {
-                        return (
-                          <td key={lote._id + item}>
+                      // else if (item === 'calibreExportacion') {
+                      //   return (
+                      //     <td key={lote._id + item}>
 
-                            {props.prediosInfo && props.prediosInfo[lote._id] &&
-                              Object.entries(props.prediosInfo[lote._id].calibres).map(([key, value]) => (
-                                <div key={key}>
-                                  <div>{key}: {value.cajas} Cajas - {value.kilos}Kg - </div>
-                                  <div>{
-                                    props.prediosInfo &&
-                                    total_porcentaje_calibre(props.prediosInfo[lote._id].calibres, key).toFixed(2)}%
-                                  </div>
-                                </div>
-                              ))}
-                          </td>
-                        )
-                      }
+                      //       {props.prediosInfo && props.prediosInfo[lote._id] &&
+                      //         Object.entries(props.prediosInfo[lote._id].calibres).map(([key, value]) => (
+                      //           <div key={key}>
+                      //             <div>{key}: {value.cajas} Cajas - {value.kilos}Kg - </div>
+                      //             <div>{
+                      //               props.prediosInfo &&
+                      //               total_porcentaje_calibre(props.prediosInfo[lote._id].calibres, key).toFixed(2)}%
+                      //             </div>
+                      //           </div>
+                      //         ))}
+                      //     </td>
+                      //   )
+                      // }
                       else {
                         return (
                           <td key={lote + item}>

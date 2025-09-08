@@ -2,7 +2,7 @@
 
 import { useContext, useEffect, useState } from "react"
 import { contenedoresContext, contenedorSeleccionadoContext } from "../ProcesoListaEmpaque"
-import { obtenerResumen, resultadoObtenerresumenContenedores } from "@renderer/functions/resumenContenedores";
+import { obtenerResumen, ResumenContenedores } from "@renderer/functions/resumenContenedores";
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 import { nombreTipoFruta2, tipoCalidad } from "@renderer/utils/tipoFrutas";
 
@@ -14,7 +14,7 @@ export default function Resumen(): JSX.Element {
     const contenedorID = useContext(contenedorSeleccionadoContext)
     const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta)
 
-    const [resumen, setResumen] = useState<resultadoObtenerresumenContenedores>();
+    const [resumen, setResumen] = useState<ResumenContenedores>();
     const [soloHoy, setSoloHoy] = useState<string>('')
     const [verKilos, setVerKilos] = useState<boolean>(false)
     const [verCajas, setVerCajas] = useState<boolean>(false)

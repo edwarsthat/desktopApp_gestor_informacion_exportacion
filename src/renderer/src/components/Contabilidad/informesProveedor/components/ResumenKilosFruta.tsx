@@ -112,7 +112,7 @@ export default function ResumenKilosFruta({ lote, contenedores }: propsType): JS
                     return Object.entries(value as Record<string, unknown>).map(
                         ([keyCalidad, valueCalidad]) => {
 
-                            if (contenedor && (keyCalidad !== '_id' && keyCalidad !== "2")) {
+                            if (contenedor && (keyCalidad !== '_id' && !["689a05d0102fb4cb445579bc","68966eb849e7fd7eff70c74d"].includes(keyCalidad))) {
 
                                 const kilos = decimalToComma(valueCalidad as number);
                                 const precioKey = decimalToComma(lote.precio.exportacion[keyCalidad]);
@@ -123,7 +123,7 @@ export default function ResumenKilosFruta({ lote, contenedores }: propsType): JS
                                 return (
                                     `2\t${lote.tipoFruta.codExportacion}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t${contenedor.numeroContenedor}\n`
                                 );
-                            } else if (contenedor && keyCalidad === "2") {
+                            } else if (contenedor && ["689a05d0102fb4cb445579bc","68966eb849e7fd7eff70c74d"].includes(keyCalidad)) {
                                 const kilos = decimalToComma(valueCalidad as number);
                                 const precioKey = decimalToComma(lote.precio.exportacion[keyCalidad]);
                                 const subTotal = decimalToComma(

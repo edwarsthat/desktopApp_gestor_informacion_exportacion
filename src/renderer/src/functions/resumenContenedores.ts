@@ -3,6 +3,30 @@
 import { contenedoresType } from "@renderer/types/contenedoresType"
 import { resultadoObtenerresumenContenedores, resumenPredios } from "@renderer/types/responses/resumenContenedores"
 
+// Claves (libres, pero te ayudan a documentar intención)
+export type TipoFruta = string;   // "Limon" | "Naranja" | ...
+export type Calibre   = string;   // "110" | "150" | ...
+export type Calidad   = string;   // "A" | "B" | "EXPORT" | ...
+
+// Métrica base por grupo (calibre/calidad)
+export interface MetricItem {
+  cajas: number;
+  cajasP: number;  // porcentaje sobre total de la fruta
+  kilos: number;
+  kilosP: number;  // porcentaje sobre total de la fruta
+  pallet: number;
+}
+
+// Secciones por fruta
+export interface FrutaResumen {
+  calibre: Record<Calibre, MetricItem>;
+  calidad: Record<Calidad, MetricItem>;
+  totalCajas: number;
+  totalKilos: number;
+}
+
+// Objeto final que devuelve tu función
+export type ResumenContenedores = Record<TipoFruta, FrutaResumen>;
 
 
 export const obtenerResumenPredios = (cont: contenedoresType[], soloHoy: boolean): resumenPredios => {
@@ -97,11 +121,11 @@ export const obtenerResumenPredios = (cont: contenedoresType[], soloHoy: boolean
 }
 
 export const obtenerResumen = (cont: contenedoresType[], soloHoy = '')
-    : resultadoObtenerresumenContenedores | null => {
+   : ResumenContenedores | null => {
 
     if (cont === undefined) return null
 
-    const resumen = {}
+    const resumen: ResumenContenedores = {}
 
     cont.forEach(contenedor => {
 
@@ -252,7 +276,6 @@ export const obtenerResumen = (cont: contenedoresType[], soloHoy = '')
 }
 
 export const fechasSeleccionarDia = (data:resultadoObtenerresumenContenedores, fecha: string): resultadoObtenerresumenContenedores => {
-    console.log("fecha",fecha)
     const tipoFrutaKeys = Object.keys(data)
     for(let i=0; i<tipoFrutaKeys.length; i++){
         const fechasKeys = Object.keys(data[tipoFrutaKeys[i]])
