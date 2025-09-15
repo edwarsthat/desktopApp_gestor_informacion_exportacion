@@ -1,0 +1,173 @@
+/* Estilos para CuartoFrioPrimaryCard */
+
+.cuarto-frio-card {
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--border-Color);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 12px 0;
+  box-shadow: 0 2px 4px var(--color-card-shadow);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cuarto-frio-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-Celifrut);
+}
+
+.cuarto-frio-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--color-card-shadow);
+  border-color: var(--color-Celifrut);
+  background-color: var(--color-fondo-hover);
+}
+
+.cuarto-frio-card__header {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-Color);
+}
+
+.cuarto-frio-card__title {
+  color: var(--color-title);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.cuarto-frio-card__title::before {
+  content: '❄️';
+  font-size: 1rem;
+}
+
+.cuarto-frio-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.cuarto-frio-card__fruta-item {
+  background-color: var(--color-input-bg);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid var(--color-Celifrut);
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.cuarto-frio-card__fruta-item:hover {
+  background-color: var(--color-fondo-hover);
+  border-left-color: var(--color-Celifrut-dark);
+}
+
+.cuarto-frio-card__fruta-name {
+  color: var(--color-subtitle);
+  font-weight: 500;
+  margin-right: 12px;
+  flex-shrink: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+.cuarto-frio-card__fruta-quantities {
+  color: var(--color-text);
+  font-size: 0.85rem;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cuarto-frio-card__quantity {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background-color: var(--color-ListaEmpaqueFondo);
+  color: var(--color-ListaEmpaqueTexto);
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.cuarto-frio-card__quantity--cajas {
+  background-color: rgba(126, 186, 39, 0.1);
+  color: var(--color-Celifrut-dark);
+}
+
+.cuarto-frio-card__quantity--kilos {
+  background-color: rgba(249, 115, 22, 0.1);
+  color: #c2410c;
+}
+
+.cuarto-frio-card__quantity-number {
+  font-weight: 600;
+}
+
+.cuarto-frio-card__empty {
+  text-align: center;
+  color: var(--color-text);
+  font-style: italic;
+  padding: 16px;
+  background-color: var(--color-input-bg);
+  border-radius: 6px;
+  border: 2px dashed var(--border-Color);
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .cuarto-frio-card {
+    padding: 12px;
+    margin: 8px 0;
+    min-height: 100px;
+  }
+  
+  .cuarto-frio-card__title {
+    font-size: 1rem;
+  }
+  
+  .cuarto-frio-card__fruta-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 6px 10px;
+  }
+  
+  .cuarto-frio-card__fruta-quantities {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}
+
+/* Indicador visual de que es clickeable */
+.cuarto-frio-card::after {
+  content: '👁️';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 0.9rem;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.cuarto-frio-card:hover::after {
+  opacity: 1;
+}

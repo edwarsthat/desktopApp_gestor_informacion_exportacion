@@ -82,6 +82,8 @@ import ShowIndicadores from "../indicadores/operaciones/ShowindIcadores/ShowIndi
 import { FrutaLoader } from "@renderer/loader/FrutaLoader"
 import ModificarSistema from "../sistema/modificarSistema/ModificarSistema"
 import CostosContenedores from "../comercial/costosContenedores/CostosContenedores"
+import TrazabilidadEF1 from "../proceso/trazabilidad/EF1/TrazabilidadEF1"
+import CuartosFrios from "../inventarioYlogistica/inventarios/cuartosFrios/CuartosFrios"
 
 
 type propsType = {
@@ -133,6 +135,9 @@ export default function Ventana(props: propsType): JSX.Element {
                     </div>
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "67ed9fe1c3fdbe833d4599bd" ? 'block' : 'none' }}>
                         {activas.includes("67ed9fe1c3fdbe833d4599bd") && <InventarioCanastillas />}
+                    </div>
+                    <div className="componentContainer" style={{ display: props.pestañaActiva === "68c86c1799dddf63af97548e" ? 'block' : 'none' }}>
+                        {activas.includes("68c86c1799dddf63af97548e") && <CuartosFrios />}
                     </div>
                     {/* historiales */}
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "66b66f1077549ed0672a901a" ? 'block' : 'none' }}>
@@ -364,6 +369,9 @@ export default function Ventana(props: propsType): JSX.Element {
                     </div>
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "67f8384a54a33e235e2f6bf9" ? 'block' : 'none' }}>
                         {activas.includes('67f8384a54a33e235e2f6bf9') && <IngresoClienteNacional />}
+                    </div>
+                    <div className="componentContainer" style={{ display: props.pestañaActiva === "68c195ffcfa49b2e567f13c6" ? 'block' : 'none' }}>
+                        {activas.includes('68c195ffcfa49b2e567f13c6') && <TrazabilidadEF1 />}
                     </div>
                     {/* indicadores */}
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "68b8ac7f7cbaefd8b4c0fa61" ? 'block' : 'none' }}>

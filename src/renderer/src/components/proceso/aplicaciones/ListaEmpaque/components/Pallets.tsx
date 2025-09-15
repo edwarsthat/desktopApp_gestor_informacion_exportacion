@@ -26,7 +26,6 @@ const headers = [
     "Fecha",
     "",
     ""
-
 ]
 
 export default function Pallets(): JSX.Element {
@@ -233,9 +232,9 @@ export default function Pallets(): JSX.Element {
 
     useEffect(() => {
         if (contenedor && contenedor.infoContenedor && contenedor.infoContenedor.calidad) {
-            const calidadesUse:calidadesType[] = []
-            for(const tipoFruta of tiposFruta){
-                for(const calidad of tipoFruta.calidades){
+            const calidadesUse: calidadesType[] = []
+            for (const tipoFruta of tiposFruta) {
+                for (const calidad of tipoFruta.calidades) {
                     if (contenedor.infoContenedor.calidad.includes(calidad._id)) {
                         calidadesUse.push(calidad);
                     }
@@ -405,11 +404,13 @@ export default function Pallets(): JSX.Element {
                                         )}</td>
                                         <td></td>
                                         <td>
-                                            <button onClick={(): void => handleAddItem(index)}>
+                                            <button onClick={(): void => handleAddItem(index)} title="Agregar cajas al pallet">
                                                 <BiSolidMessageSquareAdd />
                                             </button>
                                         </td>
-                                        <td></td>
+                                        <td>
+                                            <button title="Enviar al cuarto frío">❄️</button>
+                                        </td>
                                     </tr>
                                 </React.Fragment>
                             ))
