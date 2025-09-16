@@ -14,6 +14,8 @@ import { RiDeleteBack2Fill } from "react-icons/ri";
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 import React from "react";
 import { calidadesType } from "@renderer/types/tiposFrutas";
+import ModalCuartoFrio from "./ModalCuartoFrio";
+import { CuartoFrioType } from "@renderer/types/cuartosFrios";
 
 const headers = [
     "Pallet",
@@ -28,7 +30,12 @@ const headers = [
     ""
 ]
 
-export default function Pallets(): JSX.Element {
+type propsType = {
+    cuartosFrios: CuartoFrioType[]
+    inventarioCuartosFrios: string[]
+}
+
+export default function Pallets({ cuartosFrios, inventarioCuartosFrios }: propsType): JSX.Element {
     const { messageModal } = useAppContext();
     const tiposFruta = useTipoFrutaStore((s) => s.tiposFruta);
     const contenedores = useContext(contenedoresContext)
@@ -56,6 +63,9 @@ export default function Pallets(): JSX.Element {
 
     const [calidadSeleccionada, setCalidadSeleccionada] = useState<calidadesType[]>([])
     const [calidadesCont, setCalidadesCont] = useState<calidadesType[]>([])
+
+    const [openModalCuartoFrio, setOpenModalCuartoFrio] = useState<boolean>(false)
+    const [palletSeleccionado, setPalletSeleccionado] = useState<number>(-1)
 
     useEffect(() => {
         if (contenedorSeleccionado !== undefined && contenedores !== undefined) {
@@ -213,6 +223,7 @@ export default function Pallets(): JSX.Element {
             }
         }
     }
+
     useEffect(() => {
         let tipoFrutaSeleccionado;
 
@@ -267,79 +278,90 @@ export default function Pallets(): JSX.Element {
                         {contenedor &&
                             contenedor.pallets.map((_, index) => (
                                 <React.Fragment key={index}>
-                                    {contenedor.pallets[index].EF1.map((item, index2) => (
-                                        <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={index + item.fecha}>
-                                            <td>{index2 === 0 ? index + 1 : ''}</td>
-                                            <td>{item.lote?.enf}</td>
-                                            <td>{item.lote?.predio}</td>
+                                    {contenedor.pallets[index].EF1.map((item, index2) => {
+                                        const isInCuartoFrio = inventarioCuartosFrios.includes(item._id);
+                                        return (
+                                            <tr 
+                                                className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} 
+                                                style={isInCuartoFrio ? { backgroundColor: '#BBDEFB' } : {}}
+                                                key={index + item.fecha}>
+                                                <td>{index2 === 0 ? index + 1 : ''}</td>
+                                                <td>{item.lote?.enf}</td>
+                                                <td>{item.lote?.predio}</td>
 
-                                            {(indexItem === index && index2Item === index2 && ![indexItem, index2Item].includes(-1)) ?
+                                                {(indexItem === index && index2Item === index2 && ![indexItem, index2Item].includes(-1)) ?
+                                                    <td>
+                                                        <select onChange={(e): void => setCalidad(e.target.value)}>
+                                                            <option value=""></option>
+                                                            {calidadSeleccionada.map(caItem => (
+                                                                <option value={caItem._id} key={caItem._id + index}>
+                                                                    {caItem.nombre}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </td>
+                                                    :
+                                                    <td>{calidadesCont.find(cal => cal._id === item.calidad)?.descripcion || 'N/A'}</td>
+                                                }
+                                                {(indexItem === index && index2Item === index2 && ![indexItem, index2Item].includes(-1)) ?
+                                                    <td>
+                                                        <select onChange={(e): void => setTipoCaja(e.target.value)}>
+                                                            <option value=""></option>
+                                                            {contenedor.infoContenedor.tipoCaja.map(caItem => (
+                                                                <option value={caItem} key={caItem}>{caItem}</option>
+                                                            ))}
+                                                        </select>
+                                                    </td>
+                                                    :
+                                                    <td>{item.tipoCaja || 'N/A'}</td>
+                                                }
+                                                {(indexItem === index && index2Item === index2 && ![indexItem, index2Item].includes(-1)) ?
+                                                    <td>
+                                                        <select onChange={(e): void => setCalibre(e.target.value)}>
+                                                            <option value=""></option>
+                                                            {contenedor.infoContenedor.calibres.map(caItem => (
+                                                                <option value={caItem} key={caItem}>{caItem}</option>
+                                                            ))}
+                                                        </select>
+                                                    </td>
+                                                    :
+                                                    <td>{item.calibre || 'N/A'}</td>
+                                                }
+                                                {(indexItem === index && index2Item === index2 && ![indexItem, index2Item].includes(-1)) ?
+                                                    <td>
+                                                        <input
+                                                            type="text"
+                                                            value={cajas ?? item.cajas}
+                                                            onChange={(e): void => setCajas(e.target.value)} />
+                                                    </td>
+                                                    :
+                                                    <td>{item.cajas || 'N/A'}</td>
+                                                }
+                                                <td>{formatearFecha(item.fecha, true)}</td>
+
+
+                                                <BotonesSeleccionarItemTabla
+                                                    itemId={index + "-" + index2}
+                                                    itemSeleccionadoID={indexItem + "-" + index2Item}
+                                                    handleAceptar={handleAceptar}
+                                                    handleCancelar={handleCancel}
+                                                    handleModificar={(): void => handleModificar(index, index2)}
+                                                    disabled={isInCuartoFrio}
+                                                />
                                                 <td>
-                                                    <select onChange={(e): void => setCalidad(e.target.value)}>
-                                                        <option value=""></option>
-                                                        {calidadSeleccionada.map(caItem => (
-                                                            <option value={caItem._id} key={caItem._id + index}>
-                                                                {caItem.nombre}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </td>
-                                                :
-                                                <td>{calidadesCont.find(cal => cal._id === item.calidad)?.descripcion || 'N/A'}</td>
-                                            }
-                                            {(indexItem === index && index2Item === index2 && ![indexItem, index2Item].includes(-1)) ?
-                                                <td>
-                                                    <select onChange={(e): void => setTipoCaja(e.target.value)}>
-                                                        <option value=""></option>
-                                                        {contenedor.infoContenedor.tipoCaja.map(caItem => (
-                                                            <option value={caItem} key={caItem}>{caItem}</option>
-                                                        ))}
-                                                    </select>
-                                                </td>
-                                                :
-                                                <td>{item.tipoCaja || 'N/A'}</td>
-                                            }
-                                            {(indexItem === index && index2Item === index2 && ![indexItem, index2Item].includes(-1)) ?
-                                                <td>
-                                                    <select onChange={(e): void => setCalibre(e.target.value)}>
-                                                        <option value=""></option>
-                                                        {contenedor.infoContenedor.calibres.map(caItem => (
-                                                            <option value={caItem} key={caItem}>{caItem}</option>
-                                                        ))}
-                                                    </select>
-                                                </td>
-                                                :
-                                                <td>{item.calibre || 'N/A'}</td>
-                                            }
-                                            {(indexItem === index && index2Item === index2 && ![indexItem, index2Item].includes(-1)) ?
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={cajas ?? item.cajas}
-                                                        onChange={(e): void => setCajas(e.target.value)} />
-                                                </td>
-                                                :
-                                                <td>{item.cajas || 'N/A'}</td>
-                                            }
-                                            <td>{formatearFecha(item.fecha, true)}</td>
 
+                                                    <button 
+                                                        onClick={(): void => handleEliminar(index, index2)}
+                                                        disabled={isInCuartoFrio}
+                                                        style={{ opacity: isInCuartoFrio ? 0.5 : 1 }}
+                                                    >
+                                                        <RiDeleteBack2Fill color={isInCuartoFrio ? "#ccc" : "red"} />
+                                                    </button>
+                                                </td>
 
-                                            <BotonesSeleccionarItemTabla
-                                                itemId={index + "-" + index2}
-                                                itemSeleccionadoID={indexItem + "-" + index2Item}
-                                                handleAceptar={handleAceptar}
-                                                handleCancelar={handleCancel}
-                                                handleModificar={(): void => handleModificar(index, index2)}
-                                            />
-                                            <td>
-
-                                                <button onClick={(): void => handleEliminar(index, index2)}>
-                                                    <RiDeleteBack2Fill color="red" />
-                                                </button>
-                                            </td>
-
-                                        </tr>
-                                    ))}
+                                            </tr>
+                                        )
+                                    })}
                                     {isAdd !== -1 && isAdd === index &&
                                         <tr>
                                             <td></td>
@@ -409,7 +431,14 @@ export default function Pallets(): JSX.Element {
                                             </button>
                                         </td>
                                         <td>
-                                            <button title="Enviar al cuarto frío">❄️</button>
+                                            <button
+                                                onClick={(): void => {
+                                                    setPalletSeleccionado(index)
+                                                    setOpenModalCuartoFrio(true)
+                                                }}
+                                                title="Enviar al cuarto frío">
+                                                ❄️
+                                            </button>
                                         </td>
                                     </tr>
                                 </React.Fragment>
@@ -424,6 +453,14 @@ export default function Pallets(): JSX.Element {
                     message={message}
                     setConfirmation={setConfirm}
                     setShowConfirmationModal={setShowConfirmacion} />}
+
+            <ModalCuartoFrio
+                contenedor={contenedor}
+                pallet={palletSeleccionado}
+                open={openModalCuartoFrio}
+                onClose={(): void => setOpenModalCuartoFrio(false)}
+                cuartoFrios={cuartosFrios}
+            />
         </div>
     )
 }

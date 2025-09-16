@@ -69,7 +69,7 @@
 
 .detalles-cuarto-frio-tabla-header th {
   padding: 12px 8px;
-  text-align: left;
+  text-align: center;
   font-weight: 600;
   border-bottom: 2px solid var(--color-Celifrut-dark);
 }
@@ -93,7 +93,7 @@
 
 .detalles-cuarto-frio-tabla-cell {
   padding: 10px 8px;
-  color: var(--color-text);
+  color: var(--color-texto);
   border-right: 1px solid var(--border-Color);
 }
 
@@ -135,7 +135,7 @@
 .detalles-cuarto-frio-tabla-cell--cajas {
   font-weight: 700;
   color: var(--color-Celifrut-dark);
-  text-align: right;
+  text-align: center;
   font-size: 1rem;
 }
 

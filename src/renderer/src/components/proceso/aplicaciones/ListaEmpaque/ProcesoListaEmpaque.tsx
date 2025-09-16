@@ -11,6 +11,7 @@ import ListaEmpaquePredios from "./components/ListaEmpaquePredios";
 import { obtenerDataContenedores, obtenerPredioProcesando } from "./services/request";
 import { historialLotesType } from "@renderer/types/lotesType";
 import Pallets from "./components/Pallets";
+import { CuartoFrioType } from "@renderer/types/cuartosFrios";
 
 
 export const contenedoresContext = createContext<contenedoresType[] | undefined>(undefined)
@@ -28,6 +29,8 @@ export default function ProcesoListaEmpaque(): JSX.Element {
     const [showConfirmacion, setShowConfirmacion] = useState<boolean>(false)
     const [confirm, setConfirm] = useState<boolean>(false)
     const [message, setMessage] = useState<string>('')
+    const [cuartosFrios, setCuartosFrios] = useState<CuartoFrioType[]>([])
+    const [inventarioCuartosFrios, setInventarioCuartosFrios] = useState<string[]>([])
 
     useEffect(() => {
         if (
@@ -42,6 +45,7 @@ export default function ProcesoListaEmpaque(): JSX.Element {
             try {
                 await obtenerDataContenedores(setContenedores)
                 await obtenerPredioProcesando(setLotes)
+                await obtenerCuartosFrios()
 
             } catch (err) {
                 if (err instanceof Error) {
@@ -101,6 +105,23 @@ export default function ProcesoListaEmpaque(): JSX.Element {
             }
         }
     }
+    const obtenerCuartosFrios = async (): Promise<void> => {
+        try {
+            const request = {
+                action: "get_inventarios_cuartosFrios_listaEmpaque"
+            }
+            const response = await window.api.server2(request);
+            if (response.status !== 200)
+                throw new Error(`Code ${response.status}: ${response.message}`)
+            console.log(" cuartos frios ", response)
+            setCuartosFrios(response.data.infoCuartos)
+            setInventarioCuartosFrios(response.data.inventarioTotal)
+        } catch (err) {
+            if (err instanceof Error) {
+                messageModal("error", err.message)
+            }
+        }
+    }
 
     return (
         <div className="componentContainer">
@@ -125,7 +146,7 @@ export default function ProcesoListaEmpaque(): JSX.Element {
                         {showResumen && <Resumen />}
                         {showPredios && <ListaEmpaquePredios />}
 
-                        {!showResumen && !showPredios && <Pallets />
+                        {!showResumen && !showPredios && <Pallets cuartosFrios={cuartosFrios} inventarioCuartosFrios={inventarioCuartosFrios} />
                         }
                         {showConfirmacion &&
                             <ConfirmacionModal

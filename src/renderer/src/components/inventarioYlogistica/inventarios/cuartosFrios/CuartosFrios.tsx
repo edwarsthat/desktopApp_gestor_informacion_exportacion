@@ -1,8 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-import Filtros from "@renderer/components/UI/components/Filtros";
 import useAppContext from "@renderer/hooks/useAppContext";
-import { useFiltroValue } from "@renderer/hooks/useFiltro";
 import { CuartoFrioType } from "@renderer/types/cuartosFrios";
 import { useEffect, useState } from "react";
 import CuartoFrioPrimaryCard from "./components/CuartoFrioPrimaryCard";
@@ -11,11 +9,12 @@ import DetallesCuartoFrio from "./components/DetallesCuartoFrio";
 
 export default function CuartosFrios(): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
-    const { setCurrentFilters, currentFilters } = useFiltroValue();
     const [data, setData] = useState<CuartoFrioType[]>([]);
     const [totalData, setTotalData] = useState<{ cajas: number, kilos: number }>({ cajas: 0, kilos: 0 });
     const [cuartoSeleccionado, setCuartoSeleccionado] = useState<CuartoFrioType | null>(null);
 
+    const [filtroContenedor, setFiltroContenedor] = useState<string>('');
+    const [filtroPallet, setFiltroPallet] = useState<string>('');
     useEffect(() => {
         obtenerData();
     }, [])
@@ -25,7 +24,7 @@ export default function CuartosFrios(): JSX.Element {
             setLoading(true);
             const request = {
                 action: "get_inventarios_cuartosFrios",
-                query: { ...currentFilters }
+                query: {}
             }
             const response = await window.api.server2(request);
 
@@ -62,11 +61,28 @@ export default function CuartosFrios(): JSX.Element {
 
             <div className="cuartos-frios-filters-section">
                 {cuartoSeleccionado && (
-                    <Filtros
-                        showTipoFruta2={true}
-                        findFunction={async (): Promise<void> => { }}
-                        onFiltersChange={setCurrentFilters}
-                    />
+                    <div className="cuartos-frios-filters-container">
+                        <div className="cuartos-frios-filter-input-group">
+                            <label htmlFor="contenedor">Contenedor</label>
+                            <input 
+                                onChange={(e): void => setFiltroContenedor(e.target.value)}
+                                id="contenedor"
+                                className="cuartos-frios-filter-input"
+                                type="text" 
+                                placeholder="Buscar por contenedor..." 
+                            />
+                        </div>
+                        <div className="cuartos-frios-filter-input-group">
+                            <label htmlFor="pallet">Pallet</label>
+                            <input 
+                                onChange={(e): void => setFiltroPallet(e.target.value)}
+                                id="pallet"
+                                className="cuartos-frios-filter-input"
+                                type="text" 
+                                placeholder="Buscar por pallet..." 
+                            />
+                        </div>
+                    </div>
                 )}
             </div>
 
@@ -111,7 +127,11 @@ export default function CuartosFrios(): JSX.Element {
                         </div>
                     ) : (
                         <div className="cuartos-frios-empty-state">
-                            <DetallesCuartoFrio cuarto={cuartoSeleccionado} />
+                            <DetallesCuartoFrio 
+                                cuarto={cuartoSeleccionado} 
+                                filtroContenedor={filtroContenedor}
+                                filtroPallet={filtroPallet}
+                            />
                         </div>
                     )
 

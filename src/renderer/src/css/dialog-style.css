@@ -771,4 +771,177 @@ dialog::backdrop {
   background: var(--color-card-bg);
 }
 
+/* ========================================
+   ESTILOS PARA RADIO BUTTONS PERSONALIZADOS
+   ======================================== */
+
+/* Contenedor del grupo de radio buttons */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* Contenedor de cada opción de radio */
+.radio-option {
+  display: flex;
+  align-items: center;
+}
+
+/* Label del radio button */
+.radio-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.radio-label:hover {
+  border-color: var(--color-Celifrut);
+  background-color: #f8fff5;
+  box-shadow: 0 2px 8px rgba(126, 186, 39, 0.1);
+}
+
+/* Input radio oculto */
+.radio-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Radio button personalizado */
+.radio-custom {
+  height: 20px;
+  width: 20px;
+  background-color: #fff;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  margin-right: 12px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+/* Cuando el radio está seleccionado */
+.radio-input:checked + .radio-custom {
+  background-color: var(--color-Celifrut);
+  border-color: var(--color-Celifrut);
+}
+
+/* Punto interior del radio seleccionado */
+.radio-input:checked + .radio-custom:after {
+  content: "";
+  position: absolute;
+  display: block;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+  transform: translate(-50%, -50%);
+}
+
+/* Hover en el radio custom */
+.radio-input:hover + .radio-custom {
+  border-color: var(--color-Celifrut);
+  box-shadow: 0 0 0 3px rgba(126, 186, 39, 0.1);
+}
+
+/* Focus en el radio custom */
+.radio-input:focus + .radio-custom {
+  outline: 2px solid rgba(126, 186, 39, 0.5);
+  outline-offset: 2px;
+}
+
+/* Texto del radio button */
+.radio-text {
+  flex: 1;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Estado seleccionado para toda la label */
+.radio-input:checked + .radio-custom + .radio-text {
+  color: var(--color-Celifrut);
+  font-weight: 600;
+}
+
+/* Label completa seleccionada */
+.radio-input:checked ~ .radio-label,
+.radio-label:has(.radio-input:checked) {
+  border-color: var(--color-Celifrut);
+  background-color: #f8fff5;
+  box-shadow: 0 0 0 1px rgba(126, 186, 39, 0.2);
+}
+
+/* Estado vacío cuando no hay opciones */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-style: italic;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Responsive para radio buttons */
+@media (max-width: 480px) {
+  .radio-label {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .radio-custom {
+    height: 18px;
+    width: 18px;
+    margin-right: 10px;
+  }
+  
+  .radio-input:checked + .radio-custom:after {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+/* Tema oscuro para radio buttons */
+.dark-theme .radio-label {
+  background-color: #fff; /* Mantener siempre blanco */
+  border-color: #e0e0e0; /* Mantener borde claro */
+  color: #333; /* Texto oscuro para contraste */
+}
+
+.dark-theme .radio-label:hover {
+  background-color: #f8fff5; /* Mantener hover claro */
+  border-color: var(--color-Celifrut);
+}
+
+.dark-theme .radio-custom {
+  background-color: #fff; /* Mantener siempre blanco */
+  border-color: #ddd; /* Borde claro */
+}
+
+.dark-theme .radio-text {
+  color: #333; /* Texto oscuro para contraste en fondo blanco */
+}
+
+.dark-theme .empty-state p {
+  color: #999;
+}
+
 

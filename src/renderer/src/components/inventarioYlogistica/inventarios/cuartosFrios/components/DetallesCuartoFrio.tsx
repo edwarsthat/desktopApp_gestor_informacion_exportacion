@@ -4,17 +4,34 @@ import useAppContext from "@renderer/hooks/useAppContext"
 import { CuartoFrioType } from "@renderer/types/cuartosFrios"
 import { useEffect, useState } from "react";
 import { EF1Item } from "../types";
+import { ImExit } from "react-icons/im";
 import '../styles/DetallesCuartoFrio.css';
 
 type propsType = {
     cuarto: CuartoFrioType
+    filtroContenedor: string
+    filtroPallet: string
 }
-export default function DetallesCuartoFrio({ cuarto }:propsType): JSX.Element {
+export default function DetallesCuartoFrio({ cuarto, filtroContenedor, filtroPallet }:propsType): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
     const [data, setData] = useState<EF1Item[]>([]);
+    const [dataOriginal, setDataOriginal] = useState<EF1Item[]>([]);
+
     useEffect(()=>{
         obtenerDetallesCuarto();
     },[])
+
+    useEffect(() => {
+        let datosFiltrados = [...dataOriginal];
+        if (filtroContenedor.trim() !== '') {
+            datosFiltrados = datosFiltrados.filter(item => String(item.contenedor).toLowerCase().includes(filtroContenedor.toLowerCase()));
+        }
+        if (filtroPallet.trim() !== '') {
+            datosFiltrados = datosFiltrados.filter(item => (item.pallet + 1).toString().includes(filtroPallet));
+        }
+        setData(datosFiltrados);
+    } , [filtroContenedor, filtroPallet])
+
     const obtenerDetallesCuarto = async (): Promise<void> => {
         try{
             setLoading(true);
@@ -27,6 +44,7 @@ export default function DetallesCuartoFrio({ cuarto }:propsType): JSX.Element {
             if (response.status !== 200) {
                 throw new Error(response.message || "Error en la solicitud");
             }
+            setDataOriginal(response.data || []);
             setData(response.data || []);
         } catch (error) {
             if (error instanceof Error) {
@@ -59,6 +77,7 @@ export default function DetallesCuartoFrio({ cuarto }:propsType): JSX.Element {
                                 <th>Predio</th>
                                 <th>Tipo Caja</th>
                                 <th>Cajas</th>
+                                <th>Accion</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -68,7 +87,7 @@ export default function DetallesCuartoFrio({ cuarto }:propsType): JSX.Element {
                                         {item.contenedor}
                                     </td>
                                     <td className="detalles-cuarto-frio-tabla-cell detalles-cuarto-frio-tabla-cell--pallet">
-                                        {item.pallet}
+                                        {item.pallet + 1}
                                     </td>
                                     <td className="detalles-cuarto-frio-tabla-cell detalles-cuarto-frio-tabla-cell--lote">
                                         {item.lote.enf}
@@ -81,6 +100,9 @@ export default function DetallesCuartoFrio({ cuarto }:propsType): JSX.Element {
                                     </td>
                                     <td className="detalles-cuarto-frio-tabla-cell detalles-cuarto-frio-tabla-cell--cajas">
                                         {item.cajas}
+                                    </td>
+                                    <td className="detalles-cuarto-frio-tabla-cell detalles-cuarto-frio-tabla-cell--acciones">
+                                        <button className="detalles-cuarto-frio-tabla-cell--editar"><ImExit /></button>
                                     </td>
                                 </tr>
                             ))}

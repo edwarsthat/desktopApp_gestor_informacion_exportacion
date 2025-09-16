@@ -10,24 +10,28 @@ type propsType = {
     handleModificar: (id: string) => void
     handleAceptar: () => void
     handleCancelar: () => void
+    disabled?: boolean
 }
 
 export default function BotonesSeleccionarItemTabla(props: propsType): JSX.Element {
     const { loading } = useAppContext();
+    const isDisabled = props.disabled || loading;
+    
     return (
         <td>
             {(props.itemSeleccionadoID !== props.itemId) &&
                 <button
-                    style={{ color: "blue" }}
+                    style={{ color: props.disabled ? "#ccc" : "blue" }}
+                    disabled={props.disabled}
                     onClick={(): void => props.handleModificar(props.itemId)}>
                     <PiNotePencilDuotone />
                 </button>}
             {(props.itemSeleccionadoID === props.itemId) &&
-                    <button  disabled={loading} style={{ color: 'green' }} onClick={props.handleAceptar} >
+                    <button disabled={isDisabled} style={{ color: 'green' }} onClick={props.handleAceptar} >
                     <IoSaveSharp />
                 </button>}
             {(props.itemSeleccionadoID === props.itemId) &&
-                <button disabled={loading} style={{ color: 'red' }} onClick={props.handleCancelar}>
+                <button disabled={isDisabled} style={{ color: 'red' }} onClick={props.handleCancelar}>
                     <GiCancel />
                 </button>}
         </td>
