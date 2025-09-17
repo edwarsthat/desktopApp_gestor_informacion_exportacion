@@ -12,14 +12,14 @@ type propsType = {
     filtroContenedor: string
     filtroPallet: string
 }
-export default function DetallesCuartoFrio({ cuarto, filtroContenedor, filtroPallet }:propsType): JSX.Element {
+export default function DetallesCuartoFrio({ cuarto, filtroContenedor, filtroPallet }: propsType): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
     const [data, setData] = useState<EF1Item[]>([]);
     const [dataOriginal, setDataOriginal] = useState<EF1Item[]>([]);
 
-    useEffect(()=>{
+    useEffect(() => {
         obtenerDetallesCuarto();
-    },[])
+    }, [])
 
     useEffect(() => {
         let datosFiltrados = [...dataOriginal];
@@ -30,10 +30,10 @@ export default function DetallesCuartoFrio({ cuarto, filtroContenedor, filtroPal
             datosFiltrados = datosFiltrados.filter(item => (item.pallet + 1).toString().includes(filtroPallet));
         }
         setData(datosFiltrados);
-    } , [filtroContenedor, filtroPallet])
+    }, [filtroContenedor, filtroPallet])
 
     const obtenerDetallesCuarto = async (): Promise<void> => {
-        try{
+        try {
             setLoading(true);
             const request = {
                 action: "get_inventarios_cuartosFrios_detalles",
@@ -54,10 +54,32 @@ export default function DetallesCuartoFrio({ cuarto, filtroContenedor, filtroPal
             setLoading(false);
         }
     }
+    const darSalidaEnConjunto = async (): Promise<void> => {
+        try {
+            setLoading(true);
+            const itemsIds = data.map(item => item._id.toString());
+            const request = {
+                action: "put_inventarios_cuartosFrios_salida_item",
+                data: { itemsIds, cuartoId: cuarto._id }
+            }
+            const response = await window.api.server2(request);
+            if (response.status !== 200) {
+                throw new Error(`Code ${response.status}: ${response.message || "Error en la solicitud"}`);
+            }
+            messageModal("success", "Salida realizada con éxito");
+            await obtenerDetallesCuarto();
+        } catch (error) {
+            if (error instanceof Error) {
+                messageModal("error", error.message);
+            }
+        } finally {
+            setLoading(false);
+        }
+    }
     return (
         <div className="detalles-cuarto-frio-container">
             <h3 className="detalles-cuarto-frio-title">Detalles del Cuarto Frío</h3>
-            
+
             <div className="detalles-cuarto-frio-info">
                 <p className="detalles-cuarto-frio-nombre">Nombre: {cuarto.nombre}</p>
             </div>
@@ -77,7 +99,9 @@ export default function DetallesCuartoFrio({ cuarto, filtroContenedor, filtroPal
                                 <th>Predio</th>
                                 <th>Tipo Caja</th>
                                 <th>Cajas</th>
-                                <th>Accion</th>
+                                <th><button onClick={darSalidaEnConjunto}>
+                                    <ImExit />
+                                </button></th>
                             </tr>
                         </thead>
                         <tbody>

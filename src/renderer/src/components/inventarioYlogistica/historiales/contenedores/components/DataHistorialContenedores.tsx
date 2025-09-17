@@ -281,7 +281,7 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                                     </thead>
                                     {showCalibeCalidad ?
                                         <tbody>
-                                            {resumen && resumen.totalCalidades[tipoFruta].map((calidad, index) => (
+                                            {resumen && resumen.totalCalidades.map((calidad, index) => (
                                                 <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={calidad}>
                                                     <td>{tipoCalidad(calidad, tipoFrutas)}</td>
                                                     {verKilos &&
@@ -299,7 +299,7 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                                         </tbody>
                                         :
                                         <tbody>
-                                            {resumen && resumen.totalCalibres[tipoFruta].map((calibre, index) => (
+                                            {resumen && resumen.totalCalibres &&  resumen.totalCalibres.map((calibre, index) => (
                                                 <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}
                                                     key={calibre}
                                                     onClick={(): void => {
@@ -314,28 +314,28 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                                                     {showCalidadEnCalibre === `${tipoFruta}-${calibre}` ?
                                                         <>
                                                             {verKilos && <td>
-                                                                {resumen && resumen.totalCalidades[tipoFruta].map((calidad) => (
+                                                                {resumen && resumen.totalCalidades.map((calidad) => (
                                                                     <div key={calidad + calibre + tipoFruta}>
                                                                         {tipoCalidad(calidad, tipoFrutas)}:{mostrarCalidadPorCalibre(tipoFruta, calibre, calidad, "kilos")} Kg
                                                                     </div>
                                                                 ))}
                                                             </td>}
                                                             {verCajas && <td>
-                                                                {resumen && resumen.totalCalidades[tipoFruta].map((calidad) => (
+                                                                {resumen && resumen.totalCalidades.map((calidad) => (
                                                                     <div key={calidad + calibre + tipoFruta}>
                                                                         {tipoCalidad(calidad, tipoFrutas)}:{mostrarCalidadPorCalibre(tipoFruta, calibre, calidad, "cajas")}
                                                                     </div>
                                                                 ))}
                                                             </td>}
                                                             {verPorcentaje &&  <td>
-                                                                {resumen && resumen.totalCalidades[tipoFruta].map((calidad) => (
+                                                                {resumen && resumen.totalCalidades.map((calidad) => (
                                                                     <div key={calidad + calibre + tipoFruta}>
                                                                         {tipoCalidad(calidad, tipoFrutas)}:{mostrarCalidadPorCalibre(tipoFruta, calibre, calidad, "kilosP")?.toFixed(2) ?? "N/A"} %
                                                                     </div>
                                                                 ))}
                                                             </td>}
                                                             { verPorcentajeCajas && <td>
-                                                                {resumen && resumen.totalCalidades[tipoFruta].map((calidad) => (
+                                                                {resumen && resumen.totalCalidades.map((calidad) => (
                                                                     <div key={calidad + calibre + tipoFruta}>
                                                                         {tipoCalidad(calidad, tipoFrutas)}:{mostrarCalidadPorCalibre(tipoFruta, calibre, calidad, "cajasP")?.toFixed(2) ?? "N/A"} %
                                                                     </div>
