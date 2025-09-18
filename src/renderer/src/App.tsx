@@ -81,7 +81,6 @@ function App(): JSX.Element {
   useEffect(() => {
     funcionAuxiliar()
     window.api.status_proceso("status_proceso", (data) => {
-      console.log("status proceso", data)
       setIsprocesoStart(data.status)
     });
     return () => {

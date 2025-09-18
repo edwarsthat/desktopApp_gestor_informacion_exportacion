@@ -84,6 +84,7 @@ import ModificarSistema from "../sistema/modificarSistema/ModificarSistema"
 import CostosContenedores from "../comercial/costosContenedores/CostosContenedores"
 import TrazabilidadEF1 from "../proceso/trazabilidad/EF1/TrazabilidadEF1"
 import CuartosFrios from "../inventarioYlogistica/inventarios/cuartosFrios/CuartosFrios"
+import RegistroCuartosFrios from "../inventarioYlogistica/historiales/registrosCuartosFrios/RegistroCuartosFrios"
 
 
 type propsType = {
@@ -169,6 +170,9 @@ export default function Ventana(props: propsType): JSX.Element {
                     </div>
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "6877b961e35ac9d2a0ab08cd" ? 'block' : 'none' }}>
                         {activas.includes("6877b961e35ac9d2a0ab08cd") && <RegistrosInventarioDescartes />}
+                    </div>
+                    <div className="componentContainer" style={{ display: props.pestañaActiva === "68cc68719624e36722ead1d7" ? 'block' : 'none' }}>
+                        {activas.includes("68cc68719624e36722ead1d7") && <RegistroCuartosFrios />}
                     </div>
                     {/* programacion contenedores */}
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "66c5ee45d07e71f7d36597ee" ? 'block' : 'none' }}>

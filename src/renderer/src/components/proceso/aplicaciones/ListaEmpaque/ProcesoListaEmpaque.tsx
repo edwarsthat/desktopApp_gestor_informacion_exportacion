@@ -36,7 +36,14 @@ export default function ProcesoListaEmpaque(): JSX.Element {
         if (
             eventoServidor === 'lista_empaque_update'
         ) {
-            obtenerDataContenedores(setContenedores)
+
+            (async (): Promise<void> => {
+                await obtenerDataContenedores(setContenedores)
+                await obtenerPredioProcesando(setLotes)
+                await obtenerCuartosFrios()
+                console.log("funcion autollamada", eventoServidor)
+
+            })();
         }
     }, [triggerServer])
 
@@ -113,7 +120,6 @@ export default function ProcesoListaEmpaque(): JSX.Element {
             const response = await window.api.server2(request);
             if (response.status !== 200)
                 throw new Error(`Code ${response.status}: ${response.message}`)
-            console.log(" cuartos frios ", response)
             setCuartosFrios(response.data.infoCuartos)
             setInventarioCuartosFrios(response.data.inventarioTotal)
         } catch (err) {

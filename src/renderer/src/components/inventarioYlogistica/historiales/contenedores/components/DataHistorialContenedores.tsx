@@ -311,7 +311,7 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                                                     }}>
                                                     <td>{calibre}</td>
 
-                                                    {showCalidadEnCalibre === `${tipoFruta}-${calibre}` ?
+                                                    {!(showCalidadEnCalibre === `${tipoFruta}-${calibre}`) ?
                                                         <>
                                                             {verKilos && <td>
                                                                 {resumen && resumen.totalCalidades.map((calidad) => (

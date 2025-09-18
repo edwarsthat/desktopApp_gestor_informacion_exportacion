@@ -455,6 +455,7 @@ export default function Pallets({ cuartosFrios, inventarioCuartosFrios }: propsT
                     setShowConfirmationModal={setShowConfirmacion} />}
 
             <ModalCuartoFrio
+                inventarioCuartosFrios={inventarioCuartosFrios}
                 contenedor={contenedor}
                 pallet={palletSeleccionado}
                 open={openModalCuartoFrio}

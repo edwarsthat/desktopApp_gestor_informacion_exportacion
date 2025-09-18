@@ -13,8 +13,10 @@ type propsType = {
     cuartoFrios: CuartoFrioType[]
     contenedor: contenedoresType
     pallet: number
+    inventarioCuartosFrios: string[]
+
 }
-export default function ModalCuartoFrio({ open, onClose, cuartoFrios, contenedor, pallet }: propsType): JSX.Element {
+export default function ModalCuartoFrio({ open, onClose, cuartoFrios, contenedor, pallet, inventarioCuartosFrios }: propsType): JSX.Element {
     const { loading, setLoading, messageModal } = useAppContext();
     const [cuartoSeleccionado, setCuartoSeleccionado] = useState<string>("")
 
@@ -24,11 +26,12 @@ export default function ModalCuartoFrio({ open, onClose, cuartoFrios, contenedor
             setLoading(true)
             const items: (EF1Type | null)[] = [];
             if (!contenedor) { throw new Error("No hay contenedor seleccionado"); }
-            const itemsIds = contenedor?.pallets[pallet].EF1.map(i => i._id.toString())
+            const itemsIds = contenedor?.pallets[pallet].EF1.map(i => i._id.toString()).filter(id => !inventarioCuartosFrios.includes(id));
 
             for (const id of itemsIds) {
                 items.push(obtenerItem(contenedor, id));
             }
+            console.log("items =>", items);
             const request = {
                 action: "put_inventarios_pallet_eviarCuartoFrio",
                 data: {

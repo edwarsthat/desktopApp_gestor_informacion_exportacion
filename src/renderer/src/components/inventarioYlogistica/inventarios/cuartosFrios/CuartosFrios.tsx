@@ -8,18 +8,33 @@ import './styles/CuartosFrios.css';
 import DetallesCuartoFrio from "./components/DetallesCuartoFrio";
 
 export default function CuartosFrios(): JSX.Element {
-    const { messageModal, setLoading } = useAppContext();
+    const { messageModal, setLoading, eventoServidor, triggerServer } = useAppContext();
     const [data, setData] = useState<CuartoFrioType[]>([]);
     const [totalData, setTotalData] = useState<{ cajas: number, kilos: number }>({ cajas: 0, kilos: 0 });
     const [cuartoSeleccionado, setCuartoSeleccionado] = useState<CuartoFrioType | null>(null);
 
     const [filtroContenedor, setFiltroContenedor] = useState<string>('');
     const [filtroPallet, setFiltroPallet] = useState<string>('');
+
+
+
     useEffect(() => {
         obtenerData();
     }, [])
 
-    const obtenerData = async (): Promise<void> => {
+    useEffect(() => {
+        if (eventoServidor !== 'lista_empaque_update') return;
+
+        (async (): Promise<void> => {
+            const nuevos = await obtenerData();
+            if (cuartoSeleccionado && nuevos) {
+                const actualizado = nuevos.find(c => c._id === cuartoSeleccionado._id) || null;
+                setCuartoSeleccionado(actualizado);
+            }
+        })();
+    }, [triggerServer, eventoServidor]);
+
+    const obtenerData = async (): Promise<CuartoFrioType[] | undefined> => {
         try {
             setLoading(true);
             const request = {
@@ -31,20 +46,25 @@ export default function CuartosFrios(): JSX.Element {
             if (response.status !== 200) {
                 throw new Error(response.message || "Error en la solicitud");
             }
-            setData(response.data || []);
+
+            const arr: CuartoFrioType[] = response.data || [];
+            setData(arr);
             const totales = { kilos: 0, cajas: 0 };
 
-            (response.data ?? []).forEach((cuarto: CuartoFrioType) => {
+            (arr ?? []).forEach((cuarto: CuartoFrioType) => {
                 Object.values(cuarto?.totalFruta ?? {}).forEach(cantidades => {
                     totales.kilos += cantidades?.kilos ?? 0;
                     totales.cajas += cantidades?.cajas ?? 0;
                 });
             })
             setTotalData(totales);
+            return arr;
+
         } catch (error) {
             if (error instanceof Error) {
                 messageModal("error", error.message);
             }
+            return []
         } finally {
             setLoading(false);
         }
@@ -64,22 +84,22 @@ export default function CuartosFrios(): JSX.Element {
                     <div className="cuartos-frios-filters-container">
                         <div className="cuartos-frios-filter-input-group">
                             <label htmlFor="contenedor">Contenedor</label>
-                            <input 
+                            <input
                                 onChange={(e): void => setFiltroContenedor(e.target.value)}
                                 id="contenedor"
                                 className="cuartos-frios-filter-input"
-                                type="text" 
-                                placeholder="Buscar por contenedor..." 
+                                type="text"
+                                placeholder="Buscar por contenedor..."
                             />
                         </div>
                         <div className="cuartos-frios-filter-input-group">
                             <label htmlFor="pallet">Pallet</label>
-                            <input 
+                            <input
                                 onChange={(e): void => setFiltroPallet(e.target.value)}
                                 id="pallet"
                                 className="cuartos-frios-filter-input"
-                                type="text" 
-                                placeholder="Buscar por pallet..." 
+                                type="text"
+                                placeholder="Buscar por pallet..."
                             />
                         </div>
                     </div>
@@ -127,8 +147,10 @@ export default function CuartosFrios(): JSX.Element {
                         </div>
                     ) : (
                         <div className="cuartos-frios-empty-state">
-                            <DetallesCuartoFrio 
-                                cuarto={cuartoSeleccionado} 
+                            <DetallesCuartoFrio
+                                setFiltroContenedor={setFiltroContenedor}
+                                setFiltroPallet={setFiltroPallet}
+                                cuarto={cuartoSeleccionado}
                                 filtroContenedor={filtroContenedor}
                                 filtroPallet={filtroPallet}
                             />
