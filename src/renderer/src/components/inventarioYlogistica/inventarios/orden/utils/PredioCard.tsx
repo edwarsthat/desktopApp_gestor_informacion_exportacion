@@ -3,6 +3,8 @@ import { lotesType } from "@renderer/types/lotesType"
 import { BsArrowRightSquareFill } from "react-icons/bs";
 import { formatearFecha } from "@renderer/functions/fechas";
 import { useEffect, useState } from "react";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
+import { nombreTipoFruta2 } from "@renderer/utils/tipoFrutas";
 
 type propsType = {
     lote: lotesType
@@ -10,6 +12,7 @@ type propsType = {
 }
 
 export default function PredioCard(props: propsType): JSX.Element {
+    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
     const [exportacion, setExportacion] = useState<number>()
     const [descarte, setDescarte] = useState<number>()
     useEffect(() => {
@@ -32,13 +35,13 @@ export default function PredioCard(props: propsType): JSX.Element {
             <div className="grid-main-info">
                 <span className="enf">{props.lote.enf}</span>
                 <span className="predio">{props.lote.predio?.PREDIO}</span>
-                <span>{props.lote.tipoFruta.tipoFruta}</span>
+                <span>{nombreTipoFruta2(String(props.lote.tipoFruta), tiposFruta)}</span>
             </div>
             <div className="grid-extra-info">
                 <span>{formatearFecha(props.lote.fecha_ingreso_inventario)}</span>
 
-                <span>Can: {Number(props.lote?.inventario)}</span>
-                <span>{(Number(props.lote?.inventario) * Number(props.lote.promedio)).toFixed(0)} Kg</span>
+                <span>Can: {Number(props.lote?.canastillas)}</span>
+                <span>{(Number(props.lote?.canastillas) * Number(props.lote.promedio)).toFixed(0)} Kg</span>
                 {Object.prototype.hasOwnProperty.call(props.lote, "desverdizado") && (
                     <span className="tag-desverdizado">Desverdizado</span>
                 )}

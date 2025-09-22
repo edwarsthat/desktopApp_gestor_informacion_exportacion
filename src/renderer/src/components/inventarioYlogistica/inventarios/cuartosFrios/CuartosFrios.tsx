@@ -34,6 +34,20 @@ export default function CuartosFrios(): JSX.Element {
         })();
     }, [triggerServer, eventoServidor]);
 
+    useEffect(() => {
+        if (cuartoSeleccionado) return;
+
+        const totales = { kilos: 0, cajas: 0 };
+
+        (data ?? []).forEach((cuarto: CuartoFrioType) => {
+            Object.values(cuarto?.totalFruta ?? {}).forEach(cantidades => {
+                totales.kilos += cantidades?.kilos ?? 0;
+                totales.cajas += cantidades?.cajas ?? 0;
+            });
+        })
+        setTotalData(totales);
+    }, [cuartoSeleccionado])
+
     const obtenerData = async (): Promise<CuartoFrioType[] | undefined> => {
         try {
             setLoading(true);
@@ -148,6 +162,7 @@ export default function CuartosFrios(): JSX.Element {
                     ) : (
                         <div className="cuartos-frios-empty-state">
                             <DetallesCuartoFrio
+                                setTotalData={setTotalData}
                                 setFiltroContenedor={setFiltroContenedor}
                                 setFiltroPallet={setFiltroPallet}
                                 cuarto={cuartoSeleccionado}

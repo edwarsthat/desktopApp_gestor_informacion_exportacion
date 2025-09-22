@@ -2,6 +2,8 @@
 import { lotesType } from '@renderer/types/lotesType'
 import "../css/inventario-fruta-sin-procesar.css"
 import { useEffect, useState } from 'react'
+import { nombreTipoFruta2 } from '@renderer/utils/tipoFrutas'
+import useTipoFrutaStore from '@renderer/store/useTipoFrutaStore'
 type propsType = {
   data: lotesType[]
   loteSeleccionado: lotesType | undefined
@@ -11,7 +13,7 @@ type propsType = {
 }
 
 export default function BotonesAccionFrutaSinProcesar(props: propsType): JSX.Element {
-
+  const tipoFrutas = useTipoFrutaStore((state) => state.tiposFruta)
   const [enInventario, setEnInventario] = useState<{ [key: string]: number }>({});
   const [totalInventario, setTotalInventario] = useState<number>(0);
 
@@ -19,12 +21,14 @@ export default function BotonesAccionFrutaSinProcesar(props: propsType): JSX.Ele
     const result = {};
     let total = 0;
     props.data && props.data.forEach((lote) => {
-      if(result[lote.tipoFruta.tipoFruta]) {
-        result[lote.tipoFruta.tipoFruta] += lote.inventario ? lote.inventario * lote.promedio : 0;
+      const tipoFruta = nombreTipoFruta2(String(lote.tipoFruta), tipoFrutas);
+      console.log(lote)
+      if(result[tipoFruta]) {
+        result[tipoFruta] += Number(lote.canastillas) * lote.promedio;
       } else {
-        result[lote.tipoFruta.tipoFruta] = lote.inventario ? lote.inventario * lote.promedio : 0;
+        result[tipoFruta] = Number(lote.canastillas) * lote.promedio;
       }
-      total += lote.inventario ? lote.inventario * lote.promedio : 0;
+      total += Number(lote.canastillas) * lote.promedio;
     })
     setEnInventario(result);
     setTotalInventario(total);

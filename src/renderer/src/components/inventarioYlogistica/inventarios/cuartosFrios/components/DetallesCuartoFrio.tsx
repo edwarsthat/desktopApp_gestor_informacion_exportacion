@@ -15,8 +15,9 @@ type propsType = {
     filtroPallet: string
     setFiltroContenedor: React.Dispatch<React.SetStateAction<string>>
     setFiltroPallet: React.Dispatch<React.SetStateAction<string>>
+    setTotalData: (r: { cajas: number, kilos: number }) => void
 }
-export default function DetallesCuartoFrio({ cuarto, filtroContenedor, filtroPallet, setFiltroContenedor, setFiltroPallet }: propsType): JSX.Element {
+export default function DetallesCuartoFrio({ cuarto, filtroContenedor, filtroPallet, setFiltroContenedor, setFiltroPallet, setTotalData }: propsType): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
     const {
         setShowConfirmation, showConfirmation,
@@ -39,9 +40,21 @@ export default function DetallesCuartoFrio({ cuarto, filtroContenedor, filtroPal
         if (filtroPallet.trim() !== '') {
             datosFiltrados = datosFiltrados.filter(item => (item.pallet + 1).toString().includes(filtroPallet));
         }
+
+        totalesDestaller(datosFiltrados);
         setData(datosFiltrados);
     }, [filtroContenedor, filtroPallet])
 
+    const totalesDestaller = (dataList: EF1Item[]): void => {
+        const totales = { kilos: 0, cajas: 0 };
+        (dataList ?? []).forEach((cuarto) => {
+            const { cajas, tipoCaja } = cuarto;
+            const mult = tipoCaja.split("-")[1] ? parseFloat(tipoCaja.split("-")[1].trim()) : 1;
+            totales.kilos += (cajas ?? 0) * mult;
+            totales.cajas += (cajas ?? 0);
+        })
+        setTotalData(totales);
+    }
     const obtenerDetallesCuarto = async (): Promise<void> => {
         try {
             setLoading(true);
@@ -55,6 +68,8 @@ export default function DetallesCuartoFrio({ cuarto, filtroContenedor, filtroPal
             }
             setDataOriginal(response.data || []);
             setData(response.data || []);
+            totalesDestaller(response.data || []);
+
         } catch (error) {
             if (error instanceof Error) {
                 messageModal("error", error.message);
@@ -63,7 +78,6 @@ export default function DetallesCuartoFrio({ cuarto, filtroContenedor, filtroPal
             setLoading(false);
         }
     }
-
     const darSalidaEnConjunto = async (): Promise<void> => {
         try {
             setLoading(true);

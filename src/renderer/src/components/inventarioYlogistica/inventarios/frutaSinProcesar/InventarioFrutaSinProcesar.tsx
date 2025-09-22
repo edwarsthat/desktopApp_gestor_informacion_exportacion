@@ -10,12 +10,14 @@ import Desverdizado from './modals/Desverdizado'
 import useDataInventarioFrutaSinProcesar from './hooks/useDataInventarioFrutaSinProcesar'
 import Filtros from '@renderer/components/UI/components/Filtros'
 import { useFiltroValue } from '@renderer/hooks/useFiltro'
+import { nombreTipoFruta2 } from '@renderer/utils/tipoFrutas'
+import useTipoFrutaStore from '@renderer/store/useTipoFrutaStore'
 
 export default function InventarioFrutaSinProcesar(): JSX.Element {
   const { eventoServidor, triggerServer } = useAppContext()
   const { setCurrentFilters, currentFilters } = useFiltroValue();
   const { obtenerFruta, data, datosOriginales, setData } = useDataInventarioFrutaSinProcesar()
-
+  const tipoFrutas = useTipoFrutaStore((state) => state.tiposFruta)
   const [loteSeleccionado, setLoteSeleccionado] = useState<lotesType>()
 
   //states de los modales
@@ -64,7 +66,7 @@ export default function InventarioFrutaSinProcesar(): JSX.Element {
     }
 
     if (currentFilters.tipoFruta) {
-      datosFiltrados = datosFiltrados.filter(lote => lote.tipoFruta?.tipoFruta === currentFilters.tipoFruta)
+      datosFiltrados = datosFiltrados.filter(lote => nombreTipoFruta2(String(lote.tipoFruta), tipoFrutas) === currentFilters.tipoFruta)
     }
 
     if (currentFilters.GGN) {

@@ -14,7 +14,7 @@ export default function ViewInformeResultados({ loteSeleccionado }: propsType): 
     const fruta = tipoFrutas.find((f) => f._id === loteSeleccionado.tipoFruta._id);
     if (!fruta) return <></>;
 
-    const contIds = [...new Set(Object.values(loteSeleccionado.exportacion).flatMap(c => Object.keys(c)))];
+    const contIds = loteSeleccionado.exportacion ? [...new Set(Object.values(loteSeleccionado.exportacion).flatMap(c => Object.keys(c)))] : [];
     const calidadIds = fruta.calidades.sort((a, b) =>
         a.importancia - b.importancia).map(c => c._id);
     const calidades = calidadIds.filter(id => contIds.includes(id));

@@ -11,7 +11,7 @@ import { useState } from 'react'
 import { IoSaveSharp } from 'react-icons/io5'
 import { GiCancel } from 'react-icons/gi'
 import useAppContext from '@renderer/hooks/useAppContext'
-import { tipoCalidad } from '@renderer/utils/tipoFrutas'
+import { nombreTipoFruta2, tipoCalidad } from '@renderer/utils/tipoFrutas'
 import useTipoFrutaStore from '@renderer/store/useTipoFrutaStore'
 
 type propsType = {
@@ -121,9 +121,7 @@ export default function FilaTablaFrutaSinProcesar(props: propsType): JSX.Element
                 </td>
                 <td>{props.lote.fecha_creacion && formatearFecha(props.lote.fecha_creacion, true)}</td>
                 <td>
-                    {props.lote?.inventario && props.lote.promedio
-                        ? (props.lote.inventario * props.lote.promedio).toFixed(2)
-                        : 0}
+                    {(Number((props.lote?.canastillas || 0)) * Number((props.lote?.promedio || 0))).toFixed(2) || 0}
                 </td>
 
                 {modificarCanastillas ? (
@@ -131,10 +129,10 @@ export default function FilaTablaFrutaSinProcesar(props: propsType): JSX.Element
                         <input type="text" onChange={(e): void => setCanastillas(e.target.value)} />
                     </td>
                 ) : (
-                    <td>{props.lote?.inventario && props.lote.inventario}</td>
+                    <td>{(props.lote?.canastillas || 0)}</td>
                 )}
 
-                <td>{props.lote.tipoFruta?.tipoFruta || ''}</td>
+                <td>{nombreTipoFruta2(String(props.lote?.tipoFruta), tipoFrutas ) || ''}</td>
                 <td>{tipoCalidad(props.lote.calidad?.calidadInterna?.calidad || "", tipoFrutas) || "N/A"}</td>
                 <td>{props.lote.observaciones}</td>
                 <td>

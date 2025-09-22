@@ -30,7 +30,7 @@ return (
             <select className="defaultSelect" onChange={(e): void => props.setFiltroPrediosInventario({...props.filtroPrediosInventario, select: e.target.value })}>
                 <option value="">Tipo de fruta</option>
                 {props.tipoFrutas.map(tipo => (
-                    <option key={tipo._id} value={tipo.tipoFruta}>{tipo.tipoFruta}</option>
+                    <option key={tipo._id} value={tipo._id}>{tipo.tipoFruta}</option>
                 ))}
             </select>
             <hr />
