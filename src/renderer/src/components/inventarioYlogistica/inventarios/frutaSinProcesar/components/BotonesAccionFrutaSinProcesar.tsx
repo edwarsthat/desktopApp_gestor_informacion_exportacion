@@ -42,7 +42,7 @@ export default function BotonesAccionFrutaSinProcesar(props: propsType): JSX.Ele
           <span>Directo Nacional</span>
         </button>
         <button onClick={props.closeDesverdizado}
-          className={props.loteSeleccionado?.tipoFruta.tipoFruta === "Naranja" ? 'desverdizar' : 'no-desverdizar'} >
+          className={String(props.loteSeleccionado?.tipoFruta) === "686e6b940c34dee069775d4f" ? 'desverdizar' : 'no-desverdizar'} >
           <span >Desverdizar</span>
         </button>
       </div>

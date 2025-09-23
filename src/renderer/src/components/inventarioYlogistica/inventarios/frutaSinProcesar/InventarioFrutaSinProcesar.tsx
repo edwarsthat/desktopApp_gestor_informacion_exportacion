@@ -5,13 +5,13 @@ import { lotesType } from '@renderer/types/lotesType'
 import TableFrutaSinProcesar from './components/TableFrutaSinProcesar'
 import BotonesAccionFrutaSinProcesar from './components/BotonesAccionFrutaSinProcesar'
 import { createPortal } from 'react-dom'
-import Directo from './modals/Directo'
 import Desverdizado from './modals/Desverdizado'
 import useDataInventarioFrutaSinProcesar from './hooks/useDataInventarioFrutaSinProcesar'
 import Filtros from '@renderer/components/UI/components/Filtros'
 import { useFiltroValue } from '@renderer/hooks/useFiltro'
 import { nombreTipoFruta2 } from '@renderer/utils/tipoFrutas'
 import useTipoFrutaStore from '@renderer/store/useTipoFrutaStore'
+import DirectoNacional from './modals/DirectoNacional'
 
 export default function InventarioFrutaSinProcesar(): JSX.Element {
   const { eventoServidor, triggerServer } = useAppContext()
@@ -111,9 +111,9 @@ export default function InventarioFrutaSinProcesar(): JSX.Element {
   const closeDesverdizado = (): void => {
     setShowDesverdizadoModal(!showDesverdizadoModal)
   }
-  const handleInfo = (): void => {
-    setLoteSeleccionado(undefined)
-  }
+  // const handleInfo = (): void => {
+  //   setLoteSeleccionado(undefined)
+  // }
 
   if (!data) {
     return <div>Cargando datos...</div>
@@ -148,16 +148,11 @@ export default function InventarioFrutaSinProcesar(): JSX.Element {
         clickLote={clickLote}
       />
 
-      {showDirectoModal &&
-        createPortal(
-          <Directo
-            obtenerFruta={obtenerFruta}
-            handleInfo={handleInfo}
-            closeDirecto={closeDirecto}
-            loteSeleccionado={loteSeleccionado}
-          />,
-          document.body
-        )}
+      <DirectoNacional 
+        loteSeleccionado={loteSeleccionado}
+        open={showDirectoModal}
+        onClose={(): void => setShowDirectoModal(false)}
+      />
       {showDesverdizadoModal &&
         createPortal(
           <Desverdizado

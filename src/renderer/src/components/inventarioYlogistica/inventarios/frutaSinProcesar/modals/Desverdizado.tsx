@@ -36,7 +36,7 @@ export default function Desverdizado({
       if (!result) return
 
       const canastillasInt = Number(formState.canastillas)
-      const propsCanastillasInt = loteSeleccionado.inventario ? loteSeleccionado.inventario : 0
+      const propsCanastillasInt = Number(loteSeleccionado.canastillas || 0)
 
       if (propsCanastillasInt !== undefined && canastillasInt > propsCanastillasInt) {
         throw new Error("Error en el numero de canastillas!")
@@ -49,7 +49,6 @@ export default function Desverdizado({
       }
 
       const response = await window.api.server2(request);
-      console.log("Response:", response);
       if (response.status !== 200) {
         throw new Error(`Code ${response.status}: ${response.message}`);
       }
