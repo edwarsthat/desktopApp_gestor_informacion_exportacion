@@ -199,7 +199,6 @@ function createDownloadWindow(): void {
     resizable: false,
     autoHideMenuBar: true,
 
-
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
@@ -211,6 +210,13 @@ function createDownloadWindow(): void {
 
   downloadWindow.on('ready-to-show', () => {
     downloadWindow.show()
+    console.log('Download window is ready to receive messages'); // Para debugging
+  })
+
+  // Agregar listener para debugging cuando se cierre
+  downloadWindow.on('closed', () => {
+    console.log('Download window closed');
+    downloadWindow = null;
   })
 
   downloadWindow.loadFile(join(__dirname, '../renderer/downloadWindow.html'))
@@ -389,19 +395,23 @@ updater.autoUpdater.on('download-progress', (progressObj) => {
     console.log(`Velocidad: ${(progressObj.bytesPerSecond / 1048576).toFixed(2)} MB/s`);
     console.log(`${(progressObj.transferred / 1048576).toFixed(2)} MB de ${(progressObj.total / 1048576).toFixed(2)} MB`);
 
-    downloadWindow.webContents.send('updateProgress', currentProgress);
+    // Verificar que downloadWindow existe, no está destruida y que webContents está listo
+    if (downloadWindow && !downloadWindow.isDestroyed() && downloadWindow.webContents && !downloadWindow.webContents.isDestroyed()) {
+      try {
+        downloadWindow.webContents.send('updateProgress', currentProgress);
+        console.log(`Progreso enviado a downloadWindow: ${currentProgress}%`);
+      } catch (error) {
+        console.error('Error enviando progreso:', error);
+      }
+    } else {
+      console.log('downloadWindow no disponible para enviar progreso');
+    }
     lastProgress = currentProgress;
   }
-
 });
 
 updater.autoUpdater.on('update-downloaded', async (info) => {
   console.log('Actualización descargada:', info);
-
-  // Notificar a la ventana principal si es necesario
-  // if (downloadWindow && !downloadWindow.isDestroyed()) {
-  //   downloadWindow.webContents.send('updateReady');
-  // }
 
   // Aquí puedes mostrar un diálogo al usuario preguntando si quiere reiniciar ahora
   const dialogOpts: MessageBoxOptions = {
@@ -416,10 +426,11 @@ updater.autoUpdater.on('update-downloaded', async (info) => {
 
   if (response.response === 0) {
     updater.autoUpdater.quitAndInstall();
-    downloadWindow.close()
   }
-  if (response.response === 1) {
-    downloadWindow.close()
+  
+  // Cerrar ventana de descarga en ambos casos
+  if (downloadWindow && !downloadWindow.isDestroyed()) {
+    downloadWindow.close();
   }
 });
 
@@ -476,7 +487,19 @@ ipcMain.handle('user2', async (event, datos) => {
                 const response = await dialog.showMessageBox(mainWindow, dialogOpts);
                 if (response.response === 0) {
                   createDownloadWindow()
-                  await updater.autoUpdater.downloadUpdate()
+                  
+                  // Esperar a que la ventana esté completamente cargada antes de iniciar descarga
+                  setTimeout(async () => {
+                    try {
+                      console.log('Iniciando descarga de actualización...');
+                      await updater.autoUpdater.downloadUpdate()
+                    } catch (error) {
+                      console.error('Error al iniciar descarga:', error);
+                      if (downloadWindow && !downloadWindow.isDestroyed()) {
+                        downloadWindow.close();
+                      }
+                    }
+                  }, 1000);
                 }
               }
 
@@ -486,10 +509,16 @@ ipcMain.handle('user2', async (event, datos) => {
           .catch((e) => console.log(e))
 
         updater.autoUpdater.on("error", (info) => {
+          console.error('Error en actualización:', info);
           new Notification({
             title: info.name,
             body: info.message
           }).show()
+          
+          // Cerrar ventana de descarga si hay error
+          if (downloadWindow && !downloadWindow.isDestroyed()) {
+            downloadWindow.close();
+          }
         })
       });
 
@@ -573,7 +602,6 @@ ipcMain.handle('forgotPassword', async (event, data) => {
       })
     })
     const response = await responseJSON.json();
-    console.log("asdasd", response)
     return response
   } catch (e) {
     return { status: 505, data: e }

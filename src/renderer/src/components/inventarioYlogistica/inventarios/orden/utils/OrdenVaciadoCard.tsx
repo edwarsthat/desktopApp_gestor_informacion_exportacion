@@ -23,13 +23,13 @@ export default function OrdenVaciadoCard(props: propsType): JSX.Element {
           <p>GGN: {props.lote.GGN && props.lote.predio.GGN.code}</p>
 
           {Object.prototype.hasOwnProperty.call(props.lote, "desverdizado") ?
-            <p> Can: {Number(props.lote?.inventario)}</p> :
-            <p>Can: {Number(props.lote?.inventario)}</p>
+            <p> Can: {Number(props.lote?.canastillas)}</p> :
+            <p>Can: {Number(props.lote?.canastillas)}</p>
           }
 
           {Object.prototype.hasOwnProperty.call(props.lote, "desverdizado") ?
-            <p>{(Number(props.lote?.inventario) * Number(props.lote.promedio)).toLocaleString('es-CO')} Kg</p> :
-            <p>{(Number(props.lote?.inventario) * Number(props.lote.promedio)).toLocaleString('es-CO')} Kg</p>
+            <p>{(Number(props.lote?.canastillas) * Number(props.lote.promedio)).toLocaleString('es-CO')} Kg</p> :
+            <p>{(Number(props.lote?.canastillas) * Number(props.lote.promedio)).toLocaleString('es-CO')} Kg</p>
           }
           {Object.prototype.hasOwnProperty.call(props.lote, "desverdizado") &&
             <p>Desverdizado</p>

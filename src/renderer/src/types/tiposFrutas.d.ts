@@ -19,4 +19,5 @@ export type calidadesType = {
     nombre: string;
     descripcion: string;
     importancia: number;
+    codContabilidad: string;
 }

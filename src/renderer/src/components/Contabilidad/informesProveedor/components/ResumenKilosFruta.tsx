@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 import { descarte_nopago, descarte_pagos } from "@renderer/functions/informesLotes"
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
 import { contenedoresType } from "@renderer/types/contenedoresType"
 import { lotesType } from "@renderer/types/lotesType"
 import React from "react"
@@ -12,7 +13,7 @@ type propsType = {
 }
 
 export default function ResumenKilosFruta({ lote, contenedores }: propsType): JSX.Element {
-
+    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
     // useEffect(() => { console.log(props.lote) }, [])
     const sumardescartes_pagos = (): JSX.Element => {
 
@@ -108,33 +109,22 @@ export default function ResumenKilosFruta({ lote, contenedores }: propsType): JS
             const textCopyArrCont = Object.entries(lote.exportacion ?? {}).map(
                 ([key, value]) => {
                     const contenedor = contenedores.find(item => item._id === key);
-
+                    if (!contenedor) return [];
                     return Object.entries(value as Record<string, unknown>).map(
                         ([keyCalidad, valueCalidad]) => {
 
-                            if (contenedor && (keyCalidad !== '_id' && !["689a05d0102fb4cb445579bc","68966eb849e7fd7eff70c74d"].includes(keyCalidad))) {
+                            const kilos = decimalToComma(valueCalidad as number);
+                            const precioKey = decimalToComma(lote.precio.exportacion[keyCalidad]);
+                            const subTotal = decimalToComma(
+                                lote.precio.exportacion[keyCalidad] * (valueCalidad as number)
+                            );
+                            const fruta = tiposFruta.find(item => item.calidades.find(calidad => calidad._id === keyCalidad));
+                            const cod = fruta ? fruta.calidades.find(calidad => calidad._id === keyCalidad)?.codContabilidad : 'N/A';
 
-                                const kilos = decimalToComma(valueCalidad as number);
-                                const precioKey = decimalToComma(lote.precio.exportacion[keyCalidad]);
-                                const subTotal = decimalToComma(
-                                    lote.precio.exportacion[keyCalidad] * (valueCalidad as number)
-                                );
+                            return (
+                                `2\t${cod}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t${contenedor.numeroContenedor}\n`
+                            );
 
-                                return (
-                                    `2\t${lote.tipoFruta.codExportacion}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t${contenedor.numeroContenedor}\n`
-                                );
-                            } else if (contenedor && ["689a05d0102fb4cb445579bc","68966eb849e7fd7eff70c74d"].includes(keyCalidad)) {
-                                const kilos = decimalToComma(valueCalidad as number);
-                                const precioKey = decimalToComma(lote.precio.exportacion[keyCalidad]);
-                                const subTotal = decimalToComma(
-                                    lote.precio.exportacion[keyCalidad] * (valueCalidad as number)
-                                );
-
-                                return (
-                                    `2\t${lote.tipoFruta.codNacional}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t${contenedor.numeroContenedor}\n`
-                                );
-                            }
-                            return undefined;
                         }
                     );
                 }
@@ -205,15 +195,14 @@ export default function ResumenKilosFruta({ lote, contenedores }: propsType): JS
                         const contenedor = contenedores.find(item => item._id === key);
                         return Object.entries(value).map(([keyCalidad, valueCalidad]) => {
                             if (contenedor && keyCalidad !== '_id') {
+
+                                const fruta = tiposFruta.find(item => item.calidades.find(calidad => calidad._id === keyCalidad));
+                                const cod = fruta ? fruta.calidades.find(calidad => calidad._id === keyCalidad)?.codContabilidad : 'N/A';
+
                                 return (
                                     <tr key={`${key}-${keyCalidad}`} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
                                         <td>{contenedor.numeroContenedor}</td>
-                                        { ["689a05d0102fb4cb445579bc","68966eb849e7fd7eff70c74d"].includes(keyCalidad)  ?
-                                            <td>{lote.tipoFruta.codNacional}</td>
-
-                                            :
-                                            <td>{lote.tipoFruta.codExportacion}</td>
-                                        }
+                                        <td>{cod}</td>
                                         <td>{valueCalidad as React.ReactNode}</td>
                                         <td>{new Intl.NumberFormat('es-CO', {
                                             style: 'currency',

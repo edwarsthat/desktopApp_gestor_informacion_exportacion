@@ -29,6 +29,7 @@ export default function useDataOrdenVaceo({ filtroPrediosInventario }: propsType
     const [lotesOriginal, setLotesOriginal] = useState<lotesType[]>([])
     const [ordenVaceo, setOrdenVaceo] = useState<string[]>([])
     const [lotesOrdenVaceo, setLotesOrdenVaceo] = useState<lotesType[]>([])
+    const [ordenVersion, setOrdenVersion] = useState<number>(0)
 
     const obtenerData = async (): Promise<void> => {
         try {
@@ -47,12 +48,13 @@ export default function useDataOrdenVaceo({ filtroPrediosInventario }: propsType
             if (responseOrden.status !== 200) {
                 throw new Error(responseOrden.message)
             }
-            setOrdenVaceo(responseOrden.data)
+            setOrdenVaceo(responseOrden.data.ids)
+            setOrdenVersion(responseOrden.data.__v)
 
-            const nuevosLotes = responseLotes.data.filter((lote) => !responseOrden.data.includes(lote._id))
+            const nuevosLotes = responseLotes.data.filter((lote) => !responseOrden.data.ids.includes(lote._id))
             setLotes(nuevosLotes)
             setLotesOriginal(nuevosLotes)
-            const nuevosLotesOrdenVaceo = responseOrden.data.map((_id) => responseLotes.data.find(lote => lote._id === _id))
+            const nuevosLotesOrdenVaceo = responseOrden.data.ids.map((_id) => responseLotes.data.find(lote => lote._id === _id))
             setLotesOrdenVaceo(nuevosLotesOrdenVaceo)
 
         } catch (error) {
@@ -61,12 +63,12 @@ export default function useDataOrdenVaceo({ filtroPrediosInventario }: propsType
             }
         }
     }
-
     const handleAddOrdenVaceo = async (_id): Promise<void> => {
         try {
             setOrdenVaceo(item => [...item, String(_id)]);
             const request = {
                 data: [...ordenVaceo, String(_id)],
+                __v: ordenVersion,
                 action: 'put_inventarios_ordenVaceo_modificar'
             }
             const response = await window.api.server2(request);
@@ -81,13 +83,13 @@ export default function useDataOrdenVaceo({ filtroPrediosInventario }: propsType
             }
         }
     }
-
     const handleRemoveOrdenVaceo = async (_id): Promise<void> => {
         try {
             const nuevaOrdenVaceo = ordenVaceo.filter(item => item !== String(_id));
             setOrdenVaceo(nuevaOrdenVaceo);
             const request = {
                 data: [...nuevaOrdenVaceo],
+                __v: ordenVersion,
                 action: 'put_inventarios_ordenVaceo_modificar'
             }
             const response = await window.api.server2(request);
@@ -102,12 +104,12 @@ export default function useDataOrdenVaceo({ filtroPrediosInventario }: propsType
             }
         }
     }
-
     const handleMoveOrdenVaceo = async (source, destination): Promise<void> => {
         try {
             const newOrdenVaceo = reoreder(ordenVaceo, source, destination);
             const request = {
                 data: newOrdenVaceo,
+                __v: ordenVersion,
                 action: 'put_inventarios_ordenVaceo_modificar'
             }
             const response = await window.api.server2(request);
