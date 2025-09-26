@@ -10,12 +10,14 @@ type outType = {
     : lotesType[]
     obtenerFruta: () => Promise<void>
     setData: (e) => void
+    version: number
 }
 
 export default function useDataInventarioFrutaSinProcesar(): outType {
     const { messageModal } = useAppContext();
     const [data, setData] = useState<lotesType[]>([])
     const [datosOriginales, setDatosOriginales] = useState<lotesType[]>([]);
+    const [version, setVersion] = useState<number>(0);
 
     const obtenerFruta = async (): Promise<void> => {
         try {
@@ -23,9 +25,9 @@ export default function useDataInventarioFrutaSinProcesar(): outType {
             const response = await window.api.server2(request)
             if (response.status !== 200)
                 throw new Error(`Code ${response.status}: ${response.message}`)
-            console.log(response.data);
-            setData(response.data)
-            setDatosOriginales(response.data)
+            setData(response.data.fruta)
+            setDatosOriginales(response.data.fruta)
+            setVersion(response.data.version);
         } catch (e) {
             if (e instanceof Error) {
                 messageModal("error", e.message)
@@ -36,6 +38,7 @@ export default function useDataInventarioFrutaSinProcesar(): outType {
         data,
         datosOriginales,
         obtenerFruta,
-        setData
+        setData,    
+        version
     }
 }

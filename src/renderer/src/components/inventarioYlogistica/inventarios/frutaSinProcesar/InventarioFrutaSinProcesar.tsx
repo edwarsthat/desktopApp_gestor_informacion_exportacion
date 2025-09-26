@@ -16,7 +16,7 @@ import DirectoNacional from './modals/DirectoNacional'
 export default function InventarioFrutaSinProcesar(): JSX.Element {
   const { eventoServidor, triggerServer } = useAppContext()
   const { setCurrentFilters, currentFilters } = useFiltroValue();
-  const { obtenerFruta, data, datosOriginales, setData } = useDataInventarioFrutaSinProcesar()
+  const { obtenerFruta, data, datosOriginales, setData, version } = useDataInventarioFrutaSinProcesar()
   const tipoFrutas = useTipoFrutaStore((state) => state.tiposFruta)
   const [loteSeleccionado, setLoteSeleccionado] = useState<lotesType>()
 
@@ -149,6 +149,7 @@ export default function InventarioFrutaSinProcesar(): JSX.Element {
       />
 
       <DirectoNacional 
+        version={version}
         loteSeleccionado={loteSeleccionado}
         open={showDirectoModal}
         onClose={(): void => setShowDirectoModal(false)}
@@ -156,6 +157,7 @@ export default function InventarioFrutaSinProcesar(): JSX.Element {
       {showDesverdizadoModal &&
         createPortal(
           <Desverdizado
+            version={version}
             open={showDesverdizadoModal}
             onClose={(): void => setShowDesverdizadoModal(false)}
             loteSeleccionado={loteSeleccionado}

@@ -14,6 +14,7 @@ type propsType = {
   lotesOrdenVaceo: lotesType[]
   handleRemoveOrdenVaceo: (_id) => void
   handleMoveOrdenVaceo: (source, destination) => void
+  obtenerData: () => Promise<void>
 }
 
 export default function ListaOrdenVaceo(props: propsType): JSX.Element {
@@ -33,12 +34,11 @@ export default function ListaOrdenVaceo(props: propsType): JSX.Element {
       }
       const req = requestVaciar(props.lotesOrdenVaceo[0])
       const response = await window.api.server2(req);
-      console.log("response", response);
 
       if (response.status !== 200) {
         throw new Error(response.message);
       }
-      props.handleRemoveOrdenVaceo(props.lotesOrdenVaceo[0]._id)
+      await props.obtenerData()
       messageModal("success", "Lote vaciado con exito!")
     } catch (e) {
       if (e instanceof Error) {

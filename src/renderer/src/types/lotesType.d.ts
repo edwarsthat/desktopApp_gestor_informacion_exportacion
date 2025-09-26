@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 
+import { clientesNacionalesType } from "./clientesType";
 import { precioProveedorType } from "./preciosTypes";
 import { proveedoresType } from "./proveedoresType";
 import { tiposFrutasType } from "./tiposFrutas";
@@ -39,6 +40,7 @@ export type lotesType = {
     informeEnviado?: boolean;
     inventario?: number;
     inventarioDesverdizado?: number;
+    infoSalidaDirectoNacional?: directoNacionalType
     kilos: number;
     kilos_estimados: number;
     kilosReprocesados: number;
@@ -60,6 +62,18 @@ export type lotesType = {
 
 
 };
+
+interface directoNacionalType {
+    placa: string,
+    nombreConductor: string,
+    telefono: string,
+    cedula: string,
+    remision: string,
+    canastillas: number,
+    user: string,
+    cliente: clientesNacionalesType,
+    fecha: string,
+}
 
 interface exportacionType {
     [key: string]: {

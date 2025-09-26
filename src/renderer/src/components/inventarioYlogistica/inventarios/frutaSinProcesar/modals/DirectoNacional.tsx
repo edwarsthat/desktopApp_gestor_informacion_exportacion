@@ -13,10 +13,11 @@ type propsType = {
     open: boolean
     onClose: () => void
     loteSeleccionado: lotesType | undefined
+    version: number
 
 }
 
-export default function DirectoNacional({ open, onClose, loteSeleccionado }: propsType): JSX.Element {
+export default function DirectoNacional({ open, onClose, loteSeleccionado, version }: propsType): JSX.Element {
     const { loading, messageModal, setLoading } = useAppContext();
     const { obtenerClientesNacionales, clientesNacionales } = useGetSysData({});
     const { formState, formErrors, handleChange, validateForm, resetForm } = useForm<formType>(initialForm);
@@ -37,6 +38,7 @@ export default function DirectoNacional({ open, onClose, loteSeleccionado }: pro
                 action: 'put_inventarios_frutaSinProcesar_directoNacional',
                 data: formState,
                 lote: loteSeleccionado,
+                __v: version
             }
             const response = await window.api.server2(request)
             if (response.status !== 200) {

@@ -14,10 +14,11 @@ type vaciadoType = {
   loteSeleccionado: lotesType | undefined
   open: boolean
   onClose: () => void
+  version: number
 }
 
 export default function Desverdizado({
-  open, onClose, loteSeleccionado
+  open, onClose, loteSeleccionado, version
 }: vaciadoType): JSX.Element {
   const { obtenerCuartosDesverdizados, cuartosDesverdizados } = useGetCatalogData();
   const { formState, formErrors, handleChange, validateForm, resetForm } = useForm<formType>(initialForm);
@@ -46,6 +47,7 @@ export default function Desverdizado({
         _id: loteSeleccionado._id,
         desverdizado: formState,
         action: 'put_inventarios_frutaSinProcesar_desverdizado',
+        __v: version
       }
 
       const response = await window.api.server2(request);

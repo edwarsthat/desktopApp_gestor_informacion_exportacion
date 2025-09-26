@@ -1,22 +1,19 @@
 /* eslint-disable prettier/prettier */
 
-import { handleChangeForm } from "@renderer/controllers/formController"
 import useAppContext from "@renderer/hooks/useAppContext"
-import { useState } from "react"
-import { ValidarDatosClientesNacional } from "./validations/validations"
+import { formInit, formSchema, FormType, labelsForm } from "./validations/validations"
+import useForm from "@renderer/hooks/useForm";
+import FormInput from "@renderer/components/UI/components/Forminput";
 
-type formType = {
-    cliente?: string
-    ubicacion?: string
-}
 
 export default function IngresoClienteNacional(): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
-    const [formState, setFormState] = useState<formType>()
+    const { formState, handleChange, resetForm, formErrors, validateForm } = useForm<FormType>(formInit)
     const guardarDatos = async (e): Promise<void> => {
         e.preventDefault()
         try {
-            ValidarDatosClientesNacional(formState)
+            const result = validateForm(formSchema)
+            if (!result) return
             setLoading(true)
             const request = {
                 action: "post_comercial_clienteNacional",
@@ -27,7 +24,7 @@ export default function IngresoClienteNacional(): JSX.Element {
                 throw new Error(`Code ${response.status}:${response.message}`)
             }
             messageModal("success", "Cliente guardado con exito")
-            setFormState(undefined)
+            resetForm()
         } catch (err) {
             if (err instanceof Error) {
                 messageModal("error", err.message)
@@ -42,26 +39,16 @@ export default function IngresoClienteNacional(): JSX.Element {
             <h2>Ingreso Cliente Nacional</h2>
             <hr />
             <form className="form-container" onSubmit={guardarDatos}>
-                <div>
-                    <label>Cliente</label>
-                    <input
-                        name='cliente'
-                        type="text"
-                        value={formState?.cliente ?? ''}
-                        onChange={(e): void => handleChangeForm(e, setFormState)}
-                        required
+                {Object.entries(labelsForm).map(([key, value]) => (
+                    <FormInput
+                        key={key}
+                        label={value}
+                        name={key}
+                        value={formState[key]}
+                        onChange={handleChange}
+                        error={formErrors[key]}
                     />
-                </div>
-                <div>
-                    <label>Ubicacion</label>
-                    <input
-                        name='ubicacion'
-                        type="text"
-                        value={formState?.ubicacion ?? ''}
-                        onChange={(e): void => handleChangeForm(e, setFormState)}
-                        required
-                    />
-                </div>
+                ))}
                 <div>
                     <button type="submit">
                         Guardar

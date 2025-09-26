@@ -56,6 +56,7 @@ export default function OrdenDeVaceo(): JSX.Element {
                         tipoFrutas={tiposFruta2}
                         handleAddOrdenVaceo={handleAddOrdenVaceo} />
                     <ListaOrdenVaceo
+                        obtenerData={obtenerData}
                         lotes={lotes}
                         handleRemoveOrdenVaceo={handleRemoveOrdenVaceo}
                         lotesOrdenVaceo={lotesOrdenVaceo}
