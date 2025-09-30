@@ -33,6 +33,8 @@ export default function CostoContenedoresInfo({ data, totalCalidad, setShowData 
                 setCalidades(prev => [...new Set([...prev, ...calidadesContenedor])])
             })
             setIsOne(true)
+            console.log(data)
+            console.log(totalCalidad)
         }
 
     }, [data])
@@ -61,16 +63,16 @@ export default function CostoContenedoresInfo({ data, totalCalidad, setShowData 
                     </thead>
                     <tbody>
                         {isOne ?
-                            Object.entries(data[contenedores[0]]).map(([enf, calidades], index) => (
+                            Object.entries(data[contenedores[0]]).map(([enf, caliadEnf], index) => (
                                 <tr key={enf} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}  >
                                     <td>{enf}</td>
-                                    {Object.values(calidades).map((calidad, index) => (
+                                    {Object.keys(totalCalidad).map((calidad, index) => (
                                         <td key={index}>
                                             {new Intl.NumberFormat("es-CO", {
                                                 style: "currency",
                                                 currency: "COP",
                                                 minimumFractionDigits: 0
-                                            }).format(Number(calidad))}
+                                            }).format(Number(caliadEnf[calidad] || 0))}
                                         </td>
                                     ))}
                                 </tr>
