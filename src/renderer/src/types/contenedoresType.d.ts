@@ -1,5 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { clienteType } from "./clientesType"
+import { camionesType } from "./salidaTransporte/camiones"
+import { tractomulasType } from "./salidaTransporte/tractomulas"
 
 export type contenedoresType = {
   _id: string
@@ -12,8 +14,11 @@ export type contenedoresType = {
   inspeccion_mula: inspeccionMulasCriterios
   reclamacionCalidad: reclamacionCalidadType
   entregaPrecinto: entregaPrecintoSchema
+  registrosSalidas: (tractomulasType | camionesType)[]
   __v?: number
 }
+
+
 
 export type palletType = {
   EF1: EF1Type[]
