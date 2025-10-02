@@ -1,5 +1,7 @@
 /* eslint-disable prettier/prettier */
 
+import { z } from "zod"
+
 export type tractomulaFormType = {
     transportadora: string,
     nit: string,
@@ -15,7 +17,6 @@ export type tractomulaFormType = {
     marca: string,
     contenedor: string
 }
-
 export type camionFormType = {
     placa: string
     conductor: string
@@ -27,8 +28,6 @@ export type camionFormType = {
     pesoEstimado: number
     contenedor: string
 }
-
-
 // Formularios iniciales para cada tipo
 export const tractomulaFormInit: tractomulaFormType = {
     transportadora: "",
@@ -45,7 +44,6 @@ export const tractomulaFormInit: tractomulaFormType = {
     marca: "",
     contenedor: ""
 }
-
 export const camionFormInit: camionFormType = {
     placa: "",
     conductor: "",
@@ -57,7 +55,6 @@ export const camionFormInit: camionFormType = {
     pesoEstimado: 0,
     contenedor: ""
 }
-
 export const labelCamionForm = {
     contenedor: "Contenedor",
     placa: "Placa",
@@ -69,7 +66,6 @@ export const labelCamionForm = {
     unidadCarga: "Unidad de Carga",
     pesoEstimado: "Peso Estimado",
 };
-
 export const labelTractomulaForm = {
     contenedor: "Contenedor",
     transportadora: "Transportadora",
@@ -85,3 +81,29 @@ export const labelTractomulaForm = {
     flete: "Flete",
     marca: "Marca",
 };  
+export const schemaTractomula = z.object({
+    transportadora: z.string().min(1, { message: "Transportadora es requerida" }),
+    nit: z.string().min(1, { message: "NIT es requerido" }),
+    placa: z.string().min(1, { message: "Placa es requerida" }),
+    trailer: z.string().min(1, { message: "Trailer es requerido" }),
+    conductor: z.string().min(1, { message: "Conductor es requerido" }),
+    cedula: z.string().min(1, { message: "Cédula es requerida" }),
+    celular: z.string().min(1, { message: "Celular es requerido" }),
+    temperatura: z.string().min(1, { message: "Temperatura es requerida" }),
+    precinto: z.string().min(1, { message: "Precinto es requerido" }),
+    datalogger_id: z.string().min(1, { message: "Datalogger ID es requerido" }),
+    flete: z.number().min(0, { message: "Flete es requerido" }),
+    marca: z.string().min(1, { message: "Marca es requerida" }),
+    contenedor: z.string().min(1, { message: "Contenedor es requerido" }),
+});
+export const schemaCamion = z.object({
+    placa: z.string().min(1, { message: "Placa es requerida" }),
+    conductor: z.string().min(1, { message: "Conductor es requerido" }),
+    cedula: z.string().min(1, { message: "Cédula es requerida" }),
+    celular: z.string().min(1, { message: "Celular es requerido" }),
+    precinto: z.array(z.string().min(1)).min(1, { message: "Al menos un precinto es requerido" }),
+    flete: z.number().min(0, { message: "Flete es requerido" }),
+    unidadCarga: z.string().min(1, { message: "Unidad de Carga es requerida" }),
+    pesoEstimado: z.number().min(0, { message: "Peso Estimado es requerido" }),
+    contenedor: z.string().min(1, { message: "Contenedor es requerido" }),
+});
