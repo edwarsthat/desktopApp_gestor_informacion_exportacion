@@ -27,6 +27,7 @@ export type camionFormType = {
     unidadCarga: string
     pesoEstimado: number
     contenedor: string
+    tipoSalida: string
 }
 // Formularios iniciales para cada tipo
 export const tractomulaFormInit: tractomulaFormType = {
@@ -53,9 +54,11 @@ export const camionFormInit: camionFormType = {
     flete: 0,
     unidadCarga: "",
     pesoEstimado: 0,
-    contenedor: ""
+    contenedor: "",
+    tipoSalida: ""
 }
 export const labelCamionForm = {
+    tipoSalida: "Tipo de Salida",
     contenedor: "Contenedor",
     placa: "Placa",
     conductor: "Conductor",
@@ -81,29 +84,140 @@ export const labelTractomulaForm = {
     flete: "Flete",
     marca: "Marca",
 };  
+
+// Regex para prevenir inyecciones NoSQL y caracteres peligrosos
+// Permite letras, números, espacios, guiones, puntos y caracteres comunes
+const safeStringRegex = /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑüÜ.,\-_]*$/;
+const safeAlphanumericRegex = /^[a-zA-Z0-9\-_]*$/;
+const numericOnlyRegex = /^\d*$/;
+const numericWithDecimalRegex = /^\d*\.?\d*$/;
+
+// Función de sanitización adicional exportada para uso en el backend
+export const sanitizeString = (str: string): string => {
+    return str
+        .replace(/\$/g, '') // Eliminar $ (operadores MongoDB)
+        .replace(/\{|\}/g, '') // Eliminar llaves
+        .replace(/\[|\]/g, '') // Eliminar corchetes
+        .replace(/<|>/g, '') // Eliminar < >
+        .replace(/;/g, ''); // Eliminar punto y coma
+};
+
 export const schemaTractomula = z.object({
-    transportadora: z.string().min(1, { message: "Transportadora es requerida" }),
-    nit: z.string().min(1, { message: "NIT es requerido" }),
-    placa: z.string().min(1, { message: "Placa es requerida" }),
-    trailer: z.string().min(1, { message: "Trailer es requerido" }),
-    conductor: z.string().min(1, { message: "Conductor es requerido" }),
-    cedula: z.string().min(1, { message: "Cédula es requerida" }),
-    celular: z.string().min(1, { message: "Celular es requerido" }),
-    temperatura: z.string().min(1, { message: "Temperatura es requerida" }),
-    precinto: z.string().min(1, { message: "Precinto es requerido" }),
-    datalogger_id: z.string().min(1, { message: "Datalogger ID es requerido" }),
-    flete: z.number().min(0, { message: "Flete es requerido" }),
-    marca: z.string().min(1, { message: "Marca es requerida" }),
-    contenedor: z.string().min(1, { message: "Contenedor es requerido" }),
+    transportadora: z.string()
+        .regex(safeStringRegex, { message: "Transportadora contiene caracteres no permitidos" })
+        .max(100, { message: "Transportadora demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    nit: z.string()
+        .regex(numericOnlyRegex, { message: "NIT debe contener solo números" })
+        .max(20, { message: "NIT demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    placa: z.string()
+        .regex(safeAlphanumericRegex, { message: "Placa contiene caracteres no permitidos" })
+        .max(15, { message: "Placa demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    trailer: z.string()
+        .regex(safeAlphanumericRegex, { message: "Trailer contiene caracteres no permitidos" })
+        .max(15, { message: "Trailer demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    conductor: z.string()
+        .regex(safeStringRegex, { message: "Nombre del conductor contiene caracteres no permitidos" })
+        .max(100, { message: "Nombre del conductor demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    cedula: z.string()
+        .regex(numericOnlyRegex, { message: "La cédula debe contener solo números" })
+        .max(15, { message: "Cédula demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    celular: z.string()
+        .regex(numericOnlyRegex, { message: "El celular debe contener solo números" })
+        .max(15, { message: "Celular demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    temperatura: z.string()
+        .regex(/^-?\d*\.?\d*$/, { message: "Temperatura debe ser un número válido" })
+        .max(10, { message: "Temperatura demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    precinto: z.string()
+        .regex(safeAlphanumericRegex, { message: "Precinto contiene caracteres no permitidos" })
+        .max(50, { message: "Precinto demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    datalogger_id: z.string()
+        .regex(safeAlphanumericRegex, { message: "Datalogger ID contiene caracteres no permitidos" })
+        .max(50, { message: "Datalogger ID demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    flete: z.string()
+        .regex(numericWithDecimalRegex, { message: "El flete debe contener solo números" })
+        .max(15, { message: "Flete demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    marca: z.string()
+        .regex(safeStringRegex, { message: "Marca contiene caracteres no permitidos" })
+        .max(50, { message: "Marca demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    contenedor: z.string()
+        .regex(safeAlphanumericRegex, { message: "Contenedor contiene caracteres no permitidos" })
+        .max(50, { message: "Contenedor demasiado largo" })
+        .optional()
+        .or(z.literal("")),
 });
+
 export const schemaCamion = z.object({
-    placa: z.string().min(1, { message: "Placa es requerida" }),
-    conductor: z.string().min(1, { message: "Conductor es requerido" }),
-    cedula: z.string().min(1, { message: "Cédula es requerida" }),
-    celular: z.string().min(1, { message: "Celular es requerido" }),
-    precinto: z.array(z.string().min(1)).min(1, { message: "Al menos un precinto es requerido" }),
-    flete: z.number().min(0, { message: "Flete es requerido" }),
-    unidadCarga: z.string().min(1, { message: "Unidad de Carga es requerida" }),
-    pesoEstimado: z.number().min(0, { message: "Peso Estimado es requerido" }),
-    contenedor: z.string().min(1, { message: "Contenedor es requerido" }),
+    placa: z.string()
+        .regex(safeAlphanumericRegex, { message: "Placa contiene caracteres no permitidos" })
+        .max(15, { message: "Placa demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    conductor: z.string()
+        .regex(safeStringRegex, { message: "Nombre del conductor contiene caracteres no permitidos" })
+        .max(100, { message: "Nombre del conductor demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    cedula: z.string()
+        .regex(numericOnlyRegex, { message: "La cédula debe contener solo números" })
+        .max(15, { message: "Cédula demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    celular: z.string()
+        .regex(numericOnlyRegex, { message: "El celular debe contener solo números" })
+        .max(15, { message: "Celular demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    precinto: z.array(
+        z.string()
+            .regex(safeAlphanumericRegex, { message: "Precinto contiene caracteres no permitidos" })
+            .max(50, { message: "Precinto demasiado largo" })
+    ).optional(),
+    flete: z.string()
+        .regex(numericWithDecimalRegex, { message: "El flete debe contener solo números" })
+        .max(15, { message: "Flete demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    unidadCarga: z.string()
+        .regex(safeStringRegex, { message: "Unidad de Carga contiene caracteres no permitidos" })
+        .max(50, { message: "Unidad de Carga demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    pesoEstimado: z.string()
+        .regex(numericWithDecimalRegex, { message: "El flete debe contener solo números" })
+        .max(15, { message: "Flete demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    contenedor: z.string()
+        .regex(safeAlphanumericRegex, { message: "Contenedor contiene caracteres no permitidos" })
+        .max(50, { message: "Contenedor demasiado largo" })
+        .optional()
+        .or(z.literal("")),
+    tipoSalida: z.enum(["Nacional", "Exportacion"], {
+        required_error: "Debe seleccionar el tipo de salida",
+        invalid_type_error: "Debe seleccionar Nacional o Exportación"
+    }),
 });

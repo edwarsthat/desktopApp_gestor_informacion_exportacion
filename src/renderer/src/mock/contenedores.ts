@@ -163,7 +163,8 @@ export function generateMockContenedor(overrides = {}): contenedoresType {
             observaciones: `Observación de calidad ${randomInt(1, 999)} `,
             archivosSubidos: [`file${randomInt(1, 10)} _1.jpg`, `file${randomInt(1, 10)} _2.jpg`],
             fecha: String(new Date())
-        }
+        },
+        registrosSalidas: []
     };
 
     return { ...contenedor, ...overrides };

@@ -120,3 +120,69 @@
     gap: 6px;
     width: 100%;
 }
+.radio-group {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 12px;
+    align-items: center;
+    margin-top: 8px;
+    width: auto;
+}
+
+.radio-option {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.radio-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.radio-label {
+    display: inline-block;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+    background-color: var(--color-fondo);
+    border: 2px solid var(--color-border);
+    border-radius: 50px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+    text-align: center;
+    min-width: 120px;
+}
+
+.radio-option input[type="radio"]:hover + .radio-label {
+    border-color: var(--color-Celifrut);
+    background-color: var(--color-fondo-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.radio-option input[type="radio"]:checked + .radio-label {
+    background-color: var(--color-Celifrut);
+    border-color: var(--color-Celifrut);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(126, 186, 39, 0.3);
+}
+
+.radio-option input[type="radio"]:checked:hover + .radio-label {
+    background-color: var(--color-Celifrut-dark);
+    border-color: var(--color-Celifrut-dark);
+    transform: translateY(-2px);
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-text);
+}

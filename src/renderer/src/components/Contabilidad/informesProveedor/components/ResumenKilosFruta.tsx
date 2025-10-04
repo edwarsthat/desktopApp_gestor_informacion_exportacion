@@ -122,7 +122,7 @@ export default function ResumenKilosFruta({ lote, contenedores }: propsType): JS
                             const cod = fruta ? fruta.calidades.find(calidad => calidad._id === keyCalidad)?.codContabilidad : 'N/A';
 
                             return (
-                                `2\t${cod}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t${contenedor.numeroContenedor}\n`
+                                `2\t${cod}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t\t\t\t\t\tPCONT${contenedor.numeroContenedor}\n`
                             );
 
                         }

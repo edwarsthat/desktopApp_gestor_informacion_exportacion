@@ -6,13 +6,17 @@ import FormInput from "@renderer/components/UI/components/Forminput";
 import { useState } from "react";
 import { contenedoresType } from "@renderer/types/contenedoresType";
 import FormSelect from "@renderer/components/UI/components/FormSelect";
+import useAppContext from "@renderer/hooks/useAppContext";
 
 type propsType = {
     contenedores: contenedoresType[]
+    formularioType: string
+    obtenerData: () => Promise<void>
 }
 
-export default function CamionForm({ contenedores }: propsType): JSX.Element {
-    const { formState, handleChange, formErrors, handleArrayChange } = useForm<camionFormType>(camionFormInit);
+export default function CamionForm({ contenedores, formularioType, obtenerData }: propsType): JSX.Element {
+    const { messageModal, setLoading, loading } = useAppContext();
+    const { formState, handleChange, formErrors, handleArrayChange, resetForm } = useForm<camionFormType>(camionFormInit);
     const [inputPrecinto, setInputPrecinto] = useState<string>('');
 
     const handleInputPrecinto = (): void => {
@@ -24,11 +28,36 @@ export default function CamionForm({ contenedores }: propsType): JSX.Element {
         const filtered = (formState.precinto as string[]).filter(item => item !== caja);
         handleArrayChange({ target: { name: 'precinto', value: filtered } });
     };
+    const handleGuardar = async (e): Promise<void> => {
+        e.preventDefault()
+        try {
+            setLoading(true);
+            const request = {
+                action: "put_transporte_programaciones_mulaContenedor",
+                data: { ...formState, tipoVehiculo: formularioType },
+            }
+            const response = await window.api.server2(request);
+            if (response.status !== 200)
+                throw new Error(`Code ${response.status}: ${response.message}`)
+            messageModal("success", "Dato guardado con exito!");
+            resetForm();
+            await obtenerData();
+        } catch (err) {
+            if (err instanceof Error) {
+                messageModal("error", err.message)
+            }
+        } finally {
+            setLoading(false);
+        }
+    }
     return (
         <>
             {
                 Object.entries(labelCamionForm).map(([key, label]) => {
                     if (key === "contenedor" || key === "unidadCarga") {
+                        if (formState.tipoSalida === "Nacional") {
+                            return null;
+                        };
                         return (
                             <FormSelect
                                 key={key}
@@ -48,6 +77,9 @@ export default function CamionForm({ contenedores }: propsType): JSX.Element {
                         )
                     }
                     else if (key === "precinto") {
+                        if (formState.tipoSalida === "Nacional") {
+                            return null;
+                        };
                         return (
                             <div key={key} className="tipo-caja-group">
                                 <label >Precinto</label>
@@ -82,6 +114,41 @@ export default function CamionForm({ contenedores }: propsType): JSX.Element {
                             </div>
                         )
                     }
+                    else if (key === "tipoSalida") {
+                        return (
+                            <div key={key} className="form-group">
+                                <label className="form-label">{label}</label>
+                                <div className="radio-group">
+                                    <label className="radio-option">
+                                        <input
+                                            type="radio"
+                                            name="tipoSalida"
+                                            value="Nacional"
+                                            checked={formState.tipoSalida === "Nacional"}
+                                            onChange={handleChange}
+                                        />
+                                        <span className="radio-label">Nacional</span>
+                                    </label>
+                                    <label className="radio-option">
+                                        <input
+                                            type="radio"
+                                            name="tipoSalida"
+                                            value="Exportacion"
+                                            checked={formState.tipoSalida === "Exportacion"}
+                                            onChange={handleChange}
+                                        />
+                                        <span className="radio-label">Exportación</span>
+                                    </label>
+                                </div>
+                                {formErrors.tipoSalida && (
+                                    <span className="form-error">{formErrors.tipoSalida}</span>
+                                )}
+                            </div>
+                        )
+                    }
+                    if (formState.tipoSalida === "Nacional" && key === "pesoEstimado") {
+                        return null
+                    }
                     return (
                         <FormInput
                             key={key}
@@ -95,6 +162,9 @@ export default function CamionForm({ contenedores }: propsType): JSX.Element {
                     )
                 })
             }
+            <div className='defaultSelect-button-div'>
+                <button type='submit' className='defaulButtonAgree' onClick={handleGuardar} disabled={loading}>Guardar</button>
+            </div>
         </>
     )
 }

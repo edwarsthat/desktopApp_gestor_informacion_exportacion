@@ -31,25 +31,6 @@ export default function TransporteProgramacionMula(): JSX.Element {
         obtenerData();
     }, [])
 
-    // const guardar = async (e): Promise<void> => {
-    //     e.preventDefault()
-    //     try {
-    //         const request = {
-    //             action: "put_transporte_programaciones_mulaContenedor",
-    //             _id: contSeleccionado,
-    //             data: formState
-    //         }
-    //         const response = await window.api.server2(request);
-    //         if (response.status !== 200)
-    //             throw new Error(`Code ${response.status}: ${response.message}`)
-    //         messageModal("success", "Dato guardado con exito!")
-    //         setFormState(undefined)
-    //     } catch (err) {
-    //         if (err instanceof Error) {
-    //             messageModal("error", err.message)
-    //         }
-    //     }
-    // }
     return (
         <div className="componentContainer">
             <div className="navBar"></div>
@@ -65,12 +46,9 @@ export default function TransporteProgramacionMula(): JSX.Element {
                     }}
                     data={[{ name: "Tractomula", _id: "Tractomula" }, { name: "Camion", _id: "Camion" }]}
                 />
-                {formularioType === "Camion" && <CamionForm contenedores={contenedores} />}
-                {formularioType === "Tractomula" && <TractomulaForm contenedores={contenedores} />}
+                {formularioType === "Camion" && <CamionForm contenedores={contenedores} formularioType={formularioType} obtenerData={obtenerData} />}
+                {formularioType === "Tractomula" && <TractomulaForm contenedores={contenedores} formularioType={formularioType} obtenerData={obtenerData} />}
 
-                <div className='defaultSelect-button-div'>
-                    <button type='submit'>Guardar</button>
-                </div>
             </form>
         </div>
     )

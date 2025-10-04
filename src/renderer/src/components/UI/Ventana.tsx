@@ -53,7 +53,6 @@ import HistorialEnInventarioFrutaSinProcesar from "../inventarioYlogistica/histo
 import TransporteExportacionIngresoData from "../transporte/Ingresos/TransporteExportacion/TransporteExportacionIngresoData"
 import TransporteExportacionRegistros from "../transporte/registros/TransporteExportacion/TransporteExportacionRegistros"
 import TransporteProgramacionMula from "../transporte/Ingresos/ProgramacionMula/TransporteProgramacionMula"
-import TransporteProgramacionMulaRegistros from "../transporte/registros/TransporteProgramacionMula/TransporteProgramacionMulaRegistros"
 import FormularioMulas from "../transporte/Ingresos/inspeccionMulas/FormularioMulas"
 import TransporteRegistroInspeccionMulas from "../transporte/registros/inspeccionMulas/TransporteRegistroInspeccionMulas"
 import TransporteDocumentacionProgramacionMula from "../transporte/documentacion/documentacionProgramacionMulas/TransporteDocumentacionProgramacionMula"
@@ -85,6 +84,7 @@ import CostosContenedores from "../comercial/costosContenedores/CostosContenedor
 import TrazabilidadEF1 from "../proceso/trazabilidad/EF1/TrazabilidadEF1"
 import CuartosFrios from "../inventarioYlogistica/inventarios/cuartosFrios/CuartosFrios"
 import RegistroCuartosFrios from "../inventarioYlogistica/historiales/registrosCuartosFrios/RegistroCuartosFrios"
+import RegistroSalidaExportacion from "../transporte/registros/registroSalidaExportacion/RegistroSalidaExportacion"
 
 
 type propsType = {
@@ -274,7 +274,7 @@ export default function Ventana(props: propsType): JSX.Element {
                         {activas.includes('66cc8a24faeed9f06595f551') && <TransporteProgramacionMula />}
                     </div>
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "6748df7ae297c515615415e9" ? 'block' : 'none' }}>
-                        {activas.includes('6748df7ae297c515615415e9') && <TransporteProgramacionMulaRegistros />}
+                        {activas.includes('6748df7ae297c515615415e9') && <RegistroSalidaExportacion />}
                     </div>
                     <div className="componentContainer" style={{ display: props.pestañaActiva === "6749d4535a6f3f420f703738" ? 'block' : 'none' }}>
                         {activas.includes('6749d4535a6f3f420f703738') && <TransporteRegistroInspeccionMulas />}

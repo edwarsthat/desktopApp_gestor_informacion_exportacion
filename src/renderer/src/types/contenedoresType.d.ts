@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { clienteType } from "./clientesType"
-import { camionesType } from "./salidaTransporte/camiones"
-import { tractomulasType } from "./salidaTransporte/tractomulas"
+import { vehiculosType } from "./salidaTransporte/vehiculos"
 
 export type contenedoresType = {
   _id: string
@@ -14,7 +13,7 @@ export type contenedoresType = {
   inspeccion_mula: inspeccionMulasCriterios
   reclamacionCalidad: reclamacionCalidadType
   entregaPrecinto: entregaPrecintoSchema
-  registrosSalidas: (tractomulasType | camionesType)[]
+  registrosSalidas: vehiculosType[]
   __v?: number
 }
 
@@ -43,7 +42,7 @@ type InsumosSchemaType = {
 };
 
 export type infoContendorType = {
-  clienteInfo: clienteType | string
+  clienteInfo: clienteType
   fechaCreacion: string
   fechaInicio: string
   fechaInicioReal: string
