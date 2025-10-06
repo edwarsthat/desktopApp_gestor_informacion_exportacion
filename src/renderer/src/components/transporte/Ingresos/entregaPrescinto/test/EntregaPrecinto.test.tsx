@@ -3,7 +3,6 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import "@testing-library/jest-dom";
 import EntregaPrescinto from '../EntregaPrescinto';
-import { generateMockContenedor } from '@renderer/mock/contenedores';
 
 // Simula window.api.server2 con datos randomizados
 function mockServer2ResponseWithData(mockData: unknown[]): void {
@@ -41,52 +40,61 @@ describe('EntregaPrescinto', () => {
         expect(screen.getByText('Entrega documentos y precinto')).toBeInTheDocument();
     });
     it('debería mostrar los contenedores en el select', async () => {
-        // Creamos datos mock aleatorios
+        // Creamos datos mock aleatorios con la estructura correcta de vehiculosType
         const mockContenedores = [
-            generateMockContenedor({
+            {
                 _id: 'abc123',
-                numeroContenedor: '123',
-                infoContenedor: {
-                    clienteInfo: {
-                        CLIENTE: 'Cliente Test 1'
+                placa: 'ABC-123',
+                contenedor: {
+                    numeroContenedor: '123',
+                    infoContenedor: {
+                        clienteInfo: {
+                            CLIENTE: 'Cliente Test 1'
+                        }
                     }
                 }
-            }),
-            generateMockContenedor({
+            },
+            {
                 _id: 'def456',
-                numeroContenedor: '456',
-                infoContenedor: {
-                    clienteInfo: {
-                        CLIENTE: 'Cliente Test 2'
+                placa: 'DEF-456',
+                contenedor: {
+                    numeroContenedor: '456',
+                    infoContenedor: {
+                        clienteInfo: {
+                            CLIENTE: 'Cliente Test 2'
+                        }
                     }
                 }
-            })
+            }
         ];
         mockServer2ResponseWithData(mockContenedores);
 
         render(<EntregaPrescinto />);
         // Espera a que los textos estén disponibles
         await waitFor(() => {
-            expect(screen.getByText('123 - Cliente Test 1')).toBeInTheDocument();
-            expect(screen.getByText('456 - Cliente Test 2')).toBeInTheDocument();
+            expect(screen.getByText(/123.*Cliente Test 1.*ABC-123/)).toBeInTheDocument();
+            expect(screen.getByText(/456.*Cliente Test 2.*DEF-456/)).toBeInTheDocument();
         });
     });
     it("deberia mostrar error si se intenta guardar sin fotos", async () => {
         const mockContenedores = [
-            generateMockContenedor({
+            {
                 _id: 'abc123',
-                numeroContenedor: '123',
-                infoContenedor: {
-                    clienteInfo: {
-                        CLIENTE: 'Cliente Test 1'
+                placa: 'ABC-123',
+                contenedor: {
+                    numeroContenedor: '123',
+                    infoContenedor: {
+                        clienteInfo: {
+                            CLIENTE: 'Cliente Test 1'
+                        }
                     }
                 }
-            })
+            }
         ];
         mockServer2ResponseWithData(mockContenedores);
         render(<EntregaPrescinto />);
         // Espera a que cargue el select
-        await screen.findByText('123 - Cliente Test 1');
+        await screen.findByText(/123.*Cliente Test 1.*ABC-123/);
 
         // Haz click en guardar (el botón es el único de tipo submit)
         const guardarBtn = screen.getByRole('button', { name: /guardar/i });
@@ -97,15 +105,18 @@ describe('EntregaPrescinto', () => {
     });
     it("deberia guardar correctamente y msotrar mensaje de éxito", async () => {
         const mockContenedores = [
-            generateMockContenedor({
+            {
                 _id: 'abc123',
-                numeroContenedor: '123',
-                infoContenedor: {
-                    clienteInfo: {
-                        CLIENTE: 'Cliente Test 1'
+                placa: 'ABC-123',
+                contenedor: {
+                    numeroContenedor: '123',
+                    infoContenedor: {
+                        clienteInfo: {
+                            CLIENTE: 'Cliente Test 1'
+                        }
                     }
                 }
-            })
+            }
         ];
         mockServer2ResponseWithData(mockContenedores);
         // Mock de respuesta exitosa al guardar
@@ -114,7 +125,7 @@ describe('EntregaPrescinto', () => {
             .mockResolvedValueOnce({ status: 200 }); // para guardar entrega
 
         render(<EntregaPrescinto />);
-        await screen.findByText('123 - Cliente Test 1');
+        await screen.findByText(/123.*Cliente Test 1.*ABC-123/);
 
         // Llenar campos requeridos del formulario
         fireEvent.change(screen.getByLabelText(/Contenedores/i), { target: { value: 'abc123' } });
@@ -138,15 +149,18 @@ describe('EntregaPrescinto', () => {
     });
     it("debería mostrar mensaje de error si la API falla al guardar la entrega", async () => {
         const mockContenedores = [
-            generateMockContenedor({
+            {
                 _id: 'abc123',
-                numeroContenedor: '123',
-                infoContenedor: {
-                    clienteInfo: {
-                        CLIENTE: 'Cliente Test 1'
+                placa: 'ABC-123',
+                contenedor: {
+                    numeroContenedor: '123',
+                    infoContenedor: {
+                        clienteInfo: {
+                            CLIENTE: 'Cliente Test 1'
+                        }
                     }
                 }
-            })
+            }
         ];
         mockServer2ResponseWithData(mockContenedores);
         // Mock de respuesta exitosa para cargar contenedores y error para guardar
@@ -155,7 +169,7 @@ describe('EntregaPrescinto', () => {
             .mockResolvedValueOnce({ status: 500, message: "Error en el servidor" }); // para guardar entrega
 
         render(<EntregaPrescinto />);
-        await screen.findByText('123 - Cliente Test 1');
+        await screen.findByText(/123.*Cliente Test 1.*ABC-123/);
 
 
         // Llenar campos requeridos del formulario
@@ -182,20 +196,23 @@ describe('EntregaPrescinto', () => {
     });
     it('debería mostrar error si falta el campo "Entrega"', async () => {
         const mockContenedores = [
-            generateMockContenedor({
+            {
                 _id: 'abc123',
-                numeroContenedor: '1356',
-                infoContenedor: {
-                    clienteInfo: {
-                        CLIENTE: 'KONGELATO'
+                placa: 'KNG-001',
+                contenedor: {
+                    numeroContenedor: '1356',
+                    infoContenedor: {
+                        clienteInfo: {
+                            CLIENTE: 'KONGELATO'
+                        }
                     }
                 }
-            })
+            }
         ];
         mockServer2ResponseWithData(mockContenedores);
 
         render(<EntregaPrescinto />);
-        await screen.findByText('1356 - KONGELATO');
+        await screen.findByText(/1356.*KONGELATO.*KNG-001/);
 
         // Llenar todos los campos menos "Entrega"
         fireEvent.change(screen.getByLabelText('Contenedores'), { target: { value: 'abc123' } });
@@ -217,20 +234,23 @@ describe('EntregaPrescinto', () => {
     });
     it('debería mostrar error si se intenta subir un archivo que no es imagen', async () => {
         const mockContenedores = [
-            generateMockContenedor({
+            {
                 _id: 'abc123',
-                numeroContenedor: '1356',
-                infoContenedor: {
-                    clienteInfo: {
-                        CLIENTE: 'KONGELATO'
+                placa: 'KNG-001',
+                contenedor: {
+                    numeroContenedor: '1356',
+                    infoContenedor: {
+                        clienteInfo: {
+                            CLIENTE: 'KONGELATO'
+                        }
                     }
                 }
-            })
+            }
         ];
         mockServer2ResponseWithData(mockContenedores);
 
         render(<EntregaPrescinto />);
-        await screen.findByText('1356 - KONGELATO');
+        await screen.findByText(/1356.*KONGELATO.*KNG-001/);
 
         // Llenar campos requeridos
         fireEvent.change(screen.getByLabelText('Contenedores'), { target: { value: 'abc123' } });
@@ -252,15 +272,18 @@ describe('EntregaPrescinto', () => {
     });
     it('debería limpiar el formulario después de guardar exitosamente', async () => {
         const mockContenedores = [
-            generateMockContenedor({
+            {
                 _id: 'abc123',
-                numeroContenedor: '1356',
-                infoContenedor: {
-                    clienteInfo: {
-                        CLIENTE: 'KONGELATO'
+                placa: 'KNG-001',
+                contenedor: {
+                    numeroContenedor: '1356',
+                    infoContenedor: {
+                        clienteInfo: {
+                            CLIENTE: 'KONGELATO'
+                        }
                     }
                 }
-            })
+            }
         ];
 
         mockServer2ResponseWithData(mockContenedores);
@@ -272,7 +295,7 @@ describe('EntregaPrescinto', () => {
             .mockResolvedValueOnce({ status: 200, data: mockContenedores }); // recarga contenedores tras guardar
 
         render(<EntregaPrescinto />);
-        await screen.findByText('1356 - KONGELATO');
+        await screen.findByText(/1356.*KONGELATO.*KNG-001/);
 
         // Llenar campos requeridos
         fireEvent.change(screen.getByLabelText('Contenedores'), { target: { value: 'abc123' } });

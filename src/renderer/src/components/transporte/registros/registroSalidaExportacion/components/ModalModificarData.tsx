@@ -12,9 +12,10 @@ type propsType = {
     open: boolean
     onClose: () => void
     registroSeleccionado: vehiculosType | null
+    obtenerData: () => Promise<void>
 }
 
-export default function ModalModificarData({ open, onClose, registroSeleccionado }: propsType): JSX.Element {
+export default function ModalModificarData({ open, onClose, registroSeleccionado, obtenerData }: propsType): JSX.Element {
     const { loading, messageModal, setLoading } = useAppContext();
     const { formState, formErrors, handleChange, validateForm, resetForm, setFormState  } = useForm<formType>(initForm);
     useEffect(() => {
@@ -60,6 +61,7 @@ export default function ModalModificarData({ open, onClose, registroSeleccionado
             messageModal("success", "Registro modificado con éxito");
             resetForm();
             onClose();
+            obtenerData();
         } catch (err) {
             if (err instanceof Error) {
                 messageModal("error", err.message)

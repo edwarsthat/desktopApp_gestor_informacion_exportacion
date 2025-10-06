@@ -54,6 +54,7 @@ export default function RegistroSalidaExportacion(): JSX.Element {
                     <tbody>
                         {data.map((registro, index) => (
                             <tr key={registro._id} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
+                                <td>{registro?.codigo || ''}</td>
                                 <td>{registro?.contenedor?.numeroContenedor || ''}</td>
                                 <td>{registro.contenedor?.infoContenedor?.clienteInfo?.CLIENTE || ''}</td>
                                 <td>{registro?.conductor || ''}</td>
@@ -84,6 +85,7 @@ export default function RegistroSalidaExportacion(): JSX.Element {
             </div>
 
             <ModalModificarData
+                obtenerData={obtenerData}
                 registroSeleccionado={registroSeleccionado}
                 open={showModal}
                 onClose={():void => setShowModal(false)}

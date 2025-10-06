@@ -3,17 +3,17 @@
 import FormSelect from "@renderer/components/UI/components/FormSelect";
 import useAppContext from "@renderer/hooks/useAppContext";
 import useForm from "@renderer/hooks/useForm";
-import { contenedoresType } from "@renderer/types/contenedoresType";
 import { useEffect, useRef, useState } from "react";
 import { formKeys, formSchema, formType, initForm } from "./validations/validations";
 import FormInput from "@renderer/components/UI/components/Forminput";
+import { vehiculosType } from "@renderer/types/salidaTransporte/vehiculos";
 const MAX_SIZE = 8 * 1024 * 1024; // 5 MB
 
 export default function EntregaPrescinto(): JSX.Element {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { messageModal, setLoading, loading } = useAppContext();
     const { formState, formErrors, handleChange, validateForm, resetForm } = useForm<formType>(initForm);
-    const [contenedores, setContenedores] = useState<contenedoresType[]>([]);
+    const [contenedores, setContenedores] = useState<vehiculosType[]>([]);
     const [fotos, setFotos] = useState<File[]>([]);
     const [fotosError, setFotosError] = useState<string>("");
 
@@ -110,10 +110,9 @@ export default function EntregaPrescinto(): JSX.Element {
                         Array.isArray(contenedores)
                             ? contenedores.map((item) => ({
                                 _id: item._id,
-                                name: `${item.numeroContenedor} - ${typeof item.infoContenedor?.clienteInfo === "object"
-                                    ? item.infoContenedor.clienteInfo.CLIENTE
-                                    : ""
-                                    }`
+                                name: `${item?.contenedor?.numeroContenedor || ''} - 
+                                ${item?.contenedor?.infoContenedor?.clienteInfo?.CLIENTE || ''} - 
+                                ${item?.placa || ''} `
                             }))
                             : []
                     }

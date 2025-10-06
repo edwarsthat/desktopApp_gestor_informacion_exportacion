@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
 
 import useAppContext from "@renderer/hooks/useAppContext";
-import { contenedoresType } from "@renderer/types/contenedoresType";
+import { vehiculosType } from "@renderer/types/salidaTransporte/vehiculos";
 import { useEffect, useState } from "react";
 
 type propsType = {
     open: boolean;
     onClose: () => void;
-    contenedorSeleccionado: contenedoresType | undefined;
+    contenedorSeleccionado: vehiculosType | undefined;
 }
 
 export default function ModalFotosEntregaPrecinto({
@@ -130,7 +130,7 @@ export default function ModalFotosEntregaPrecinto({
                                                 </button>
                                                 <button
                                                     className="image-action-btn download-btn"
-                                                    onClick={(): void => descargarImagen(imagenUrl, `entrega_precinto_${contenedorSeleccionado?.numeroContenedor}_foto_${idx + 1}.jpg`)}
+                                                    onClick={(): void => descargarImagen(imagenUrl, `entrega_precinto_${contenedorSeleccionado?.contenedor?.numeroContenedor}_foto_${idx + 1}.jpg`)}
                                                     aria-label="Descargar imagen"
                                                 >
                                                     📥
@@ -138,7 +138,7 @@ export default function ModalFotosEntregaPrecinto({
                                                 <div className="image-overlay">
                                                     <h4>Foto {idx + 1}</h4>
                                                     <p>Entrega de Precinto</p>
-                                                    <p>Contenedor: {contenedorSeleccionado?.numeroContenedor}</p>
+                                                    <p>Contenedor: {contenedorSeleccionado?.contenedor?.numeroContenedor || ''}</p>
                                                 </div>
                                             </div>
                                         );
@@ -199,7 +199,7 @@ export default function ModalFotosEntregaPrecinto({
                         </button>
                         <div className="image-overlay" style={{ transform: 'translateY(0)', position: 'absolute' }}>
                             <h4>Foto {(imagenSeleccionada ?? 0) + 1} - Entrega de Precinto</h4>
-                            <p>Contenedor: {contenedorSeleccionado?.numeroContenedor}</p>                            <p>Haga clic fuera de la imagen para cerrar</p>
+                            <p>Contenedor: {contenedorSeleccionado?.contenedor?.numeroContenedor || ''}</p>
                         </div>
                     </div>
                 </div>

@@ -3,8 +3,9 @@
 import BotonesPasarPaginas from "@renderer/components/UI/BotonesPasarPaginas";
 import { formatearFecha } from "@renderer/functions/fechas";
 import useAppContext from "@renderer/hooks/useAppContext"
+import { useFetchPaginatedList } from "@renderer/hooks/useFetchPaginatedList";
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
-import { contenedoresType } from "@renderer/types/contenedoresType";
+import { vehiculosType } from "@renderer/types/salidaTransporte/vehiculos";
 import { useEffect, useState } from "react";
 import { IoDocumentTextSharp } from "react-icons/io5";
 
@@ -16,69 +17,38 @@ const headers = [
 ]
 
 export default function TransporteDocumentacionProgramacionMula(): JSX.Element {
-    const { messageModal, setLoading } = useAppContext();
+    const { messageModal, setLoading, loading } = useAppContext();
     const tipoFrutas = useTipoFrutaStore(state => state.tiposFruta)
-    const [data, setData] = useState<contenedoresType[]>()
-
-    //page navigator
     const [page, setPage] = useState<number>(1);
-    const [numeroElementos, setNumeroElementos] = useState<number>()
 
-    const obtenerNumeroElementos = async (): Promise<void> => {
-        try {
-            const query = {
-                action: "get_transporte_documentos_programacionMulas_numeroElementos"
-            }
-            const response = await window.api.server2(query);
-            if (response.status !== 200)
-                throw new Error(`Code ${response.status}: ${response.message}`)
-            setNumeroElementos(response.data)
-        } catch (err) {
-            if (err instanceof Error) {
-                messageModal("error", err.message)
-            }
-        }
-    }
-    const obtenerData = async (): Promise<void> => {
-        try {
-            setLoading(true)
-            const request = {
-                action: "get_transporte_documentos_programacionMula_contenedores",
-                page: page
-            }
-            const response = await window.api.server2(request);
-            if (response.status !== 200)
-                throw new Error(`Code ${response.status}: ${response.message}`)
-            setData(response.data)
-        } catch (err) {
-            if (err instanceof Error) {
-                messageModal("error", err.message)
-            }
-        } finally {
-            setLoading(false)
-        }
-    }
+    const { obtenerCantidadElementos, obtenerData, data, numeroElementos } = useFetchPaginatedList<vehiculosType>({
+        actionData: "get_transporte_documentos_programacionMula_contenedores",
+        actionNumberData: "get_transporte_documentos_programacionMulas_numeroElementos",
+        page: page
+    })
 
     const generar_informe = async (contenedor): Promise<void> => {
         try {
+            setLoading(true);
             if (!contenedor) throw new Error("No hay contenedor seleccionado")
 
-            const data = {
-                action: "crear_documentos_programacon_mula",
-                data: {
-                    contenedor: contenedor,
-                    tiposFrutas: tipoFrutas
-                }
+            const request = {
+                action: "get_transporte_documentos_generarDocumentos",
+                registro: contenedor,
             }
-            window.api.crearDocumento(data)
+            const response = await window.api.server2(request)
+            if (response.status !== 200)
+                throw new Error(`Code ${response.status}: ${response.message}`)
 
         } catch (err) {
             console.error('Error al generar PDF:', err);
             messageModal("error", "Error al generar los documentos");
+        } finally {
+            setLoading(false);
         }
     };
     useEffect(() => {
-        obtenerNumeroElementos()
+        obtenerCantidadElementos()
     }, [])
     useEffect(() => {
         obtenerData()
@@ -110,15 +80,13 @@ export default function TransporteDocumentacionProgramacionMula(): JSX.Element {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map((cont, index) => (
-                            <tr key={cont._id} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
-                                <td>{cont.numeroContenedor}</td>
-                                <td>{typeof cont.infoContenedor.clienteInfo === 'object' &&
-                                    cont.infoContenedor.clienteInfo.CLIENTE
-                                }</td>
-                                <td>{cont.infoContenedor.fechaCreacion && formatearFecha(cont.infoContenedor.fechaCreacion)}</td>
+                        {data.map((registro, index) => (
+                            <tr key={registro._id} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
+                                <td>{registro.contenedor.numeroContenedor}</td>
+                                <td>{registro?.contenedor?.infoContenedor?.clienteInfo?.CLIENTE || ''}</td>
+                                <td>{registro?.contenedor?.infoContenedor?.fechaCreacion && formatearFecha(registro?.contenedor?.infoContenedor?.fechaCreacion)}</td>
                                 <td>
-                                    <button onClick={(): Promise<void> => generar_informe(cont)}>
+                                    <button onClick={(): Promise<void> => generar_informe(registro)} disabled={loading} title="Generar documentos">
                                         <IoDocumentTextSharp color="green" fontSize={25} />
                                     </button>
                                 </td>

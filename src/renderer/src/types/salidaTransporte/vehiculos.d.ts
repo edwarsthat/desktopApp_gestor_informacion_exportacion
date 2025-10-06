@@ -24,4 +24,15 @@ export type vehiculosType = {
         marca: string,
         contenedor: contenedoresType,
         fecha: string,
+        entregaPrecinto: entregaPrecintoSchema
+}
+
+export type entregaPrecintoSchema = {
+        entrega: string,
+        recibe: string,
+        createdAt: string
+        fechaEntrega: string,
+        fotos: string[],
+        user: string,
+        observaciones: string
 }

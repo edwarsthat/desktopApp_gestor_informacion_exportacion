@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 export const headers = [
+    "Codigo",
     "Contenedor",
     "Cliente",
     "Conductor",

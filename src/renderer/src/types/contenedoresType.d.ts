@@ -12,7 +12,6 @@ export type contenedoresType = {
   insumosData: InsumosSchemaType
   inspeccion_mula: inspeccionMulasCriterios
   reclamacionCalidad: reclamacionCalidadType
-  entregaPrecinto: entregaPrecintoSchema
   registrosSalidas: vehiculosType[]
   __v?: number
 }
@@ -171,12 +170,4 @@ export type reclamacionCalidadType = {
 }
 
 
-export type entregaPrecintoSchema = {
-  entrega: string,
-  recibe: string,
-  createdAt: string
-  fechaEntrega: string,
-  fotos: string[],
-  user: string,
-  observaciones: string
-}
+
