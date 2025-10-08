@@ -3,8 +3,6 @@ import { lotesType } from "@renderer/types/lotesType"
 import { BsArrowRightSquareFill } from "react-icons/bs";
 import { formatearFecha } from "@renderer/functions/fechas";
 import { useEffect, useState } from "react";
-import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
-import { nombreTipoFruta2 } from "@renderer/utils/tipoFrutas";
 
 type propsType = {
     lote: lotesType
@@ -12,7 +10,6 @@ type propsType = {
 }
 
 export default function PredioCard(props: propsType): JSX.Element {
-    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
     const [exportacion, setExportacion] = useState<number>()
     const [descarte, setDescarte] = useState<number>()
     useEffect(() => {
@@ -35,7 +32,7 @@ export default function PredioCard(props: propsType): JSX.Element {
             <div className="grid-main-info">
                 <span className="enf">{props.lote.enf}</span>
                 <span className="predio">{props.lote.predio?.PREDIO}</span>
-                <span>{nombreTipoFruta2(String(props.lote.tipoFruta), tiposFruta)}</span>
+                <span>{props.lote?.tipoFruta?.tipoFruta || ""}</span>
             </div>
             <div className="grid-extra-info">
                 <span>{formatearFecha(props.lote.fecha_ingreso_inventario)}</span>

@@ -3,45 +3,44 @@ import { lotesType } from "@renderer/types/lotesType"
 import "../css/prediosEnInventario.css"
 import PredioCard from "../utils/PredioCard"
 import { filtroPrediosInventarioType } from "../hooks/useDataOrdenVaceo"
-import { tiposFrutasType } from "@renderer/types/tiposFrutas"
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
 
 type propsType = {
     filtroPrediosInventario: filtroPrediosInventarioType
     setFiltroPrediosInventario: (e: filtroPrediosInventarioType) => void
     lotes: lotesType[]
     handleAddOrdenVaceo: (_id) => void
-    tipoFrutas: tiposFrutasType[];
 }
 
 export default function PrediosEnInventario(props: propsType): JSX.Element {
+    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta);
+    const handleFiltro = (e): void => {
+        props.setFiltroPrediosInventario({
+            ...props.filtroPrediosInventario,
+            filtro: e.target.value,
+        });
+    }
 
-const handleFiltro = (e): void => {
-    props.setFiltroPrediosInventario({
-        ...props.filtroPrediosInventario,
-        filtro: e.target.value,
-    });
-}
-
-return (
-    <div className="predios-en-inventario-container">
-        <h3>Lista de Predios</h3>
-        <div className="filtros-predios-inventario-container">
-            <input type="text" className="defaultSelect" onChange={handleFiltro} />
-            <select className="defaultSelect" onChange={(e): void => props.setFiltroPrediosInventario({...props.filtroPrediosInventario, select: e.target.value })}>
-                <option value="">Tipo de fruta</option>
-                {props.tipoFrutas.map(tipo => (
-                    <option key={tipo._id} value={tipo._id}>{tipo.tipoFruta}</option>
+    return (
+        <div className="predios-en-inventario-container">
+            <h3>Lista de Predios</h3>
+            <div className="filtros-predios-inventario-container">
+                <input type="text" className="defaultSelect" onChange={handleFiltro} />
+                <select className="defaultSelect" onChange={(e): void => props.setFiltroPrediosInventario({ ...props.filtroPrediosInventario, select: e.target.value })}>
+                    <option value="">Tipo de fruta</option>
+                    {tiposFruta.map(tipo => (
+                        <option key={tipo._id} value={tipo._id}>{tipo.tipoFruta}</option>
+                    ))}
+                </select>
+                <hr />
+            </div>
+            <div>
+                {props.lotes.map(lote => (
+                    <div key={lote._id} className="predios-en-inventario-card-div">
+                        <PredioCard lote={lote} handleAddOrdenVaceo={props.handleAddOrdenVaceo} />
+                    </div>
                 ))}
-            </select>
-            <hr />
+            </div>
         </div>
-        <div>
-            {props.lotes.map(lote => (
-                <div key={lote._id} className="predios-en-inventario-card-div">
-                    <PredioCard lote={lote} handleAddOrdenVaceo={props.handleAddOrdenVaceo} />
-                </div>
-            ))}
-        </div>
-    </div>
-)
+    )
 }

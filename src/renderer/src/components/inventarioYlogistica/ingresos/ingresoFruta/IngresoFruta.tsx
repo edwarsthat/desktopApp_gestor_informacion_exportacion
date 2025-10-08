@@ -10,10 +10,12 @@ import FormInput from '@renderer/components/UI/components/Forminput'
 import { formSchema, formType, initialValues, labelsForms } from './validations/ingresoLotesValidations'
 import FormSelect from '@renderer/components/UI/components/FormSelect'
 import useGetSysData from '@renderer/hooks/useGetSysData'
+import useTipoFrutaStore from '@renderer/store/useTipoFrutaStore'
 
 export default function IngresoFruta(): JSX.Element {
+  const tipoFruta = useTipoFrutaStore(state => state.tiposFruta)
   const { messageModal, setLoading, loading } = useAppContext()
-  const { obtenerTipoFruta2, tiposFruta2, obtenerEf1, ef1, proveedores, obtenerPredios } = useGetSysData({ proveedoresProp: "activos"});
+  const { obtenerEf1, ef1, proveedores, obtenerPredios } = useGetSysData({ proveedoresProp: "activos"});
   const { formState, handleChange, resetForm, formErrors, validateForm } =
     useForm<formType>(initialValues)
 
@@ -21,9 +23,8 @@ export default function IngresoFruta(): JSX.Element {
     const fetchData = async (): Promise<void> => {
       try {
         setLoading(true)
-        await obtenerEf1()
-        await obtenerPredios()
-        await obtenerTipoFruta2()
+        await obtenerEf1();
+        await obtenerPredios();
       } catch (err) {
         if (err instanceof Error) {
           messageModal('error', err.message)
@@ -112,7 +113,7 @@ export default function IngresoFruta(): JSX.Element {
                 label={value}
                 onChange={handleChange}
                 error={formErrors.tipoFruta}
-                data={tiposFruta2.map((item) => ({ _id: item._id, name: item.tipoFruta }))}
+                data={tipoFruta.map((item) => ({ _id: item._id, name: item.tipoFruta }))}
               />
             )
           } else if (key === "GGN") {
