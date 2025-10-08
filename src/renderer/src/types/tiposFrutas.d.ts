@@ -9,7 +9,6 @@ export type tiposFrutasType = {
     rengoDeshidratacionNegativa: number,
     createdAt: string
     calibres: string[]
-    calidades: calidadesType[]
     codNacional: string
     codExportacion: string
 }
@@ -20,4 +19,5 @@ export type calidadesType = {
     descripcion: string;
     importancia: number;
     codContabilidad: string;
+    tipoFruta: tiposFrutasType;
 }

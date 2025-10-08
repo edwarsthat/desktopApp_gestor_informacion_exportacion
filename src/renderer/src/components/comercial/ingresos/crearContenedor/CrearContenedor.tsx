@@ -11,10 +11,13 @@ import FormInput from '@renderer/components/UI/components/Forminput'
 import FormMultipleSelect from '@renderer/components/UI/components/FormMultipleSelect'
 import useForm from '@renderer/hooks/useForm'
 import { calidadesType } from '@renderer/types/tiposFrutas'
+import useTipoFrutaStore from '@renderer/store/useTipoFrutaStore'
 
 export default function CrearContenedor(): JSX.Element {
+  const tiposFruta = useTipoFrutaStore(state => state.tiposFruta);
+  const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades);
   const { messageModal, setLoading, loading } = useAppContext();
-  const { obtenerClientes, clientes, tiposFruta2, obtenerTipoFruta2 } = useGetSysData({});
+  const { obtenerClientes, clientes} = useGetSysData({});
   const { formState, formErrors, handleChange, handleArrayChange, validateForm, resetForm } = useForm<FormStateType>(initForm);
   const [calidad, setCalidad] = useState<calidadesType[]>([]);
   const [calibres, setCalibres] = useState<string[]>([]);
@@ -40,7 +43,6 @@ export default function CrearContenedor(): JSX.Element {
       try {
         setLoading(true);
         await obtenerClientes();
-        await obtenerTipoFruta2();
       } catch (err) {
         if (err instanceof Error) {
           messageModal("error", `Error al cargar los datos: ${err.message}`);
@@ -53,17 +55,29 @@ export default function CrearContenedor(): JSX.Element {
   }, [])
 
   useEffect(() => {
+    console.log("tipos fruta", formState.tipoFruta)
+  
+
     const arrcalidad: calidadesType[] = []
     const arrcalibres: string[] = [];
-    tiposFruta2.forEach((item) => {
+    tiposFruta.forEach((item) => {
       if (
         Array.isArray(formState.tipoFruta) &&
         formState.tipoFruta.includes(item._id)
       ) {
-        arrcalidad.push(...item.calidades);
         arrcalibres.push(...item.calibres);
       }
     });
+    tiposCalidades.forEach((item) => {
+      console.log("item", item)
+      if (
+        Array.isArray(formState.tipoFruta) &&
+        formState.tipoFruta.includes(item?.tipoFruta?._id || "")
+      ) {
+        arrcalidad.push(item);
+      }
+    });
+
     setCalidad(arrcalidad);
     setCalibres(arrcalibres);
   }, [formState.tipoFruta])
@@ -127,7 +141,7 @@ export default function CrearContenedor(): JSX.Element {
                 label={value}
                 onChange={handleArrayChange}
                 error={formErrors[key as keyof FormStateType]}
-                data={tiposFruta2.map((item) => ({ _id: item._id, name: item.tipoFruta }))}
+                data={tiposFruta.map((item) => ({ _id: item._id, name: item.tipoFruta }))}
               />
             )
           }

@@ -27,8 +27,7 @@ const useTipoFrutaStore = create<FrutaStore>((set) => ({
             if (response.status !== 200) {
                 throw new Error('Error al cargar los tipos de fruta');
             }
-
-            set({ tiposFruta: response.data, tiposCalidades: response.data.flatMap(item => item.calidades), isLoading: false });
+            set({ tiposFruta: response.data.tipoFrutas, tiposCalidades: response.data.calidadesExport, isLoading: false });
         } catch (error) {
             set({ error: error instanceof Error ? error.message : 'Error desconocido', isLoading: false });
         }

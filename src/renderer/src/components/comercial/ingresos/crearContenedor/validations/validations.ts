@@ -17,7 +17,6 @@ export const initForm: FormStateType = {
     defecto: '',
     mancha: '',
     verdeManzana: '',
-    numeroPallets: '',
     cajasTotal: '',
     rtoEstimado: '',
     observaciones:''
@@ -37,7 +36,6 @@ export const schemaForm = z.object({
     defecto: z.string().optional(),
     mancha: z.string().optional(),
     verdeManzana: z.string().optional(),
-    numeroPallets: z.string().min(1, "El número de pallets es obligatorio"),
     cajasTotal: z.string().min(1, "El total de cajas es obligatorio"),
     rtoEstimado: z.string().optional(),
     observaciones: z.string().min(1, "Las observaciones son obligatorias")
@@ -56,7 +54,6 @@ export const formLabels = {
     defecto: "Defecto",
     mancha: "Mancha",
     verdeManzana: "Verde Manzana",
-    numeroPallets: "Número de Pallets",
     cajasTotal: "Cajas Total",
     rtoEstimado: "RTO",
     observaciones: "Observaciones"
