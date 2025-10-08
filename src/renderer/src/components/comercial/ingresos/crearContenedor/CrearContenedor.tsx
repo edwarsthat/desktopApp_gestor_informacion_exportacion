@@ -17,7 +17,7 @@ export default function CrearContenedor(): JSX.Element {
   const tiposFruta = useTipoFrutaStore(state => state.tiposFruta);
   const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades);
   const { messageModal, setLoading, loading } = useAppContext();
-  const { obtenerClientes, clientes} = useGetSysData({});
+  const { obtenerClientes, clientes } = useGetSysData({});
   const { formState, formErrors, handleChange, handleArrayChange, validateForm, resetForm } = useForm<FormStateType>(initForm);
   const [calidad, setCalidad] = useState<calidadesType[]>([]);
   const [calibres, setCalibres] = useState<string[]>([]);
@@ -56,7 +56,7 @@ export default function CrearContenedor(): JSX.Element {
 
   useEffect(() => {
     console.log("tipos fruta", formState.tipoFruta)
-  
+
 
     const arrcalidad: calidadesType[] = []
     const arrcalibres: string[] = [];
@@ -69,7 +69,6 @@ export default function CrearContenedor(): JSX.Element {
       }
     });
     tiposCalidades.forEach((item) => {
-      console.log("item", item)
       if (
         Array.isArray(formState.tipoFruta) &&
         formState.tipoFruta.includes(item?.tipoFruta?._id || "")
