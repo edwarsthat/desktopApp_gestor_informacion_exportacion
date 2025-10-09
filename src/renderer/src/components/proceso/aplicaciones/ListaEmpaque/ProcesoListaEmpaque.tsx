@@ -12,6 +12,8 @@ import { obtenerDataContenedores, obtenerPredioProcesando } from "./services/req
 import { historialLotesType } from "@renderer/types/lotesType";
 import Pallets from "./components/Pallets";
 import { CuartoFrioType } from "@renderer/types/cuartosFrios";
+import useListaEmpaqueStore from "./store/listaEmpaqueStore";
+import { itemPalletType } from "@renderer/types/contenedores/itemsPallet";
 
 
 export const contenedoresContext = createContext<contenedoresType[] | undefined>(undefined)
@@ -19,11 +21,14 @@ export const contenedorSeleccionadoContext = createContext<string | undefined>(u
 export const loteselectedContext = createContext<historialLotesType | undefined>(undefined)
 
 export default function ProcesoListaEmpaque(): JSX.Element {
-    const { messageModal, eventoServidor, triggerServer } = useAppContext();
+    const { messageModal, eventoServidor, triggerServer, setLoading } = useAppContext();
+    const setContenedor = useListaEmpaqueStore(state => state.setContenedor);
+    const contenedor = useListaEmpaqueStore(state => state.contenedor);
+
     const [contenedores, setContenedores] = useState<contenedoresType[]>();
+    const [itemsPallet, setItemsPallet] = useState<itemPalletType[]>([])
     const [lotes, setLotes] = useState<historialLotesType[]>();
-    const [loteSeleccionado, setLoteSeleccionado] = useState<historialLotesType>()
-    const [contenedorSeleccionado, setContenedorSeleccionado] = useState<string>();
+
     const [showResumen, setShowResumen] = useState<boolean>(false)
     const [showPredios, setShowPredios] = useState<boolean>(false)
     const [showConfirmacion, setShowConfirmacion] = useState<boolean>(false)
@@ -41,7 +46,6 @@ export default function ProcesoListaEmpaque(): JSX.Element {
                 await obtenerDataContenedores(setContenedores)
                 await obtenerPredioProcesando(setLotes)
                 await obtenerCuartosFrios()
-                console.log("funcion autollamada", eventoServidor)
 
             })();
         }
@@ -70,7 +74,7 @@ export default function ProcesoListaEmpaque(): JSX.Element {
             const contenedorSeleccionado = contenedores?.find(item => item._id === _id);
 
             if (contenedorSeleccionado) {
-                setContenedorSeleccionado(contenedorSeleccionado._id)
+                setContenedor(contenedorSeleccionado)
                 localStorage.removeItem("proceso-listaempaque-id-contenedor")
             }
         }
@@ -82,6 +86,33 @@ export default function ProcesoListaEmpaque(): JSX.Element {
             setConfirm(false)
         }
     }, [confirm]);
+
+    useEffect(() => {
+        console.log("contenedor", contenedor)
+        const fetchPalletItems = async (): Promise<void> => {
+            try {
+                if (contenedor === null) return
+                const request = {
+                    action: 'get_proceso_aplicaciones_listaEmpaque_itemsPallet',
+                    contenedor: contenedor._id
+                };
+                const response = await window.api.server2(request);
+                if (response.status !== 200)
+                    throw new Error(`Code ${response.status}: ${response.message}`)
+                setItemsPallet(response.data)
+
+            } catch (err) {
+                if (err instanceof Error) {
+                    messageModal("error", err.message)
+                }
+            } finally {
+                setLoading(false)
+            }
+        }
+        if (contenedor !== null) {
+            fetchPalletItems()
+        }
+    }, [contenedor])
 
     const handleShowResumen = (): void => {
         setShowResumen(!showResumen)
@@ -96,11 +127,11 @@ export default function ProcesoListaEmpaque(): JSX.Element {
 
     const cerrarContenedor = async (): Promise<void> => {
         try {
-            if (contenedorSeleccionado === undefined || contenedorSeleccionado === '')
+            if (contenedor === undefined || contenedor === null)
                 throw new Error("Error: contenedor no seleccionado")
             const request = {
                 action: 'cerrar_contenedor',
-                _id: contenedorSeleccionado
+                _id: contenedor._id
             }
             const response = await window.api.server2(request);
             if (response.status !== 200)
@@ -134,34 +165,25 @@ export default function ProcesoListaEmpaque(): JSX.Element {
             <div className="navBar"></div>
             <h2>Lista de empaque</h2>
             <hr />
-            <contenedoresContext.Provider value={contenedores}>
-                <contenedorSeleccionadoContext.Provider value={contenedorSeleccionado}>
-                    <loteselectedContext.Provider value={loteSeleccionado}>
-                        <GeneralInfo
-                            lotes={lotes}
-                            setLoteSeleccionado={setLoteSeleccionado}
-                            showPredios={showPredios}
-                            handleShowPredios={handleShowPredios}
-                            contenedorSeleccionado={contenedorSeleccionado}
-                            handleCerrarContenedor={handleCerrarContenedor}
-                            showResumen={showResumen}
-                            handleShowResumen={handleShowResumen}
-                            setContenedorSeleccionado={setContenedorSeleccionado}
-                            contenedores={contenedores}
-                        />
-                        {showResumen && <Resumen />}
-                        {showPredios && <ListaEmpaquePredios />}
+            <GeneralInfo
+                lotes={lotes}
+                showPredios={showPredios}
+                handleShowPredios={handleShowPredios}
+                handleCerrarContenedor={handleCerrarContenedor}
+                showResumen={showResumen}
+                handleShowResumen={handleShowResumen}
+                contenedores={contenedores}
+            />
+            {showResumen && <Resumen />}
+            {showPredios && <ListaEmpaquePredios />}
 
-                        {!showResumen && !showPredios && <Pallets cuartosFrios={cuartosFrios} inventarioCuartosFrios={inventarioCuartosFrios} />
-                        }
-                        {showConfirmacion &&
-                            <ConfirmacionModal
-                                message={message}
-                                setConfirmation={setConfirm}
-                                setShowConfirmationModal={setShowConfirmacion} />}
-                    </loteselectedContext.Provider>
-                </contenedorSeleccionadoContext.Provider>
-            </contenedoresContext.Provider>
+            {!showResumen && !showPredios && <Pallets itemsPallet={itemsPallet} cuartosFrios={cuartosFrios} inventarioCuartosFrios={inventarioCuartosFrios} />
+            }
+            {showConfirmacion &&
+                <ConfirmacionModal
+                    message={message}
+                    setConfirmation={setConfirm}
+                    setShowConfirmationModal={setShowConfirmacion} />}
         </div>
     )
 }

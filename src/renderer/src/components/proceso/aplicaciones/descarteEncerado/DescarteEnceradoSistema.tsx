@@ -4,11 +4,11 @@ import { formInit, labels, sumarDatos } from "./func/functions";
 import { datosPredioType, FormCategory, FormState } from "./types/types";
 import useAppContext from "@renderer/hooks/useAppContext";
 import './styles/styles.css'
-import useGetSysData from "@renderer/hooks/useGetSysData";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 
 export default function DescarteEnceradoSistema(): JSX.Element {
     const { messageModal } = useAppContext();
-    const { obtenerTipoFruta2, tiposFruta2 } = useGetSysData({});
+    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
     const [formState, setFormState] = useState<FormState>(formInit);
     const [reload, setReload] = useState<boolean>(false);
     const [datosPredio, setDatosPredio] = useState<datosPredioType>({
@@ -19,7 +19,6 @@ export default function DescarteEnceradoSistema(): JSX.Element {
     });
     useEffect(() => {
         obtenerLote();
-        obtenerTipoFruta2();
         window.api.reload(() => {
             setReload(!reload)
         });
@@ -57,7 +56,7 @@ export default function DescarteEnceradoSistema(): JSX.Element {
     };
     const guardarDatos = async (): Promise<void> => {
         try {
-            const data = sumarDatos(formState, datosPredio, tiposFruta2);
+            const data = sumarDatos(formState, datosPredio, tiposFruta);
             const request = {
                 action: "put_proceso_aplicaciones_descarteEncerado",
                 _id: datosPredio._id,

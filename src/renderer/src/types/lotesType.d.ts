@@ -22,8 +22,6 @@ export type lotesType = {
     dias_inicio_fin?: number;
     directoNacional: number;
     enf: string;
-    exportacionDetallada: ExportacionDetallada;
-    exportacion: exportacionType,
     fecha_creacion: string,
     fechaIngreso: string,
     fecha_ingreso_patio: string,
@@ -45,7 +43,7 @@ export type lotesType = {
     kilos_estimados: number;
     kilosReprocesados: number;
     kilosVaciados: number;
-    kilosGGN: number;
+    kilosProcesados: number;
     numeroPrecintos: number;
     numeroRemision: string;
     not_pass?: boolean;
@@ -55,13 +53,22 @@ export type lotesType = {
     predio: proveedoresType;
     promedio: number;
     rendimiento: number;
+    salidaExportacion: salidaExportacionType;
     tipoFruta: tiposFrutasType;
     urlBascula?: string;
     urlInformeCalidad?: string;
     user: string
-
-
 };
+
+interface salidaExportacionType {
+    kilosGGN: number;
+    totalKilos: number;
+    totalCajas: number;
+    porCalidad: { calidadId: string; kilos: number; cajas: number }[];
+    porCalibre: { calibre: string; kilos: number; cajas: number }[];
+    contenedores: string[];
+}
+
 
 interface directoNacionalType {
     placa: string,
@@ -75,22 +82,7 @@ interface directoNacionalType {
     fecha: string,
 }
 
-interface exportacionType {
-    [key: string]: {
-        [key: string]: number
-    }
-}
 
-
-interface ContenedorDetalle {
-    1: number;
-    15: number;
-    2: number;
-}
-
-interface ExportacionDetallada {
-    any: Map<string, ContenedorDetalle>;
-}
 
 export type historialLotesType = {
     documento: lotesType;
