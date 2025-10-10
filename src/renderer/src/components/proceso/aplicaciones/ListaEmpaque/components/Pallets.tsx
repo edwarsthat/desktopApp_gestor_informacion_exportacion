@@ -26,8 +26,6 @@ type propsType = {
 }
 
 export default function Pallets({ itemsPallet }: propsType): JSX.Element {
-
-
     return (
         <div>
             <div className="table-container">
@@ -41,7 +39,7 @@ export default function Pallets({ itemsPallet }: propsType): JSX.Element {
                     </thead>
                     <tbody>
                         {itemsPallet && itemsPallet.map((item, index) => (
-                            <tr key={"pallet" + index + item._id}>
+                            <tr key={"pallet" + index + item._id} className={item.pallet.numeroPallet % 2 === 0 ? 'fondo-par' : 'fondo-impar'}>
                                 <td>{item.pallet.numeroPallet}</td>
                                 <td>{item.lote.enf}</td>
                                 <td>{item.lote.predio.PREDIO}</td>

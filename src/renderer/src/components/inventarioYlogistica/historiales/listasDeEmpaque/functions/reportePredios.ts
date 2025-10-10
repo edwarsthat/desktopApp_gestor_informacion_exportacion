@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-import { contenedoresType } from "@renderer/types/contenedoresType";
-import { proveedoresType } from "@renderer/types/proveedoresType";
+import { itemPalletType } from "@renderer/types/contenedores/itemsPallet";
 
 export type resumenPredioType = {
     [key: string]: {
@@ -14,45 +13,39 @@ export type resumenPredioType = {
     }
 }
 
-export const resumenPredios =
-    (contenedor: contenedoresType):
-        [resumenPredioType, totalCajas: number, pesoTotal: number] => {
-        const out: resumenPredioType = {};
-        let totalCajas = 0;
-        let pesoTotal = 0;
-        contenedor.pallets.forEach((pallet) => {
-            pallet.EF1.forEach((item) => {
-                const id = item.lote?.predioID
-                const predio = item.lote?.predio;
-                const ICA = item.lote && item.lote.ICA && item.lote.ICA.code;
-                const peso = Number(item.tipoCaja.split('-')[1])
-                if (predio && ICA && id) {
-                    if (!out[id]) {
-                        out[id] = {
-                            predio: predio,
-                            cajas: 0,
-                            peso: 0,
-                            pesoBruto: 0,
-                            ICA: ICA,
-                            SISPAP: false
-                        };
-                    }
-                    out[id].cajas += item.cajas
-                    out[id].peso += item.cajas * peso
-                    out[id].SISPAP = item.SISPAP || false
+export const resumenPredios = (items: itemPalletType[]): [resumenPredioType, totalCajas: number, pesoTotal: number] => {
+    const out: resumenPredioType = {};
+    let totalCajas = 0;
+    let pesoTotal = 0;
+    for (const item of items) {
+        const id = item.lote?.predio._id || "SIN PREDIO";
+        const predio = item.lote?.predio.PREDIO || "SIN PREDIO";
+        const ICA = item.lote?.predio.ICA.code || "SIN SIPAP";
+        if (predio && ICA && id) {
+            if (!out[id]) {
+                out[id] = {
+                    predio: predio,
+                    cajas: 0,
+                    peso: 0,
+                    pesoBruto: 0,
+                    ICA: ICA,
+                    SISPAP: false
+                };
+            }
+            out[id].cajas += item.cajas
+            out[id].peso += item.kilos
+            out[id].SISPAP = item.SISPAP || false
 
-                }
-                totalCajas += item.cajas
-                pesoTotal += peso * item.cajas
-            });
-        });
-
-        return [out, totalCajas, pesoTotal];
+        }
+        totalCajas += item.cajas
+        pesoTotal += item.kilos
     };
 
+    return [out, totalCajas, pesoTotal];
+};
+
 export const resumenPrediosClientes = (
-    resumen: resumenPredioType,
-    proveedores: proveedoresType[]
+    resumen: resumenPredioType
 ): [resumenPredioType, totalCajas: number, pesoTotal: number] => {
     const newOut = {}
     let totalPeso = 0;

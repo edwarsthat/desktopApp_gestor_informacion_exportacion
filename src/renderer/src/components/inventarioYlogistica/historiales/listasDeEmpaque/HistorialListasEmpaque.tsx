@@ -7,9 +7,11 @@ import InfoListaEmpaque from "./components/InfoListaEmpaque";
 import './styles/styles.css'
 import BotonesPasarPaginas from "@renderer/components/UI/BotonesPasarPaginas";
 import { useFetchPaginatedList } from "@renderer/hooks/useFetchPaginatedList";
-import useGetSysData from "@renderer/hooks/useGetSysData";
+import useAppContext from "@renderer/hooks/useAppContext";
+import { itemPalletType } from "@renderer/types/contenedores/itemsPallet";
 
 export default function HistorialListaEmpaque(): JSX.Element {
+    const { messageModal, setLoading } = useAppContext();
     const [page, setPage] = useState<number>(1)
 
     const {
@@ -22,19 +24,36 @@ export default function HistorialListaEmpaque(): JSX.Element {
         actionData: "get_inventarios_historiales_listasDeEmpaque",
         actionNumberData: "get_inventarios_historiales_listasDeEmpaque_numeroRegistros"
     })
-    const { proveedores } = useGetSysData({})
-
+    const [itemsPallet, setItemsPallet] = useState<itemPalletType[]>([])
     const [showTable, setShowTable] = useState<boolean>(true)
-    const [contenedor, setContenedor] = useState<contenedoresType>()
+    const [contenedorSeleccionado, setContenedorSeleccionado] = useState<string>("")
 
     useEffect(() => {
         obtenerData()
         obtenerCantidadElementos()
     }, [page])
 
-    const handleAccederDocumento = (cont: contenedoresType): void => {
-        setShowTable(false)
-        setContenedor(cont)
+    const handleAccederDocumento = async (cont: contenedoresType): Promise<void> => {
+        try {
+            setLoading(true)
+            const request = {
+                action: "get_inventarios_historiales_listasDeEmpaque_itemPallets",
+                contenedor: cont._id
+            }
+            const response = await window.api.server2(request)
+            if (response.error) {
+                throw new Error(`Code ${response.status} : ${response.message}`)
+            }
+            setItemsPallet(response.data)
+            setShowTable(false)
+            setContenedorSeleccionado(cont._id)
+        } catch (error) {
+            if (error instanceof Error) {
+                messageModal("error", error.message)
+            }
+        } finally {
+            setLoading(false)
+        }
     }
     const handleVolverTabla = (): void => {
         setShowTable(true)
@@ -49,9 +68,9 @@ export default function HistorialListaEmpaque(): JSX.Element {
                 <TablaHistorialListaEmpaque handleAccederDocumento={handleAccederDocumento} data={data} />
                 :
                 <InfoListaEmpaque
-                    proveedores={proveedores}
+                    contenedorSeleccionado={contenedorSeleccionado}
                     handleVolverTabla={handleVolverTabla}
-                    contenedor={contenedor} />
+                    items={itemsPallet} />
             }
             {showTable &&
 

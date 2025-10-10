@@ -1,34 +1,30 @@
 /* eslint-disable prettier/prettier */
 
-import { contenedoresType } from "@renderer/types/contenedoresType"
 import { useEffect, useState } from "react"
 import { resumenCalidad } from "../functions/resumen"
+import { itemPalletType } from "@renderer/types/contenedores/itemsPallet"
 
 type propsType = {
-    contenedor: contenedoresType | undefined
+    items: itemPalletType[]
     calidad: string
 }
 
-export default function TablaCalidadesInfo(props: propsType): JSX.Element {
+export default function TablaCalidadesInfo({ items, calidad }: propsType): JSX.Element {
     const [resumen, setResumen] = useState<object>()
     useEffect(() => {
-        if (props.contenedor !== undefined) {
-            const res = resumenCalidad(props.contenedor, props.calidad)
+        if (items !== undefined) {
+            const res = resumenCalidad(items, calidad)
             setResumen(res)
         }
-    }, [props.contenedor])
-    if (props.contenedor === undefined) {
-        return (
-            <div>Cargando datos...</div>
-        )
-    }
+    }, [items])
+
     return (
 
             <table className="table-main">
                 <thead>
                     <tr>
                         <th>SUMMARY CATEGORY</th>
-                        <th>{props.calidad}</th>
+                        <th>{calidad}</th>
                         <th></th>
                         <th></th>
                     </tr>

@@ -1,17 +1,16 @@
 /* eslint-disable prettier/prettier */
-import { contenedoresType } from "@renderer/types/contenedoresType"
+import { formatearFecha } from "@renderer/functions/fechas"
 import imagenCelifrut from "../../../../../assets/CELIFRUT.png"
 import TablaReportePredios from "./TablaReportePredios"
-import { proveedoresType } from "@renderer/types/proveedoresType"
+import { itemPalletType } from "@renderer/types/contenedores/itemsPallet"
 
 type propsType = {
-    contenedor: contenedoresType
+    items: itemPalletType[]
     final: boolean
-    proveedores: proveedoresType[]
     setDataToExcel: (e) => void
 
 }
-export default function InformeReportePredios(props: propsType): JSX.Element {
+export default function InformeReportePredios({ items, final, setDataToExcel }: propsType): JSX.Element {
     return (
         <div className="historiales-listaempaque-info-container" id="view_informe_resporte_predios">
             <section >
@@ -29,22 +28,20 @@ export default function InformeReportePredios(props: propsType): JSX.Element {
                 <hr />
                 <div className="historiales-listaempaque-info-cabecera">
                     <p>CLIENTE:</p>
-                    <p>{(typeof props.contenedor.infoContenedor.clienteInfo === "object" ?
-                        props.contenedor.infoContenedor.clienteInfo.CLIENTE : "")}</p>
+                    <p>{items[0]?.contenedor?.infoContenedor?.clienteInfo?.CLIENTE || ""}</p>
 
                 </div>
                 <div className="historiales-listaempaque-info-cabecera">
                     <p>FECHA:</p>
-                    <p>{new Date(props.contenedor.infoContenedor.fechaCreacion).toLocaleDateString()}</p>
+                    <p>{formatearFecha(items[0]?.contenedor?.infoContenedor?.fechaCreacion || "")}</p>
 
                 </div>
                 <hr />
             </section>
             <TablaReportePredios
-                setDataToExcel={props.setDataToExcel}
-                proveedores={props.proveedores}
-                final={props.final} 
-                data={props.contenedor} />
+                setDataToExcel={setDataToExcel}
+                final={final} 
+                items={items} />
         </div>
     )
 }

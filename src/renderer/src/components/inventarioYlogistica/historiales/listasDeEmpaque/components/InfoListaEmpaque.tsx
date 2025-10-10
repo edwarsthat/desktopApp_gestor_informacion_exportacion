@@ -1,56 +1,82 @@
 /* eslint-disable prettier/prettier */
 
 import { useState } from "react"
-import { contenedoresType } from "@renderer/types/contenedoresType"
 import InformeListaEmpaque from "./InformeListaEmpaque"
 import InformeReportePredios from "./InformeReportePredios"
-import { proveedoresType } from "@renderer/types/proveedoresType"
 import useAppContext from "@renderer/hooks/useAppContext"
 import { resumenPredioType } from "../functions/reportePredios"
-import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
+import { itemPalletType } from "@renderer/types/contenedores/itemsPallet"
 
 type propsType = {
-    contenedor: contenedoresType | undefined
+    items: itemPalletType[]
     handleVolverTabla: () => void
-    proveedores: proveedoresType[] | undefined
+    contenedorSeleccionado: string | null
 }
 
-export default function InfoListaEmpaque(props: propsType): JSX.Element {
-    const { messageModal } = useAppContext();
-    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
+export default function InfoListaEmpaque({ items, handleVolverTabla, contenedorSeleccionado }: propsType): JSX.Element {
+    const { messageModal, setLoading, loading } = useAppContext();
     const [final, setFinal] = useState<boolean>(false)
     const [reportePredios, setReportePredios] = useState<boolean>(false)
     const [dataToExcel, setDataToExcel] = useState<resumenPredioType>()
 
     const generar_informe = async (): Promise<void> => {
         try {
-            if (!props.contenedor) throw new Error("No hay contenedor seleccionado")
+            setLoading(true)
+            if (!items) throw new Error("No hay items seleccionados")
 
-                const data = {
-                    action: "crear_lista_empaque",
-                    data:{
-                        contenedor: props.contenedor,
-                        proveedores: props.proveedores,
-                        tiposFrutas: tiposFrutas
-                    }
+            const req = {
+                action: "get_inventarios_historiales_listaDeEmpaque_crearDocumento",
+                data: {
+                    contenedor: contenedorSeleccionado,
                 }
-                console.log(data)
-                window.api.crearDocumento(data)
+            }
+            const response = await window.api.server2(req);
+            if (response.status !== 200) {
+                throw new Error(`Code ${response.status} : ${response.message}`)
+            }
+
+            // Descargar el archivo
+            const { file, filename, mimetype } = response.data;
+            
+            // Convertir base64 a blob
+            const byteCharacters = atob(file);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: mimetype });
+
+            // Crear link de descarga
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            
+            // Limpiar
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            messageModal("success", "Documento generado exitosamente");
 
         } catch (err) {
             console.error('Error al generar PDF:', err);
             messageModal("error", "Error al generar el PDF");
+        } finally {
+            setLoading(false)
         }
     };
 
-    const generar_informe_reporte_predios =  (): void => {
+    const generar_informe_reporte_predios = (): void => {
         try {
-            if (!props.contenedor) throw new Error("No hay contenedor seleccionado")
+            if (!items) throw new Error("No hay contenedor seleccionado")
 
             const data = {
                 action: "crear_resporte_predios_lista_empaque",
-                data:{
-                    contenedor: props.contenedor,
+                data: {
+                    contenedor: items,
                     tabla: dataToExcel
                 }
             }
@@ -66,20 +92,16 @@ export default function InfoListaEmpaque(props: propsType): JSX.Element {
 
 
 
-    if (props.contenedor === undefined) {
+    if (items === undefined) {
         return (
             <div>Contenedor no seleccionado...</div>
         )
     }
-    if (props.proveedores === undefined) {
-        return (
-            <div>Cargando datos...</div>
-        )
-    }
+
     return (
         <div>
             <div className="historiales-listaempaque-info-container-filtros">
-                <button className="defaulButtonAgree" onClick={props.handleVolverTabla}>Regresar</button>
+                <button className="defaulButtonAgree" onClick={handleVolverTabla}>Regresar</button>
                 <div>
                     <p>Local/Cliente</p>
                     <label className="switch">
@@ -96,21 +118,19 @@ export default function InfoListaEmpaque(props: propsType): JSX.Element {
                 </div>
             </div>
             <div>
-                {reportePredios ?
+                {reportePredios ? 
                     <InformeReportePredios
                         setDataToExcel={setDataToExcel}
-                        proveedores={props.proveedores}
                         final={final}
-                        contenedor={props.contenedor} />
+                        items={items} />
                     :
                     <InformeListaEmpaque
-                        proveedores={props.proveedores}
                         final={final}
-                        contenedor={props.contenedor} />
+                        items={items} />
                 }
             </div>
             <div className='informe-calidad-lote-div'>
-                <button onClick={(): void => {
+                <button disabled={loading} onClick={(): void => {
                     if (reportePredios) {
                         generar_informe_reporte_predios()
                     } else {

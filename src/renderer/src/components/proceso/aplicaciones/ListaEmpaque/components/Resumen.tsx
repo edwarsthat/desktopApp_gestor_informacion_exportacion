@@ -1,17 +1,18 @@
 /* eslint-disable prettier/prettier */
 
-import { useContext, useEffect, useState } from "react"
-import { contenedoresContext, contenedorSeleccionadoContext } from "../ProcesoListaEmpaque"
+import { useEffect, useState } from "react"
 import { obtenerResumen, ResumenContenedores } from "@renderer/functions/resumenContenedores";
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 import { nombreTipoFruta2, tipoCalidad } from "@renderer/utils/tipoFrutas";
+import { itemPalletType } from "@renderer/types/contenedores/itemsPallet";
+
+type propsType = {
+    pallets: itemPalletType[]
+}
 
 
+export default function Resumen({ pallets }: propsType): JSX.Element {
 
-
-export default function Resumen(): JSX.Element {
-    const contenedores = useContext(contenedoresContext)
-    const contenedorID = useContext(contenedorSeleccionadoContext)
     const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta)
 
     const [resumen, setResumen] = useState<ResumenContenedores>();
@@ -23,20 +24,12 @@ export default function Resumen(): JSX.Element {
     const [showCalibeCalidad, setShowCalibreCalidad] = useState<boolean>(false)
 
     useEffect(() => {
-        let cont
-        if (contenedorID === undefined || contenedorID === '') {
-            cont = contenedores
-        } else {
-            const contenedor = contenedores?.find(c => c._id === contenedorID);
-            cont = [contenedor]
-        }
-
-
-        const resumenv = obtenerResumen(cont, soloHoy)
+        console.log("se supone que deberia mostrar el resumen")
+        const resumenv = obtenerResumen(pallets, soloHoy)
         if (resumenv)
             setResumen(resumenv);
 
-    }, [contenedorID, contenedores, soloHoy])
+    }, [ soloHoy, pallets])
     return (
         <div className="proceso-listaempaque-resumen-container">
             <div className="resumen-container-buttons-div">
@@ -50,7 +43,7 @@ export default function Resumen(): JSX.Element {
                 <section className="proceso-listaempaque-resumen-filtro-button-hoy">
                     <p>Solo Hoy</p>
                     <label className="switch">
-                        <input type="checkbox" 
+                        <input type="checkbox"
                             onChange={(e): void => setSoloHoy(
                                 e.target.checked ? new Date().toISOString().split('T')[0] : '')} />
                         <span className="slider round"></span>

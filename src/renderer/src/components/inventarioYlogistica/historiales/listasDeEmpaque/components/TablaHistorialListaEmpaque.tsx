@@ -6,7 +6,7 @@ import { IoDocumentTextSharp } from "react-icons/io5";
 
 type propsType = {
     data: contenedoresType[] | undefined
-    handleAccederDocumento: (data: contenedoresType) => void
+    handleAccederDocumento: (data: contenedoresType) => Promise<void>
 }
 
 const headers = ["# Contenedor", "Cliente", "Creación", ""]
@@ -37,7 +37,7 @@ export default function TablaHistorialListaEmpaque(props: propsType): JSX.Elemen
                                     cont.infoContenedor.clienteInfo.CLIENTE : "")}</td>
                             <td>{formatearFecha(cont.infoContenedor.fechaCreacion)}</td>
                             <td>
-                                <button onClick={(): void => props.handleAccederDocumento(cont)}>
+                                <button onClick={async (): Promise<void> => props.handleAccederDocumento(cont)}>
                                     <IoDocumentTextSharp color="green" fontSize={25} />
                                 </button>
                             </td>

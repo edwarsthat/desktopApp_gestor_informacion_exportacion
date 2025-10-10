@@ -29,10 +29,25 @@
     color: black;
     border: 1px solid black;
 }
+
 .historiales-listaempaque-info-resumen{
     display: grid;
-    grid-template-columns: 1fr 1fr ;
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
+    margin-top: 20px;
+    position: relative;
+}
+
+.historiales-listaempaque-info-resumen > div {
+    width: 100%;
+    position: relative;
+}
+
+/* Sobrescribir el position absolute de .table-main dentro del informe */
+.historiales-listaempaque-info-container .table-main {
+    position: relative !important;
+    width: 100%;
+    z-index: 1;
 }
 
 .historiales-listaempaque-info-container-filtros{

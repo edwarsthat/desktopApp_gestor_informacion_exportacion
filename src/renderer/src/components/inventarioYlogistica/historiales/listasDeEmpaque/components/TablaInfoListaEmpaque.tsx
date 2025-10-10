@@ -1,15 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { formatearFecha } from "@renderer/functions/fechas";
-import { contenedoresType } from "@renderer/types/contenedoresType";
-import { proveedoresType } from "@renderer/types/proveedoresType";
 import { aplicar_ggn_fecha } from "../functions/ggn";
-import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
-import { nombreTipoFruta2, tipoCalidad } from "@renderer/utils/tipoFrutas";
+import { itemPalletType } from "@renderer/types/contenedores/itemsPallet";
 
 type propsType = {
-    contenedor: contenedoresType
+    items: itemPalletType[]
     final: boolean
-    proveedores: proveedoresType[]
 
 }
 
@@ -29,9 +25,8 @@ const headers = [
 ];
 
 
-export default function TablaInfoListaEmpaque({ contenedor, final }: propsType): JSX.Element {
+export default function TablaInfoListaEmpaque({ items, final }: propsType): JSX.Element {
 
-    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
     const mostrarKilose = (item): string => {
         const peso = Number(item.tipoCaja.split("-")[1]);
         if (final) {
@@ -49,8 +44,7 @@ export default function TablaInfoListaEmpaque({ contenedor, final }: propsType):
                 <tr>
                     {headers
                         .filter(item => !(item === "PRODUCT") ||
-                            (final && (typeof contenedor.infoContenedor.clienteInfo === 'object' &&
-                                contenedor.infoContenedor.clienteInfo._id === '659dbd9a347a42d89929340e')))
+                            (final && (items[0]?.contenedor?.infoContenedor?.clienteInfo?._id === '659dbd9a347a42d89929340e')))
                         .map(item => (
                             <th key={item}>{item}</th>
                         ))
@@ -58,35 +52,33 @@ export default function TablaInfoListaEmpaque({ contenedor, final }: propsType):
                 </tr>
             </thead>
             <tbody>
-                {contenedor.pallets.map((_, index) => (
-                    contenedor.pallets[index].EF1.map((item) => (
-                        <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={index + item.fecha}>
-                            <td>{index + 1}{contenedor.numeroContenedor}</td>
-                            <td>{formatearFecha(item.fecha, true)}</td>
-                            <td>{item.tipoCaja.split("-")[0]}</td>
-                            <td>{nombreTipoFruta2(item.tipoFruta, tiposFrutas)}</td>
-                            {final &&
-                                (typeof contenedor.infoContenedor.clienteInfo === "object" ?
-                                    contenedor.infoContenedor.clienteInfo.CLIENTE : "") === 'KONGELATO' &&
-                                <td>
-                                    COL-{mostrarKilose(item)}
-                                    {item.tipoFruta === 'Limon' ? 'Limes' : 'Oranges'}
-                                    {item.calibre}ct
-                                </td>}
-                            <td>{mostrarKilose(item)}</td>
-                            <td>{tipoCalidad(item.calidad, tiposFrutas)}</td>
-                            <td>{item.calibre}</td>
-                            <td>{item.cajas}</td>
-                            <td>{
-                                item.SISPAP ? item.lote && item.lote.ICA && item.lote.ICA.code  : 'Sin SISPAP'
-                            }</td>
-                            <td>{item.GGN ? item.lote?.GGN?.code : ''}</td>
+                {items.map((item, index) => (
+                    <tr className={`${ item.pallet.numeroPallet % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={index + item._id}>
+                        <td>{item.pallet.numeroPallet}{item?.contenedor?.numeroContenedor || ""}</td>
+                        <td>{formatearFecha(item.fecha, true)}</td>
+                        <td>{item.tipoCaja.split("-")[0]}</td>
+                        <td>{item?.tipoFruta?.tipoFruta || ''}</td>
+                        {final &&
+                            (item?.contenedor?.infoContenedor?.clienteInfo?.CLIENTE || "") === 'KONGELATO' &&
                             <td>
-                                {aplicar_ggn_fecha(item, contenedor) !== "" ?
-                                    formatearFecha(aplicar_ggn_fecha(item, contenedor)) : "N/A"}
-                            </td>
-                        </tr>
-                    ))
+                                COL-{mostrarKilose(item)}
+                                {item.tipoFruta.tipoFruta === 'Limon' ? 'Limes' : 'Oranges'}
+                                {item.calibre}ct
+                            </td>}
+                        <td>{mostrarKilose(item)}</td>
+                        <td>{item.calidad.nombre}</td>
+                        <td>{item.calibre}</td>
+                        <td>{item.cajas}</td>
+                        <td>{
+                            item.SISPAP ? item.lote && item.lote.predio.ICA && item.lote.predio.ICA.code : 'Sin SISPAP'
+                        }</td>
+                        <td>{item.lote.predio.GGN ? item.lote?.predio.GGN?.code : ''}</td>
+                        <td>
+                            {aplicar_ggn_fecha(item) !== "" ?
+                                formatearFecha(aplicar_ggn_fecha(item)) : "N/A"}
+                        </td>
+                    </tr>
+
                 ))}
             </tbody>
         </table>

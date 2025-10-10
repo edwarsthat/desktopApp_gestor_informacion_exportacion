@@ -88,7 +88,6 @@ export default function ProcesoListaEmpaque(): JSX.Element {
     }, [confirm]);
 
     useEffect(() => {
-        console.log("contenedor", contenedor)
         const fetchPalletItems = async (): Promise<void> => {
             try {
                 if (contenedor === null) return
@@ -174,8 +173,8 @@ export default function ProcesoListaEmpaque(): JSX.Element {
                 handleShowResumen={handleShowResumen}
                 contenedores={contenedores}
             />
-            {showResumen && <Resumen />}
-            {showPredios && <ListaEmpaquePredios />}
+            {showResumen && <Resumen pallets={itemsPallet} />}
+            {showPredios && <ListaEmpaquePredios pallets={itemsPallet} />}
 
             {!showResumen && !showPredios && <Pallets itemsPallet={itemsPallet} cuartosFrios={cuartosFrios} inventarioCuartosFrios={inventarioCuartosFrios} />
             }

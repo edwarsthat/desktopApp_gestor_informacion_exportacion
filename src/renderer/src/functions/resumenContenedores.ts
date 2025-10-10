@@ -1,260 +1,245 @@
 /* eslint-disable prettier/prettier */
 
-import { contenedoresType } from "@renderer/types/contenedoresType"
-import { resultadoObtenerresumenContenedores, resumenPredios } from "@renderer/types/responses/resumenContenedores"
+import { itemPalletType } from "@renderer/types/contenedores/itemsPallet";
+import { proveedoresType } from "@renderer/types/proveedoresType";
+import { resultadoObtenerresumenContenedores } from "@renderer/types/responses/resumenContenedores"
+import { tiposFrutasType } from "@renderer/types/tiposFrutas";
 
 // Claves (libres, pero te ayudan a documentar intención)
 export type TipoFruta = string;   // "Limon" | "Naranja" | ...
-export type Calibre   = string;   // "110" | "150" | ...
-export type Calidad   = string;   // "A" | "B" | "EXPORT" | ...
+export type Calibre = string;   // "110" | "150" | ...
+export type Calidad = string;   // "A" | "B" | "EXPORT" | ...
 
 // Métrica base por grupo (calibre/calidad)
 export interface MetricItem {
-  cajas: number;
-  cajasP: number;  // porcentaje sobre total de la fruta
-  kilos: number;
-  kilosP: number;  // porcentaje sobre total de la fruta
-  pallet: number;
+    cajas: number;
+    cajasP: number;  // porcentaje sobre total de la fruta
+    kilos: number;
+    kilosP: number;  // porcentaje sobre total de la fruta
+    pallet: number;
 }
 
 // Secciones por fruta
 export interface FrutaResumen {
-  calibre: Record<Calibre, MetricItem>;
-  calidad: Record<Calidad, MetricItem>;
-  totalCajas: number;
-  totalKilos: number;
+    calibre: Record<Calibre, MetricItem>;
+    calidad: Record<Calidad, MetricItem>;
+    totalCajas: number;
+    totalKilos: number;
 }
 
 // Objeto final que devuelve tu función
 export type ResumenContenedores = Record<TipoFruta, FrutaResumen>;
 
+type PredioDatosType = {
+    [key: string]: {
+        enf: string;
+        predio: proveedoresType;
+        cont: contType,
+        tipoFruta: tiposFrutasType,
+        calibres: calibreType
+    }
+};
+type contType = {
+    [key: string]: {
+        numero: number,
+        cajas: number,
+        kilos: number
+    }
+}
+type calibreType = {
+    [key: string]: {
+        cajas: number,
+        kilos: number
+    }
+}
 
-export const obtenerResumenPredios = (cont: contenedoresType[], soloHoy: boolean): resumenPredios => {
+export const obtenerResumenPredios = (items: itemPalletType[], soloHoy: boolean): PredioDatosType => {
     const predios = {}
-    cont.forEach(contenedor => {
-        contenedor.pallets.forEach(pallet => {
-            pallet.EF1.forEach(item => {
-                // console.log("por predio", item)
-                //se crea el elemento en el objeto
-                if (item.lote?._id) {
-                    if (soloHoy) {
-                        const hoy = new Date().getDate();
-                        const fechaItem = new Date(item.fecha).getDate();
-                        if (hoy === fechaItem) {
-                            if (!Object.prototype.hasOwnProperty.call(predios, item.lote._id)) {
-                                predios[item.lote._id] = {
-                                    enf: item.lote.enf,
-                                    predio: item.lote.predio,
-                                    tipoFruta: item.tipoFruta
-                                }
-                                predios[item.lote._id].cont = {}
-                                predios[item.lote._id].calibres = {}
-                            }
-                            if (!Object.prototype.hasOwnProperty.call(predios[item.lote._id].cont, contenedor._id as string)) {
-                                predios[item.lote._id].cont[contenedor._id] = {
-                                    numero: contenedor.numeroContenedor,
-                                    kilos: 0,
-                                    cajas: 0
-                                }
-                            }
-                            if(!Object.prototype.hasOwnProperty.call(predios[item.lote._id].calibres, item.calibre as string)) {
-                                predios[item.lote._id].calibres[item.calibre] = {
-                                    kilos: 0,
-                                    cajas: 0
-                                }
-                            }
-                            if (item.tipoCaja !== null || item.cajas !== null) {
-                                predios[item.lote._id].cont[contenedor._id].cajas += item.cajas
-                                predios[item.lote._id].calibres[item.calibre].cajas += item.cajas
+    for (const item of items) {
 
-                                const mult = item.tipoCaja.split('-')[1].replace(",", ".")
-                                const kilos = item.cajas * Number(mult)
-
-                                predios[item.lote._id].cont[contenedor._id].kilos += kilos
-                                predios[item.lote._id].calibres[item.calibre].kilos += kilos
-                            }
-
+        if (item.lote?._id) {
+            if (soloHoy) {
+                const hoy = new Date().getDate();
+                const fechaItem = new Date(item.fecha).getDate();
+                if (hoy === fechaItem) {
+                    if (!predios[item.lote._id]) {
+                        predios[item.lote._id] = {
+                            enf: item.lote.enf,
+                            predio: item.lote.predio,
+                            tipoFruta: item.tipoFruta
                         }
-
-                    } else {
-                        if (!Object.prototype.hasOwnProperty.call(predios, item.lote._id)) {
-                            predios[item.lote._id] = {
-                                enf: item.lote.enf,
-                                predio: item.lote.predio,
-                                tipoFruta: item.tipoFruta
-                            }
-                            predios[item.lote._id].cont = {}
-                            predios[item.lote._id].calibres = {}
-
+                        predios[item.lote._id].cont = {}
+                        predios[item.lote._id].calibres = {}
+                    }
+                    if (!predios[item.lote._id].cont[item.contenedor._id]) {
+                        predios[item.lote._id].cont[item.contenedor._id] = {
+                            numero: item.contenedor.numeroContenedor,
+                            kilos: 0,
+                            cajas: 0
                         }
-                        if (!Object.prototype.hasOwnProperty.call(predios[item.lote._id].cont, contenedor._id as string)) {
-                            predios[item.lote._id].cont[contenedor._id] = {
-                                numero: contenedor.numeroContenedor,
-                                kilos: 0,
-                                cajas: 0
-                            }
+                    }
+                    if (!predios[item.lote._id].calibres[item.calibre]) {
+                        predios[item.lote._id].calibres[item.calibre] = {
+                            kilos: 0,
+                            cajas: 0
                         }
-                        if(!Object.prototype.hasOwnProperty.call(predios[item.lote._id].calibres, item.calibre as string)) {
-                            predios[item.lote._id].calibres[item.calibre] = {
-                                kilos: 0,
-                                cajas: 0
-                            }
-                        }
-                        if (item.tipoCaja !== null) {
-                            predios[item.lote._id].cont[contenedor._id].cajas += item.cajas
-                            predios[item.lote._id].calibres[item.calibre].cajas += item.cajas
+                    }
+                    if (item.tipoCaja !== null || item.cajas !== null) {
+                        predios[item.lote._id].cont[item.contenedor._id].cajas += item.cajas
+                        predios[item.lote._id].calibres[item.calibre].cajas += item.cajas
 
-                            const mult = item.tipoCaja.split('-')[1].replace(",", ".")
-                            const kilos = item.cajas * Number(mult)
-                            predios[item.lote._id].cont[contenedor._id].kilos += kilos
-                            predios[item.lote._id].calibres[item.calibre].kilos += kilos
+                        const mult = item.tipoCaja.split('-')[1].replace(",", ".")
+                        const kilos = item.cajas * Number(mult)
 
-                        }
+                        predios[item.lote._id].cont[item.contenedor._id].kilos += kilos
+                        predios[item.lote._id].calibres[item.calibre].kilos += kilos
                     }
 
                 }
-            })
-        })
-    })
+
+            } else {
+                if (!Object.prototype.hasOwnProperty.call(predios, item.lote._id)) {
+                    predios[item.lote._id] = {
+                        enf: item.lote.enf,
+                        predio: item.lote.predio,
+                        tipoFruta: item.tipoFruta
+                    }
+                    predios[item.lote._id].cont = {}
+                    predios[item.lote._id].calibres = {}
+
+                }
+                if (!predios[item.lote._id].cont[item.contenedor._id]) {
+                    predios[item.lote._id].cont[item.contenedor._id] = {
+                        numero: item.contenedor.numeroContenedor,
+                        kilos: 0,
+                        cajas: 0
+                    }
+                }
+                if (!Object.prototype.hasOwnProperty.call(predios[item.lote._id].calibres, item.calibre as string)) {
+                    predios[item.lote._id].calibres[item.calibre] = {
+                        kilos: 0,
+                        cajas: 0
+                    }
+                }
+                if (item.tipoCaja !== null) {
+                    predios[item.lote._id].cont[item.contenedor._id].cajas += item.cajas
+                    predios[item.lote._id].calibres[item.calibre].cajas += item.cajas
+
+                    const mult = item.tipoCaja.split('-')[1].replace(",", ".")
+                    const kilos = item.cajas * Number(mult)
+                    predios[item.lote._id].cont[item.contenedor._id].kilos += kilos
+                    predios[item.lote._id].calibres[item.calibre].kilos += kilos
+
+                }
+            }
+        }
+
+    }
     console.log(predios)
     return predios
 }
+export const obtenerResumen = (items: itemPalletType[], soloHoy = '')
+    : ResumenContenedores | null => {
 
-export const obtenerResumen = (cont: contenedoresType[], soloHoy = '')
-   : ResumenContenedores | null => {
-
-    if (cont === undefined) return null
-
+    if (!Array.isArray(items) || items.length === 0) {
+        return null
+    }
     const resumen: ResumenContenedores = {}
 
-    cont.forEach(contenedor => {
+    for (const item of items) {
+        const calibreSet = new Set()
+        const calidadSet = new Set()
+        const tipoFrutaSet = new Set()
 
-        contenedor.pallets.forEach(pallet => {
-            const calibreSet = new Set()
-            const calidadSet = new Set()
-            const tipoFrutaSet = new Set()
-            pallet.EF1.forEach(item => {
-                const { tipoFruta, calibre, calidad, tipoCaja, cajas } = item
-                //se crea el elemento en el objeto
-                if (!Object.prototype.hasOwnProperty.call(resumen, tipoFruta)) {
-                    resumen[tipoFruta] = {
-                        calibre: {},
-                        calidad: {},
-                        totalCajas: 0,
-                        totalKilos: 0
-                    }
-                }
-                if (!Object.prototype.hasOwnProperty.call(resumen[tipoFruta].calibre, calibre)) {
-                    resumen[tipoFruta].calibre[calibre] = {
-                        cajas: 0,
-                        cajasP: 0,
-                        kilos: 0,
-                        kilosP: 0,
-                        pallet: 0
-                    }
-                }
-                if (!Object.prototype.hasOwnProperty.call(resumen[tipoFruta].calidad, calidad)) {
-                    resumen[tipoFruta].calidad[calidad] = {
-                        cajas: 0,
-                        cajasP: 0,
-                        kilos: 0,
-                        kilosP: 0,
-                        pallet: 0
-                    }
-                }
-                //se obtiene el peso de la caja
-                let kilosToMult
+        const { tipoFruta, calibre, calidad, cajas } = item
+        //se crea el elemento en el objeto
+        if (!resumen[tipoFruta._id]) {
+            resumen[tipoFruta._id] = {
+                calibre: {},
+                calidad: {},
+                totalCajas: 0,
+                totalKilos: 0
+            }
+        }
 
-                if (tipoCaja) {
-                    const partes = tipoCaja.split('-');
-                    if (partes.length > 1) { // Verifica que hay al menos dos partes
-                        const kilosStr = partes[1]; // Toma la segunda parte
-                        kilosToMult = Number(kilosStr.replace(",", ".")); // Realiza el replace
-                    } else {
-                        // Manejar el caso donde no hay suficientes partes
-                        console.warn('tipoCaja no contiene el formato esperado.');
-                        kilosToMult = 0; // O asigna el valor que necesites
-                    }
-                }
-                //si si hay peso
-                if (kilosToMult) {
+        if (!resumen[tipoFruta._id].calibre[calibre]) {
+            resumen[tipoFruta._id].calibre[calibre] = {
+                cajas: 0,
+                cajasP: 0,
+                kilos: 0,
+                kilosP: 0,
+                pallet: 0
+            }
+        }
+        if (!Object.prototype.hasOwnProperty.call(resumen[tipoFruta._id].calidad, calidad._id)) {
+            resumen[tipoFruta._id].calidad[calidad._id] = {
+                cajas: 0,
+                cajasP: 0,
+                kilos: 0,
+                kilosP: 0,
+                pallet: 0
+            }
+        }
 
-                    if (soloHoy) {
-                        // console.log(soloHoy);
+        if (soloHoy) {
 
-                        const [year, month, day] = soloHoy.split('-');
-                        const diaItem = new Date(item.fecha).getDate();
-                        const mesItem = new Date(item.fecha).getMonth();
-                        const annoItem = new Date(item.fecha).getFullYear();
-                        if (Number(day) === diaItem &&
-                            Number(month) === mesItem + 1 &&
-                            Number(year) === annoItem) {
-                            //lo kilos total
-                            const kilos = item.cajas * kilosToMult;
-                            //if si mira si solo se requieren los datos de hoy
-                            resumen[tipoFruta].calibre[calibre].kilos += kilos
-                            resumen[tipoFruta].calibre[calibre].cajas += cajas
+            const [year, month, day] = soloHoy.split('-');
+            const diaItem = new Date(item.fecha).getDate();
+            const mesItem = new Date(item.fecha).getMonth();
+            const annoItem = new Date(item.fecha).getFullYear();
+            if (Number(day) === diaItem &&
+                Number(month) === mesItem + 1 &&
+                Number(year) === annoItem) {
+                //lo kilos total
+                const kilos = item.kilos
+                //if si mira si solo se requieren los datos de hoy
+                resumen[tipoFruta._id].calibre[calibre].kilos += kilos
+                resumen[tipoFruta._id].calibre[calibre].cajas += cajas
 
-                            resumen[tipoFruta].calidad[calidad].kilos += kilos
-                            resumen[tipoFruta].calidad[calidad].cajas += cajas
+                resumen[tipoFruta._id].calidad[calidad._id].kilos += kilos
+                resumen[tipoFruta._id].calidad[calidad._id].cajas += cajas
 
-                            resumen[tipoFruta].totalCajas += cajas
-                            resumen[tipoFruta].totalKilos += kilos
-                        }
+                resumen[tipoFruta._id].totalCajas += cajas
+                resumen[tipoFruta._id].totalKilos += kilos
+            }
 
-                    } else {
-                        //lo kilos total
-                        const kilos = item.cajas * kilosToMult;
-                        //if si mira si solo se requieren los datos de hoy
-                        resumen[tipoFruta].calibre[calibre].kilos += kilos
-                        resumen[tipoFruta].calibre[calibre].cajas += cajas
+        } else {
+            //lo kilos total
+            const kilos = item.kilos;
+            //if si mira si solo se requieren los datos de hoy
+            resumen[tipoFruta._id].calibre[calibre].kilos += kilos
+            resumen[tipoFruta._id].calibre[calibre].cajas += cajas
 
-                        resumen[tipoFruta].calidad[calidad].kilos += kilos
-                        resumen[tipoFruta].calidad[calidad].cajas += cajas
+            resumen[tipoFruta._id].calidad[calidad._id].kilos += kilos
+            resumen[tipoFruta._id].calidad[calidad._id].cajas += cajas
 
-                        resumen[tipoFruta].totalCajas += cajas
-                        resumen[tipoFruta].totalKilos += kilos
+            resumen[tipoFruta._id].totalCajas += cajas
+            resumen[tipoFruta._id].totalKilos += kilos
+        }
+        calibreSet.add(calibre)
+        calidadSet.add(calidad)
+        tipoFrutaSet.add(tipoFruta._id)
+        const arrTipoFruta = [...tipoFrutaSet]
 
-                    }
+        arrTipoFruta.forEach(fruta => {
 
-                } else {
-                    resumen[tipoFruta].calibre[calibre].kilos += 0
-                    resumen[tipoFruta].calibre[calibre].cajas += 0
-
-                    resumen[tipoFruta].calidad[calidad].kilos += 0
-                    resumen[tipoFruta].calidad[calidad].cajas += 0
-
-                    resumen[tipoFruta].totalCajas += 0
-                    resumen[tipoFruta].totalKilos += 0
+            const arrCalibre = [...calibreSet]
+            arrCalibre.forEach(cal => {
+                if (resumen[fruta as string].calibre[cal as string]) {
+                    resumen[fruta as string].calibre[cal as string].pallet += 1
 
                 }
-                calibreSet.add(calibre)
-                calidadSet.add(calidad)
-                tipoFrutaSet.add(tipoFruta)
             })
-            const arrTipoFruta = [...tipoFrutaSet]
+            const arrCalidad = [...calidadSet]
+            arrCalidad.forEach(cal => {
+                if (resumen[fruta as string].calidad[cal as string]) {
+                    resumen[fruta as string].calidad[cal as string].pallet += 1
 
-            arrTipoFruta.forEach(fruta => {
-
-
-                const arrCalibre = [...calibreSet]
-                arrCalibre.forEach(cal => {
-                    if (resumen[fruta as string].calibre[cal as string]) {
-                        resumen[fruta as string].calibre[cal as string].pallet += 1
-
-                    }
-                })
-                const arrCalidad = [...calidadSet]
-                arrCalidad.forEach(cal => {
-                    if (resumen[fruta as string].calidad[cal as string]) {
-                        resumen[fruta as string].calidad[cal as string].pallet += 1
-
-                    }
-                })
-
+                }
             })
+
         })
-    })
+    }
 
     Object.keys(resumen).forEach(tipoFruta => {
         const itemFruta = resumen[tipoFruta]
@@ -271,20 +256,18 @@ export const obtenerResumen = (cont: contenedoresType[], soloHoy = '')
         })
     })
 
-    // console.log(resumen)
     return resumen
 }
-
-export const fechasSeleccionarDia = (data:resultadoObtenerresumenContenedores, fecha: string): resultadoObtenerresumenContenedores => {
+export const fechasSeleccionarDia = (data: resultadoObtenerresumenContenedores, fecha: string): resultadoObtenerresumenContenedores => {
     const tipoFrutaKeys = Object.keys(data)
-    for(let i=0; i<tipoFrutaKeys.length; i++){
+    for (let i = 0; i < tipoFrutaKeys.length; i++) {
         const fechasKeys = Object.keys(data[tipoFrutaKeys[i]])
-        for(let j=0; j<fechasKeys.length; j++){
-            if(fechasKeys[j] === 'totalCajas' || fechasKeys[j] === 'totalKilos') continue;
-            if(fechasKeys[j] !== fecha){
+        for (let j = 0; j < fechasKeys.length; j++) {
+            if (fechasKeys[j] === 'totalCajas' || fechasKeys[j] === 'totalKilos') continue;
+            if (fechasKeys[j] !== fecha) {
                 delete data[tipoFrutaKeys[i]][fechasKeys[j]]
             }
         }
-    } 
+    }
     return data
 }
