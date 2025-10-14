@@ -45,12 +45,8 @@ export default function CostoContenedoresInfo({ data, setShowData, tipo }: props
                     totalesPorTipoFruta[tipoFruta as string].totalPrecio += (+item[key].precio || 0);
                     totalesPorTipoFruta[tipoFruta as string].totalKilos += (+item[key].kilos || 0);
 
-
                 }
             })
-
-
-
 
         });
 
