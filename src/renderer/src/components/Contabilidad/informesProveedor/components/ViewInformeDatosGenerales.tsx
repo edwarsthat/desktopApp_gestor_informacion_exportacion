@@ -1,11 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { contenedoresType } from "@renderer/types/contenedoresType";
 import { lotesType } from "@renderer/types/lotesType"
 import '../css/informesDatosGeneral.css'
 import { formatearFecha } from "@renderer/functions/fechas";
 type propsType = {
     loteSeleccionado: lotesType
-    contenedores: contenedoresType[]
     setDataInforme: (e) => void
 }
 
@@ -41,8 +39,10 @@ export default function ViewInformeDatosGenerales(props: propsType): JSX.Element
                 <p>TRZ:
                     <span>
                         {
-                            props.contenedores !== undefined &&
-                            props.contenedores.reduce((acu, cont) => (acu += cont.numeroContenedor + "-"), ' ')
+                            props.loteSeleccionado !== undefined &&
+                            props.loteSeleccionado?.salidaExportacion?.contenedores?.reduce(
+                                (acu, cont) => (acu += cont.numeroContenedor + "-"), ' '
+                            )
                         }
                     </span></p>
             </div>

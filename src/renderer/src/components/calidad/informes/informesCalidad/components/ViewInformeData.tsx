@@ -5,7 +5,6 @@ import '../css/datosLote.css'
 import '../css/ViewInformeData.css'
 import { useEffect, useRef, useState } from 'react';
 import useAppContext from '@renderer/hooks/useAppContext';
-import { contenedoresType } from '@renderer/types/contenedoresType';
 import ViewInformeDatosGenerales from './ViewInformeDatosGenerales';
 import ViewInformeResultados from './ViewInformeResultados';
 import ViewInformeDescarte from './ViewInformeDescarte';
@@ -13,7 +12,7 @@ import ViewInformeObservaciones from './ViewInformeObservaciones';
 import ViewInformeFotos from './ViewInformeFotos';
 import MostrarPrecios from "./MostrarPrecios";
 import logo from '@renderer/assets/1.webp'
-import { dataInformeInit, dataInformeType, obtenerPorcentage, totalExportacion, totalLote, totalPrecios } from "@renderer/functions/informesLotes";
+import { dataInformeInit, dataInformeType, obtenerPorcentage, totalLote, totalPrecios } from "@renderer/functions/informesLotes";
 type propsType = {
     handleVolverTabla: () => void
     loteSeleccionado: lotesType | undefined
@@ -24,41 +23,18 @@ type propsType = {
 let isVisible = false
 export default function ViewInformeData(props: propsType): JSX.Element {
     const { messageModal } = useAppContext();
-    const [contenedores, setContenedores] = useState<contenedoresType[]>([]);
     const [, setDataInforme] = useState<dataInformeType>(dataInformeInit)
 
     const menuRef = useRef<HTMLDivElement | null>(null);
 
-    useEffect(() => {
-        if (props.loteSeleccionado &&
-            props.loteSeleccionado.contenedores &&
-            props.loteSeleccionado.contenedores?.length > 0) {
-            buscarContenedores()
-        }
-    }, [])
-
 
     useEffect(() => { }, [isVisible])
 
-    const buscarContenedores = async (): Promise<void> => {
-        try {
-            const request = { action: "get_calidad_informes_contenedoresLote", data: props.loteSeleccionado?.contenedores }
-            const response = await window.api.server2(request)
-            if (response.status !== 200) throw new Error(`Code ${response.status}: ${response.message}`);
-            setContenedores(response.data)
-        } catch (err) {
-            if (err instanceof Error) {
-                messageModal("error", `${err.message}`)
-            }
-        }
-    }
     const finalizar_informe_proveedor = async (): Promise<void> => {
         try {
             const request = {
                 action: "put_calidad_informes_loteFinalizarInforme",
-                precio: props.loteSeleccionado?.predio.precio[props.loteSeleccionado.tipoFruta.tipoFruta],
                 _id: props.loteSeleccionado?._id,
-                contenedores: props.loteSeleccionado?.contenedores
             }
             const response = await window.api.server2(request)
             if (response.status !== 200)
@@ -197,7 +173,6 @@ export default function ViewInformeData(props: propsType): JSX.Element {
                 <hr />
                 <ViewInformeDatosGenerales
                     setDataInforme={setDataInforme}
-                    contenedores={contenedores}
                     loteSeleccionado={props.loteSeleccionado} />
                 <hr />
                 <div className='informe-calidad-lote-div informe-calidad-row'>
@@ -209,14 +184,14 @@ export default function ViewInformeData(props: propsType): JSX.Element {
                             <div className="metric">
                                 <div className="metric-label">Kilos</div>
                                 <div className="informe-calidad-total-exportacion-value">
-                                    {totalExportacion(props.loteSeleccionado).toFixed(2)} Kg
+                                    {props.loteSeleccionado?.salidaExportacion?.totalKilos?.toFixed(2) || 0} Kg
                                 </div>
                             </div>
                             <div className="metric-divider" />
                             <div className="metric">
                                 <div className="metric-label">% Exportación</div>
                                 <div className="informe-calidad-total-exportacion-percentage">
-                                    {obtenerPorcentage(totalExportacion(props.loteSeleccionado), props.loteSeleccionado.kilos).toFixed(2)}%
+                                    {obtenerPorcentage(props.loteSeleccionado?.salidaExportacion?.totalKilos || 0, props.loteSeleccionado.kilos).toFixed(2)}%
                                 </div>
                             </div>
                         </div>

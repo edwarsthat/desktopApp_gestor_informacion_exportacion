@@ -1,5 +1,7 @@
 /* eslint-disable prettier/prettier */
 
+import { proveedoresType } from "../proveedoresType";
+
 export type resultadoObtenerresumenContenedores = Record<string, ResumenFruta>;
 
 export type ResumenFruta = {
@@ -30,7 +32,7 @@ export type resumenPredios = {
 
 type predioType = {
     enf:string
-    predio: string
+    predio: proveedoresType
     tipoFruta: string
     cont: {
         [contenedorId: string]: {

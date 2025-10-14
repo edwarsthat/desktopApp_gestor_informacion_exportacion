@@ -36,7 +36,7 @@ export default function Contenedores():JSX.Element{
             if(response.status !== 200)
                 throw new Error(`Code ${response.status}: ${response.message}`)
 
-            console.log(response.data)
+            console.log(response);
             setDataContenedores(response.data.contenedores);
             setResumen(response.data);
             setShowData(true);

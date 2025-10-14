@@ -17,18 +17,16 @@ export default function InfoListaEmpaque({ items, handleVolverTabla, contenedorS
     const { messageModal, setLoading, loading } = useAppContext();
     const [final, setFinal] = useState<boolean>(false)
     const [reportePredios, setReportePredios] = useState<boolean>(false)
-    const [dataToExcel, setDataToExcel] = useState<resumenPredioType>()
 
-    const generar_informe = async (): Promise<void> => {
+    const generar_informe = async (tipo): Promise<void> => {
         try {
             setLoading(true)
             if (!items) throw new Error("No hay items seleccionados")
 
             const req = {
                 action: "get_inventarios_historiales_listaDeEmpaque_crearDocumento",
-                data: {
-                    contenedor: contenedorSeleccionado,
-                }
+                tipo: tipo,
+                contenedor: contenedorSeleccionado,
             }
             const response = await window.api.server2(req);
             if (response.status !== 200) {
@@ -37,7 +35,7 @@ export default function InfoListaEmpaque({ items, handleVolverTabla, contenedorS
 
             // Descargar el archivo
             const { file, filename, mimetype } = response.data;
-            
+
             // Convertir base64 a blob
             const byteCharacters = atob(file);
             const byteNumbers = new Array(byteCharacters.length);
@@ -54,7 +52,7 @@ export default function InfoListaEmpaque({ items, handleVolverTabla, contenedorS
             link.download = filename;
             document.body.appendChild(link);
             link.click();
-            
+
             // Limpiar
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
@@ -68,29 +66,6 @@ export default function InfoListaEmpaque({ items, handleVolverTabla, contenedorS
             setLoading(false)
         }
     };
-
-    const generar_informe_reporte_predios = (): void => {
-        try {
-            if (!items) throw new Error("No hay contenedor seleccionado")
-
-            const data = {
-                action: "crear_resporte_predios_lista_empaque",
-                data: {
-                    contenedor: items,
-                    tabla: dataToExcel
-                }
-            }
-            window.api.crearDocumento(data)
-
-        } catch (err) {
-            if (err instanceof Error) {
-                console.error('Error al generar PDF:', err);
-                messageModal("error", `Error ${err.message}`);
-            }
-        }
-    }
-
-
 
     if (items === undefined) {
         return (
@@ -118,9 +93,8 @@ export default function InfoListaEmpaque({ items, handleVolverTabla, contenedorS
                 </div>
             </div>
             <div>
-                {reportePredios ? 
+                {reportePredios ?
                     <InformeReportePredios
-                        setDataToExcel={setDataToExcel}
                         final={final}
                         items={items} />
                     :
@@ -132,9 +106,9 @@ export default function InfoListaEmpaque({ items, handleVolverTabla, contenedorS
             <div className='informe-calidad-lote-div'>
                 <button disabled={loading} onClick={(): void => {
                     if (reportePredios) {
-                        generar_informe_reporte_predios()
+                        generar_informe("reportePredios")
                     } else {
-                        generar_informe()
+                        generar_informe("listaEmpaque")
                     }
                 }} className='defaulButtonAgree' >Generar informe</button>
             </div>

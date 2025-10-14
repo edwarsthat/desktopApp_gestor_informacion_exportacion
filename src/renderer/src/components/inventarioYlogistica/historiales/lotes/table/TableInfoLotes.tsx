@@ -7,20 +7,15 @@ import { numeroContenedorType } from "../functions/request"
 // import { total_porcentaje_calibre } from "../functions/functions"
 import { formatearFecha } from "@renderer/functions/fechas"
 // import { PredioDatosType } from "@renderer/functions/resumenContenedores"
-import { totalExportacion } from "@renderer/functions/operacionesLotes"
-import { tipoCalidadInforme } from "@renderer/utils/tipoFrutas"
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
-import { totalExportacionCalidad } from "@renderer/functions/informesLotes"
-import { resumenPredios } from "@renderer/types/responses/resumenContenedores"
 
 type propsType = {
   data: lotesType[]
   numeroContenedor: numeroContenedorType | undefined
   columnVisibility: filtroColumnasType
-  prediosInfo: resumenPredios | undefined
 }
 export default function TableInfoLotes(props: propsType): JSX.Element {
-  const tipoFrutas = useTipoFrutaStore(state => state.tiposFruta);
+  const calidadesExp = useTipoFrutaStore(state => state.tiposCalidades);
   const [showDetailDescarte, setShowDetailDescarte] = useState<boolean>(false)
   const [indice1, setIndice1] = useState<string>('')
   const [indice2, setIndice2] = useState<string>('')
@@ -55,17 +50,6 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
         </thead>
         <tbody>
           {Array.isArray(props.data) && props.data.map((lote, index) => {
-            let calidades: string[] = [];
-            if (lote.exportacion) {
-              const fruta = tipoFrutas.find((f) => f._id === lote.tipoFruta._id);
-              if (!fruta) return <></>;
-
-              const contIds = [...new Set(Object.values(lote.exportacion).flatMap(c => Object.keys(c)))];
-              const calidadIds = fruta.calidades.sort((a, b) =>
-                a.importancia - b.importancia).map(c => c._id);
-              calidades = calidadIds.filter(id => contIds.includes(id));
-            }
-
 
             return (
               lote && typeof lote === 'object' && typeof lote !== undefined ?
@@ -107,7 +91,7 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                       else if (item === 'contenedores') {
 
                         return <td key={lote + item} >
-                          {lote.contenedores?.reduce((acu, cont) => {
+                          {lote.salidaExportacion?.contenedores?.reduce((acu, cont) => {
                             if (props.numeroContenedor) {
                               acu += props.numeroContenedor[cont] + ' - ';
                             }
@@ -115,7 +99,15 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                           }, '')}
                         </td>
 
-                      } else if (item === 'exportacion') {
+                      }
+                      else if (item === 'kilosGGN') {
+
+                        return <td key={lote + item} >
+                          {lote?.salidaExportacion?.kilosGGN?.toFixed(2) || 0}
+                        </td>
+
+                      }
+                      else if (item === 'exportacion') {
                         return (
                           <td
                             key={lote + item}
@@ -125,7 +117,7 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                               <td className="text-center p-2">
                                 <div className="flex flex-col items-center space-y-2 py-1">
 
-                                  {(calidades || []).map((calidad) => (
+                                  {(lote.salidaExportacion.porCalidad || []).map((calidad) => (
 
                                     <div
                                       key={calidad + lote._id}
@@ -133,10 +125,10 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                                     >
                                       <div className="flex items-center justify-center space-x-2 text-center">
                                         <span className="font-semibold text-blue-800 text-xs">
-                                          {tipoCalidadInforme(calidad, tipoFrutas)}:
+                                          {calidadesExp.find(c => c._id === calidad.calidadId)?.nombre || calidad.calidadId}:
                                         </span>
                                         <span className="font-medium text-gray-700 text-xs">
-                                          {totalExportacionCalidad(lote, calidad)}
+                                          {calidad.kilos}
                                         </span>
                                       </div>
                                     </div>
@@ -145,7 +137,7 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                                 </div>
                               </td>
                               :
-                              totalExportacion(lote).toFixed(2) ?? 0}
+                              lote?.salidaExportacion?.totalKilos?.toFixed(2) ?? 0}
                           </td>
                         )
                       } else if (item === 'desverdizado') {
@@ -159,30 +151,6 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                           </td>
                         )
                       }
-                      // else if (item === 'exportacionCalidad') {
-                      //   return (
-                      //     <td key={lote + item}>
-                      //       {obtener_porcentages_exportacion(lote)}
-                      //     </td>
-                      //   )
-                      // }
-                      // else if (item === 'calibreExportacion') {
-                      //   return (
-                      //     <td key={lote._id + item}>
-
-                      //       {props.prediosInfo && props.prediosInfo[lote._id] &&
-                      //         Object.entries(props.prediosInfo[lote._id].calibres).map(([key, value]) => (
-                      //           <div key={key}>
-                      //             <div>{key}: {value.cajas} Cajas - {value.kilos}Kg - </div>
-                      //             <div>{
-                      //               props.prediosInfo &&
-                      //               total_porcentaje_calibre(props.prediosInfo[lote._id].calibres, key).toFixed(2)}%
-                      //             </div>
-                      //           </div>
-                      //         ))}
-                      //     </td>
-                      //   )
-                      // }
                       else {
                         return (
                           <td key={lote + item}>

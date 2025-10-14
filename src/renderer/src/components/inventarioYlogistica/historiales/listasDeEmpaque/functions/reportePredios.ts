@@ -43,20 +43,3 @@ export const resumenPredios = (items: itemPalletType[]): [resumenPredioType, tot
 
     return [out, totalCajas, pesoTotal];
 };
-
-export const resumenPrediosClientes = (
-    resumen: resumenPredioType
-): [resumenPredioType, totalCajas: number, pesoTotal: number] => {
-    const newOut = {}
-    let totalPeso = 0;
-    let totalCajas = 0;
-    Object.entries(resumen).forEach(([key, value]) => {
-        totalPeso += value.peso;
-        totalCajas += value.cajas;
-        const proveedor = proveedores.find(pro => pro._id === key)
-        if (proveedor) {
-            newOut[key] = value
-        }
-    })
-    return [newOut, totalCajas, totalPeso]
-}

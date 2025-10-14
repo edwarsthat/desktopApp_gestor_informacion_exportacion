@@ -3,13 +3,12 @@ import { obtener_proveedores2 } from '@renderer/functions/SystemRequest'
 import useAppContext from '@renderer/hooks/useAppContext'
 import { FilterValues, useFiltro } from '@renderer/hooks/useFiltro'
 import useGetCatalogData from '@renderer/hooks/useGetCatalogData'
+import useTipoFrutaStore from '@renderer/store/useTipoFrutaStore'
 import { proveedoresType } from '@renderer/types/proveedoresType'
-import { tiposFrutasType } from '@renderer/types/tiposFrutas'
 import { useEffect, useState } from 'react'
 
 type FiltrosProps = {
   showTipoFruta?: boolean 
-  showTipoFruta2?: boolean
   showFechaInicio?: boolean
   showFechaFin?: boolean
   showGGN?: boolean
@@ -29,7 +28,6 @@ type FiltrosProps = {
 
 export default function Filtros({
   showTipoFruta = false,
-  showTipoFruta2 = false,
   showFechaInicio = false,
   showFechaFin = false,
   showGGN = false,
@@ -48,14 +46,12 @@ export default function Filtros({
 
 }: FiltrosProps): JSX.Element {
   const { messageModal } = useAppContext()
-  const [tipoFrutaArr, setTipoFrutaArr] = useState<string[]>([])
-  const [tipoFrutaArr2, setTipoFrutaArr2] = useState<tiposFrutasType[]>([])
+  const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
   const [proveedores, setProveedores] = useState<proveedoresType[]>([])
   const { obtenerCuartosDesverdizados, cuartosDesverdizados } = useGetCatalogData();
 
   const {
     tipoFruta, setTipoFruta,
-    tipoFruta2, setTipoFruta2,
     fechaInicio, setFechaInicio,
     fechaFin, setFechaFin,
     GGN, setGGN,
@@ -70,32 +66,6 @@ export default function Filtros({
 
   //se obtienen los datos del servidor
   useEffect(() => {
-    const obtenerTipoFruta = async (): Promise<void> => {
-      try {
-        const response = await window.api.obtenerFruta()
-        if (response instanceof Error) {
-          throw new Error(response.message)
-        }
-        setTipoFrutaArr(response)
-      } catch (err) {
-        if (err instanceof Error) {
-          messageModal('error', err.message)
-        }
-      }
-    }
-    const obtenerTipoFruta2 = async (): Promise<void> => {
-      try {
-        const response = await window.api.obtenerFruta2()
-        if (response instanceof Error) {
-          throw new Error(response.message)
-        }
-        setTipoFrutaArr2(response)
-      } catch (err) {
-        if (err instanceof Error) {
-          messageModal('error', err.message)
-        }
-      }
-    }
     const obtenerProveedores = async (): Promise<void> => {
       try {
         const response = await obtener_proveedores2("all")
@@ -110,16 +80,13 @@ export default function Filtros({
       }
     }
     obtenerCuartosDesverdizados()
-    obtenerTipoFruta()
     obtenerProveedores()
-    obtenerTipoFruta2()
   }, [])
 
   useEffect(() => {
     // Construct the object with current filter values
     const currentFilterValues: FilterValues = {
       tipoFruta,
-      tipoFruta2,
       fechaInicio,
       fechaFin,
       GGN,
@@ -135,7 +102,6 @@ export default function Filtros({
     onFiltersChange(currentFilterValues)
   }, [
     tipoFruta,
-    tipoFruta2,
     proveedor,
     fechaInicio,
     fechaFin,
@@ -168,29 +134,14 @@ export default function Filtros({
             }}
           >
             <option value="">Seleccione un tipo de fruta</option>
-            {tipoFrutaArr.map((tipo, index) => (
-              <option key={index} value={tipo}>
-                {tipo}
-              </option>
-            ))}
-          </select>
-        )}
-        {showTipoFruta2 && (
-          <select
-            aria-label="Selecciona una opción"
-            onChange={(e): void => {
-              const tipoFruta = tipoFrutaArr2.find((item) => item._id === e.target.value);
-              setTipoFruta2(tipoFruta)
-            }}
-          >
-            <option value="">Seleccione un tipo de fruta</option>
-            {tipoFrutaArr2.map((tipo, index) => (
-              <option key={index + tipo._id} value={tipo._id}>
+            {tiposFruta.map((tipo, index) => (
+              <option key={index} value={tipo._id}>
                 {tipo.tipoFruta}
               </option>
             ))}
           </select>
         )}
+
         {showProveedor && (
           <select
             aria-label="Selecciona un predio"

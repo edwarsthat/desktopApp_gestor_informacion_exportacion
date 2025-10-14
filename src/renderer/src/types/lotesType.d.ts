@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 import { clientesNacionalesType } from "./clientesType";
+import { contenedoresType } from "./contenedoresType";
 import { precioProveedorType } from "./preciosTypes";
 import { proveedoresType } from "./proveedoresType";
 import { tiposFrutasType } from "./tiposFrutas";
@@ -66,7 +67,7 @@ interface salidaExportacionType {
     totalCajas: number;
     porCalidad: { calidadId: string; kilos: number; cajas: number }[];
     porCalibre: { calibre: string; kilos: number; cajas: number }[];
-    contenedores: string[];
+    contenedores: contenedoresType[];
 }
 
 

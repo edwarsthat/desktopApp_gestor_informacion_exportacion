@@ -2,18 +2,18 @@
 
 import { descarte_nopago, descarte_pagos } from "@renderer/functions/informesLotes"
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
-import { contenedoresType } from "@renderer/types/contenedoresType"
+import { itemPalletType } from "@renderer/types/contenedores/itemsPallet"
 import { lotesType } from "@renderer/types/lotesType"
 import React from "react"
 
 type propsType = {
-    lote: lotesType
-    contenedores: contenedoresType[]
-
+    lote: lotesType;
+    itemsPallet: itemPalletType[];
 }
 
-export default function ResumenKilosFruta({ lote, contenedores }: propsType): JSX.Element {
+export default function ResumenKilosFruta({ lote, itemsPallet }: propsType): JSX.Element {
     const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
+    const calidadesExport = useTipoFrutaStore((state) => state.tiposCalidades);
     // useEffect(() => { console.log(props.lote) }, [])
     const sumardescartes_pagos = (): JSX.Element => {
 
@@ -105,24 +105,24 @@ export default function ResumenKilosFruta({ lote, contenedores }: propsType): JS
         };
         let textCopy = ''
         // Build up your lines
-        if (lote.exportacion) {
-            const textCopyArrCont = Object.entries(lote.exportacion ?? {}).map(
-                ([key, value]) => {
-                    const contenedor = contenedores.find(item => item._id === key);
-                    if (!contenedor) return [];
-                    return Object.entries(value as Record<string, unknown>).map(
-                        ([keyCalidad, valueCalidad]) => {
+        if (lote.salidaExportacion) {
+            const textCopyArrCont = (lote.salidaExportacion.contenedores ?? []).map(
+                (cont) => {
+                    return lote.salidaExportacion.porCalidad.map(
+                        (item) => {
+
+                            const valueCalidad = itemsPallet.filter(i => (i.contenedor._id === cont._id) && (i.calidad._id === item.calidadId))
+                                .reduce((acu, it) => (acu += it.kilos), 0)
 
                             const kilos = decimalToComma(valueCalidad as number);
-                            const precioKey = decimalToComma(lote.precio.exportacion[keyCalidad]);
+                            const precioKey = decimalToComma(lote.precio.exportacion[item.calidadId]);
                             const subTotal = decimalToComma(
-                                lote.precio.exportacion[keyCalidad] * (valueCalidad as number)
+                                lote.precio.exportacion[item.calidadId] * (valueCalidad as number)
                             );
-                            const fruta = tiposFruta.find(item => item.calidades.find(calidad => calidad._id === keyCalidad));
-                            const cod = fruta ? fruta.calidades.find(calidad => calidad._id === keyCalidad)?.codContabilidad : 'N/A';
+                            const cod = calidadesExport.find(c => c._id === item.calidadId)?.codContabilidad || 'N/A';
 
                             return (
-                                `2\t${cod}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t\t\t\t\t\tPCONT${contenedor.numeroContenedor}\n`
+                                `2\t${cod}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t\t\t\t\t\tPCONT${cont.numeroContenedor}\n`
                             );
 
                         }
@@ -191,38 +191,37 @@ export default function ResumenKilosFruta({ lote, contenedores }: propsType): JS
                     </tr>
                 </thead>
                 <tbody>
-                    {lote.exportacion && Object.entries(lote.exportacion).map(([key, value], index) => {
-                        const contenedor = contenedores.find(item => item._id === key);
-                        return Object.entries(value).map(([keyCalidad, valueCalidad]) => {
-                            if (contenedor && keyCalidad !== '_id') {
+                    {lote.salidaExportacion && (lote.salidaExportacion?.contenedores || []).map((cont, index) => {
+                        return (lote.salidaExportacion.porCalidad).map((calidadItem) => {
 
-                                const fruta = tiposFruta.find(item => item.calidades.find(calidad => calidad._id === keyCalidad));
-                                const cod = fruta ? fruta.calidades.find(calidad => calidad._id === keyCalidad)?.codContabilidad : 'N/A';
+                            const valueCalidad = itemsPallet.filter(i => (i.contenedor._id === cont._id) && (i.calidad._id === calidadItem.calidadId))
+                                .reduce((acu, it) => (acu += it.kilos), 0)
+                            if (valueCalidad === 0) return null;
+                            const calidadData = calidadesExport.find(c => c._id === calidadItem.calidadId);
+                            const cod = calidadData?.codContabilidad || 'N/A';
 
-                                return (
-                                    <tr key={`${key}-${keyCalidad}`} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
-                                        <td>{contenedor.numeroContenedor}</td>
-                                        <td>{cod}</td>
-                                        <td>{valueCalidad as React.ReactNode}</td>
-                                        <td>{new Intl.NumberFormat('es-CO', {
+                            return (
+                                <tr key={`${cont._id}-${calidadItem.calidadId}`} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
+                                    <td>{cont.numeroContenedor}</td>
+                                    <td>{cod}</td>
+                                    <td>{valueCalidad as React.ReactNode}</td>
+                                    <td>{new Intl.NumberFormat('es-CO', {
+                                        style: 'currency',
+                                        currency: 'COP',
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0
+                                    }).format(lote.precio.exportacion[calidadData?._id as string])}</td>
+                                    <td>
+                                        {new Intl.NumberFormat('es-CO', {
                                             style: 'currency',
                                             currency: 'COP',
                                             minimumFractionDigits: 0,
-                                            maximumFractionDigits: 0
-                                        }).format(lote.precio.exportacion[keyCalidad])}</td>
-                                        <td>
-                                            {new Intl.NumberFormat('es-CO', {
-                                                style: 'currency',
-                                                currency: 'COP',
-                                                minimumFractionDigits: 0,
-                                                maximumFractionDigits: 0,
-                                            }).format(lote.precio.exportacion[keyCalidad] * (valueCalidad as number))}
-                                        </td>
-                                    </tr>
-                                );
-                            } else {
-                                return null
-                            }
+                                            maximumFractionDigits: 0,
+                                        }).format(lote.precio.exportacion[calidadData?._id as string] * (valueCalidad as number))}
+                                    </td>
+                                </tr>
+                            );
+
                         });
                     })}
                 </tbody>

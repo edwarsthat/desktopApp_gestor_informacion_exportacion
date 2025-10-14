@@ -27,7 +27,6 @@ export default function ProcesoData(): JSX.Element {
         obtenerProveedores,
         obtenerData,
         data,
-        prediosInfo,
         numeroContenedor
     } = useLotes({ currentFilters });
 
@@ -87,7 +86,7 @@ export default function ProcesoData(): JSX.Element {
             <Filtros
                 showFechaInicio={true}
                 showFechaFin={true}
-                showTipoFruta2={true}
+                showTipoFruta={true}
                 showGGN={true}
                 ggnId="proceso-data-lotes"
                 showProveedor={true}
@@ -122,7 +121,6 @@ export default function ProcesoData(): JSX.Element {
             <div>
                 <TableInfoLotes
                     data={data}
-                    prediosInfo={prediosInfo}
                     numeroContenedor={numeroContenedor}
                     columnVisibility={columnVisibility} />
             </div>

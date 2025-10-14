@@ -24,7 +24,6 @@ export default function InformesProveedorContabilidad(): JSX.Element {
   });
   const { setCurrentFilters, currentFilters } = useFiltroValue();
 
-
   const [datosFiltrados, setDatosFiltrados] = useState<lotesType[]>([]);
   const [showTable, setShowTable] = useState<boolean>(true)
   const [loteSeleccionado, setLoteSeleccionado] = useState<lotesType>()

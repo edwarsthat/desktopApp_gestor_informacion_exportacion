@@ -7,11 +7,13 @@ import { useEffect } from "react";
 import { formKeys, formSchema, formType, initialValues, validateNumeroKilosCanastillas } from "./validations/form";
 import FormSelect from "@renderer/components/UI/components/FormSelect";
 import FormInput from "@renderer/components/UI/components/Forminput";
+import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 
 
 export default function IngresoEf8(): JSX.Element {
     const { messageModal, setLoading, loading } = useAppContext()
-    const { obtenerPredios, proveedores, obtenerEf8, ef8, obtenerTipoFruta2, tiposFruta2 } = useGetSysData({proveedoresProp:"activos"});
+    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
+    const { obtenerPredios, proveedores, obtenerEf8, ef8 } = useGetSysData({proveedoresProp:"activos"});
     const { formState, handleChange, resetForm, formErrors, validateForm } = useForm<formType>(initialValues)
 
     useEffect(() => {
@@ -20,7 +22,6 @@ export default function IngresoEf8(): JSX.Element {
                 setLoading(true)
                 await obtenerPredios();
                 await obtenerEf8();
-                await obtenerTipoFruta2();
             } catch (err) {
                 if (err instanceof Error) {
                     messageModal('error', err.message)
@@ -82,7 +83,7 @@ export default function IngresoEf8(): JSX.Element {
                     label="Tipo de fruta"
                     onChange={handleChange}
                     error={formErrors.tipoFruta}
-                    data={tiposFruta2.map((item) => ({ _id: item._id, name: item.tipoFruta }))}
+                    data={tiposFruta.map((item) => ({ _id: item._id, name: item.tipoFruta }))}
                 />
 
                 {Object.entries(formKeys).map(([key, label]) => {

@@ -1,12 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { useEffect, useState } from "react"
-import { resumenPredios, resumenPrediosClientes, resumenPredioType } from "../functions/reportePredios"
+import { resumenPredios, resumenPredioType } from "../functions/reportePredios"
 import { itemPalletType } from "@renderer/types/contenedores/itemsPallet"
 
 type propsType = {
     items: itemPalletType[] | undefined
     final: boolean
-    setDataToExcel: (e) => void
 }
 
 const headers = [
@@ -17,24 +16,16 @@ const headers = [
     "Peso Bruto"
 ]
 
-export default function TablaReportePredios({ items, final, setDataToExcel }: propsType): JSX.Element {
+export default function TablaReportePredios({ items, final }: propsType): JSX.Element {
     const [info, setInfo] = useState<resumenPredioType>()
     const [totalCajas, setTotalCajas] = useState<number>();
     const [pesoTotal, setPesoTotal] = useState<number>();
     useEffect(() => {
         if (items !== undefined) {
             const infoTabla = resumenPredios(items);
-            console.log(infoTabla)
-            if(final){
-                console.log(infoTabla)
-                // infoTabla = resumenPrediosClientes(
-                //     infoTabla[0], props.proveedores
-                // )
-            }
             setInfo(infoTabla[0])
             setTotalCajas(infoTabla[1])
             setPesoTotal(infoTabla[2])
-            setDataToExcel(infoTabla)
         }
     }, [final])
 

@@ -7,10 +7,9 @@ import { itemPalletType } from "@renderer/types/contenedores/itemsPallet"
 type propsType = {
     items: itemPalletType[]
     final: boolean
-    setDataToExcel: (e) => void
 
 }
-export default function InformeReportePredios({ items, final, setDataToExcel }: propsType): JSX.Element {
+export default function InformeReportePredios({ items, final }: propsType): JSX.Element {
     return (
         <div className="historiales-listaempaque-info-container" id="view_informe_resporte_predios">
             <section >
@@ -39,7 +38,6 @@ export default function InformeReportePredios({ items, final, setDataToExcel }: 
                 <hr />
             </section>
             <TablaReportePredios
-                setDataToExcel={setDataToExcel}
                 final={final} 
                 items={items} />
         </div>

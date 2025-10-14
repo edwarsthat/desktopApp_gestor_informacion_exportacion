@@ -1,41 +1,38 @@
 /* eslint-disable prettier/prettier */
 import { lotesType } from "@renderer/types/lotesType"
 import MostrarPrecios from "./MostrarPrecios"
-import { obtenerPorcentage, totalExportacionCalidad } from "@renderer/functions/informesLotes"
+import { obtenerPorcentage } from "@renderer/functions/informesLotes"
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
-import { tipoCalidadInforme } from "@renderer/utils/tipoFrutas"
 
 type propsType = {
     loteSeleccionado: lotesType
 }
 
 export default function ViewInformeResultados({ loteSeleccionado }: propsType): JSX.Element {
-    const tipoFrutas = useTipoFrutaStore((state) => state.tiposFruta);
-    const fruta = tipoFrutas.find((f) => f._id === loteSeleccionado.tipoFruta._id);
-    if (!fruta) return <></>;
+    const calidadesExport = useTipoFrutaStore((state) => state.tiposCalidades);
+    const calidadesLote = loteSeleccionado?.salidaExportacion?.porCalidad?.map(c => c.calidadId) || [];
 
-    const contIds = loteSeleccionado.exportacion ? [...new Set(Object.values(loteSeleccionado.exportacion).flatMap(c => Object.keys(c)))] : [];
-    const calidadIds = fruta.calidades.sort((a, b) =>
+    const calidadIds = calidadesExport.filter(c => calidadesLote.includes(c._id)).sort((a, b) =>
         a.importancia - b.importancia).map(c => c._id);
-    const calidades = calidadIds.filter(id => contIds.includes(id));
 
 
     return (
         <>
-            {(calidades || []).map((id) => (
-                <tr key={id}>
-                    <td>Exportación Tipo {tipoCalidadInforme(id, tipoFrutas)}</td>
-                    <td>{totalExportacionCalidad(loteSeleccionado, id)}</td>
+            {(calidadIds || []).map((id) => {
+                const calidadLoteKilos = loteSeleccionado.salidaExportacion.porCalidad.find(c => c.calidadId === id)?.kilos || 0;
+                return <tr key={id}>
+                    <td>Exportación Tipo {calidadesExport.find(c => c._id === id)?.descripcion}</td>
+                    <td>{calidadLoteKilos.toFixed(2)} Kg</td>
                     <td>{
-                        obtenerPorcentage(totalExportacionCalidad(loteSeleccionado, id), loteSeleccionado.kilos).toFixed(2)
+                        obtenerPorcentage(calidadLoteKilos, loteSeleccionado.kilos).toFixed(2)
                     }% </td>
                     <MostrarPrecios
                         loteSeleccionado={loteSeleccionado}
                         tipoPrecio={id}
-                        kilosFruta={totalExportacionCalidad(loteSeleccionado, id) || 0}
+                        kilosFruta={calidadLoteKilos}
                     />
                 </tr>
-            ))}
+            })}
 
         </>
     )

@@ -38,7 +38,7 @@ export default function HistorialIngresoFruta(): JSX.Element {
     if (currentFilters.fechaInicio !== '') {
       obtenerData()
     }
-  }, [currentFilters.fechaFin, currentFilters.fechaInicio, currentFilters.tipoFruta2, filtro])
+  }, [currentFilters.fechaFin, currentFilters.fechaInicio, currentFilters.tipoFruta, filtro])
 
   return (
     <div>
@@ -48,7 +48,7 @@ export default function HistorialIngresoFruta(): JSX.Element {
       <Filtros
         showFechaInicio={true}
         showFechaFin={true}
-        showTipoFruta2={true}
+        showTipoFruta={true}
         ggnId="historial-procesado"
         onFiltersChange={setCurrentFilters} />
 

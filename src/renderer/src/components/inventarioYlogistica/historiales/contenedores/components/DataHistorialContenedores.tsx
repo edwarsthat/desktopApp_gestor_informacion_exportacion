@@ -213,12 +213,12 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                                 <tbody>
                                     {resumen && Object.values(resumen.resumenPredios).map((lote, index) => {
                                         if (
-                                            lote.predio.toLowerCase().startsWith(filtro.toLowerCase()) ||
+                                            lote.predio.PREDIO.toLowerCase().startsWith(filtro.toLowerCase()) ||
                                             lote.enf.toLocaleLowerCase().startsWith(filtro.toLocaleLowerCase())
                                         ) {
                                             return (
                                                 <tr key={lote.enf} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
-                                                    <td>{lote.enf} - {lote.predio}</td>
+                                                    <td>{lote.enf} - {lote.predio.PREDIO}</td>
                                                     <td>{Object.entries(lote.cont).map(([key, value]) => (
                                                         <div key={key}>
                                                             <div>{value.numero}: {value.cajas} Cajas - {value.kilos}Kg</div>
@@ -236,11 +236,11 @@ export default function DataHistorialContenedores({ resumen, setShowData }: prop
                                 <tbody>
                                     {resumen && Object.values(resumen.resumenPredios).map((lote, index) => {
                                         if (
-                                            lote.predio.toLowerCase().startsWith(filtro.toLowerCase()) ||
+                                            lote.predio.PREDIO.toLowerCase().startsWith(filtro.toLowerCase()) ||
                                             lote.enf.toLocaleLowerCase().startsWith(filtro.toLocaleLowerCase())
                                         ) {
                                             return (<tr key={lote.enf} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
-                                                <td>{lote.enf} - {lote.predio}</td>
+                                                <td>{lote.enf} - {lote.predio.PREDIO}</td>
                                                 <td>{Object.entries(lote.calibres).map(([key, value]) => (
                                                     <div key={key}>
                                                         <div>{key}: {value.cajas} Cajas - {value.kilos}Kg</div>
