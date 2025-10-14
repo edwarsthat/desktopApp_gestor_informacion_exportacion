@@ -4,13 +4,15 @@
 import { useEffect, useRef } from "react";
 
 import { Chart } from "chart.js";
-import { filtroExportacionesSelectType, totalesLotesType } from "../validations/types";
+import { dataLotesType, filtroExportacionesSelectType, totalesLotesType } from "../validations/types";
 import { buildEficienciaPrediosPieChartConfig } from "../config/chartConfig";
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 
 
 type propsType = {
     totalLotes: totalesLotesType;
+    dataCalibres: dataLotesType[];
+    dataCalidades: dataLotesType[];
     filtrosCalidad: string[];
     filtrosCalibre: string[];
     selectFiltroExportacion: filtroExportacionesSelectType
@@ -18,7 +20,7 @@ type propsType = {
 
 
 export default function GraficoTortaEficienciaPredios({
-    totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion
+    totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion, dataCalibres, dataCalidades
 }: propsType): JSX.Element {
     const chartRef = useRef<Chart | null>(null);
     const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
@@ -32,7 +34,7 @@ export default function GraficoTortaEficienciaPredios({
         // Cleanup del chart anterior
         chartRef.current?.destroy();
         // Usa el generador de config
-        const config = buildEficienciaPrediosPieChartConfig(totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion, tiposFrutas);
+        const config = buildEficienciaPrediosPieChartConfig(totalLotes, dataCalibres, dataCalidades, filtrosCalidad, filtrosCalibre, selectFiltroExportacion, tiposFrutas);
 
         chartRef.current = new Chart(ctx, config);
 
@@ -41,7 +43,7 @@ export default function GraficoTortaEficienciaPredios({
             chartRef.current?.destroy();
             chartRef.current = null;
         };
-    }, [totalLotes]);
+    }, [totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion]);
     return (
         <div className='indicadores-operativos-eficiencia-operativa-grafica-barras-container'>
             <h2>Gráfico de Eficiencia por Predio</h2>

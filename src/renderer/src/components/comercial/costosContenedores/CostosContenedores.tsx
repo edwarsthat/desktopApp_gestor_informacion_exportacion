@@ -5,13 +5,14 @@ import { useState } from "react";
 import CostosContenedoresFiltros from "./components/CostosContenedoresFiltros";
 import { costoContenedorData } from "./types";
 import CostoContenedoresInfo from "./components/CostoContenedoresInfo";
+import { set } from "date-fns";
 
 export default function CostosContenedores(): JSX.Element {
 
     const { messageModal, setLoading } = useAppContext();
     const [showData, setShowData] = useState<boolean>(false);
-    const [dataContenedores, setDataContenedores] = useState<costoContenedorData>({});
-    const [totalCalidad, setTotalCalidad] = useState<{ [calidad: string]: number }>({})
+    const [data, setData] = useState<costoContenedorData[]>([]);
+    const [tipo, setTipo] = useState<string>("");
 
     const handlebuscar = async (
         numeroContenedor: string[],
@@ -35,9 +36,9 @@ export default function CostosContenedores(): JSX.Element {
             if (response.status !== 200)
                 throw new Error(`Code ${response.status}: ${response.message}`)
             console.log(response.data);
-            if(!response.data) throw new Error("No se encontraron datos con los filtros seleccionados")
-            setDataContenedores(response.data.preciosContenedores);
-            setTotalCalidad(response.data.totalPrecioCalidades);
+            if (!response.data) throw new Error("No se encontraron datos con los filtros seleccionados")
+            setData(response.data.costo);
+            setTipo(response.data.tipo);
             setShowData(true);
         } catch (err) {
             if (err instanceof Error) {
@@ -53,7 +54,7 @@ export default function CostosContenedores(): JSX.Element {
             <h2>Costos de Contenedores</h2>
             <hr />
             {showData ?
-                <CostoContenedoresInfo data={dataContenedores} totalCalidad={totalCalidad} setShowData={setShowData}/>
+                <CostoContenedoresInfo data={data} setShowData={setShowData} tipo={tipo} />
                 :
                 <CostosContenedoresFiltros handlebuscar={handlebuscar} />}
         </div>

@@ -5,9 +5,9 @@ import { useEffect, useRef } from "react";
 
 import { Chart } from "chart.js";
 import { buildEficienciaPrediosBarChartConfig } from "../config/chartConfig";
-import { lotesType } from "@renderer/types/lotesType";
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 import { tipoCalidad } from "@renderer/utils/tipoFrutas";
+import { lotesType } from "@renderer/types/lotesType";
 
 
 type propsType = {

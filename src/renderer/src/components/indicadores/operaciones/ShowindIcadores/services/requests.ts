@@ -30,7 +30,7 @@ export const datosProceso = async (
     setFiltrosExportacion(dataFiltro)
 }
 
-export const datosPredios = async (currentFilters: FilterValues, setLotes, setTotalesLotes, filtrosCalidad: string[], setFiltrosExportacion): Promise<void> => {
+export const datosPredios = async (currentFilters: FilterValues, setLotes, setDataCalibres, setDataCalidades, setTotalesLotes, filtrosCalidad: string[], setFiltrosExportacion): Promise<void> => {
     if (currentFilters.proveedor === "") throw new Error("El proveedor es requerido para el indicador de rendimiento por predios");
 
     const request = {
@@ -41,16 +41,19 @@ export const datosPredios = async (currentFilters: FilterValues, setLotes, setTo
     if (response.status !== 200) {
         throw new Error(`Code ${response.status}: ${response.message}`);
     }
-    console.log("Response data:", response.data);
-    setLotes(response.data.lotes);
-    setFiltrosExportacion((prev) => ({ ...prev, calibre: response.data.calibres, calidad: response.data.calidadesIds }));
+    const calidades = (response.data.dataLotesCalidades || []).map(item => item._id);
+    const calibres = (response.data.dataLotesCalibres || []).map(item => item._id);
+    console.log("response.data:", response.data);
+    setDataCalibres(response.data.dataLotesCalibres || []);
+    setDataCalidades(response.data.dataLotesCalidades || []);
+    setLotes(response.data.lotes || []);
+    setFiltrosExportacion((prev) => ({ ...prev, calibre: calibres, calidad: calidades }));
     setTotalesLotes({
         totalKilosIngreso: response.data.totalKilosIngreso,
         totalKilosProcesados: response.data.totalKilosProcesados,
         totalKilosExportacion: response.data.totalKilosExportacion,
         totalKilosDescarte: response.data.totalKilosDescarte,
-        calibresTotal: response.data.calibresTotal,
-        calidades: response.data.calidades,
-        calidadesIds: response.data.calidadesIds
+        calibresTotal: calibres,
+        calidades: calidades,
     });
 }

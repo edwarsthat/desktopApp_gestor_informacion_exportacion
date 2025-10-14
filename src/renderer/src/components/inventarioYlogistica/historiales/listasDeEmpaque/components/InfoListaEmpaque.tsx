@@ -4,7 +4,6 @@ import { useState } from "react"
 import InformeListaEmpaque from "./InformeListaEmpaque"
 import InformeReportePredios from "./InformeReportePredios"
 import useAppContext from "@renderer/hooks/useAppContext"
-import { resumenPredioType } from "../functions/reportePredios"
 import { itemPalletType } from "@renderer/types/contenedores/itemsPallet"
 
 type propsType = {

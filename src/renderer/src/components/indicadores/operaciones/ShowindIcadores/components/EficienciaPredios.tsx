@@ -1,21 +1,23 @@
 /* eslint-disable prettier/prettier */
 
-import { lotesType } from "@renderer/types/lotesType";
-import { filtroExportacionesSelectType, totalesLotesType } from "../validations/types";
+import { dataLotesType, filtroExportacionesSelectType, totalesLotesType } from "../validations/types";
 import GraficoTortaEficienciaPredios from "../graficos/GraficoTortaEficienciaPredios";
 import "./styles/eficienciaPredios.css"
 import GraficosBarrasEficienciaPredios from "./GraficosBarrasEficienciaPredios";
 import TablasRendimientoPredios from "../constants/TablasRendimientoPredios";
+import { lotesType } from "@renderer/types/lotesType";
 
 type propsType = {
-    data: lotesType[];
+    dataCalibres: dataLotesType[];
+    dataCalidades: dataLotesType[];
     totalLotes: totalesLotesType;
     filtrosCalidad: string[];
     filtrosCalibre: string[];
     selectFiltroExportacion: filtroExportacionesSelectType
+    lotes: lotesType[];
 }
 
-export default function EficienciaPredios({ data, totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion }: propsType): JSX.Element {
+export default function EficienciaPredios({ lotes, dataCalibres, dataCalidades, totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion }: propsType): JSX.Element {
 
 
     return (
@@ -24,6 +26,8 @@ export default function EficienciaPredios({ data, totalLotes, filtrosCalidad, fi
                 <h3 className="card-title">Resumen de Eficiencia</h3>
                 <div className="table-container">
                     <TablasRendimientoPredios
+                        dataCalibres={dataCalibres}
+                        dataCalidades={dataCalidades}
                         totalLotes={totalLotes}
                         filtrosCalidad={filtrosCalidad}
                         filtrosCalibre={filtrosCalibre}
@@ -32,6 +36,8 @@ export default function EficienciaPredios({ data, totalLotes, filtrosCalidad, fi
             </div>
             <div>
                 <GraficoTortaEficienciaPredios
+                    dataCalibres={dataCalibres}
+                    dataCalidades={dataCalidades}
                     filtrosCalibre={filtrosCalibre}
                     selectFiltroExportacion={selectFiltroExportacion}
                     filtrosCalidad={filtrosCalidad}
@@ -39,7 +45,10 @@ export default function EficienciaPredios({ data, totalLotes, filtrosCalidad, fi
                 />
             </div>
             {!selectFiltroExportacion.calibre && (
-                <GraficosBarrasEficienciaPredios data={data} filtrosCalidad={filtrosCalidad} totalLotes={totalLotes} />
+                <GraficosBarrasEficienciaPredios
+                    lotes={lotes}
+                    filtrosCalidad={filtrosCalidad} 
+                />
 
             )}
         </div>

@@ -7,16 +7,16 @@ import EficienciaOperativaComponent from "./components/EficienciaOperativaCompon
 import useAppContext from "@renderer/hooks/useAppContext";
 import { z } from "zod";
 import { agruparRegistrosKilosExportacion, agruparRegistrosKilospRocesados, arreglar_datos_excel_eficiencia, arreglar_datos_excel_eficienciaPredios, arreglar_datos_excel_exportaciones, arreglar_datos_excel_kilos_hora } from "./function";
-import { filtrosExportacionesType, IndicadorKilosProcesados, filtroExportacionesSelectType, itemExportacionType, totalesLotesType } from "./validations/types";
+import { filtrosExportacionesType, IndicadorKilosProcesados, filtroExportacionesSelectType, itemExportacionType, totalesLotesType, dataLotesType } from "./validations/types";
 import './styles.css';
 import { indicadoresType } from "@renderer/types/indicadoresType";
 import EficienciaKilosHora from "./components/EficienciaKilosHora";
 import FiltrosExportaciones from "./components/FiltrosExportaciones";
 import ExportacionDiaria from "./components/ExportacionDiaria";
 import { datosPredios, datosProceso } from "./services/requests";
-import { lotesType } from "@renderer/types/lotesType";
 import EficienciaPredios from "./components/EficienciaPredios";
 import FiltroRendimientoPredios from "./components/FiltroRendimientoPredios";
+import { lotesType } from "@renderer/types/lotesType";
 
 
 
@@ -33,9 +33,10 @@ export default function ShowIndicadores(): JSX.Element {
     const [dataExportacion, setDataExportacion] = useState<itemExportacionType[]>([]);
     const [dataExportacionOriginal, setDataExportacionOriginal] = useState<itemExportacionType[]>([]);
     const [lotes, setLotes] = useState<lotesType[]>([]);
+    const [dataCalibres, setDataCalibres] = useState<dataLotesType[]>([]);
+    const [dataCalidades, setDataCalidades] = useState<dataLotesType[]>([]);
     const [totalesLotes, setTotalesLotes] = useState<totalesLotesType>({
-        totalKilosIngreso: 0, totalKilosProcesados: 0, totalKilosExportacion: 0, totalKilosDescarte: 0,
-        calidades:{}, calibresTotal: {}
+        totalKilosIngreso: 0, totalKilosProcesados: 0, totalKilosExportacion: 0, totalKilosDescarte: 0
     });
 
     const [filtrosTipoFruta, setFiltrosTipoFruta] = useState<string[]>([]);
@@ -81,7 +82,7 @@ export default function ShowIndicadores(): JSX.Element {
         selectFiltroExportacionRef.current = selectFiltroExportacion;
         filtrosCalibreRef.current = filtrosCalibre;
 
-    }, [selectFiltroExportacion, filtrosTipoFruta, filtrosCalidad, filtrosCalibre, currentFilters, tipoIndicador]);
+    }, [selectFiltroExportacion, filtrosTipoFruta, currentFilters, tipoIndicador]);
 
     useEffect(() => {
 
@@ -109,14 +110,19 @@ export default function ShowIndicadores(): JSX.Element {
         });
     }, []);
 
-
-
     const buscar = async (): Promise<void> => {
         try {
             setLoading(true);
 
             if (tipoIndicador === 'rendimiento-predios') {
-                await datosPredios(currentFilters, setLotes, setTotalesLotes, filtrosCalidad, setFiltrosExportacion)
+                await datosPredios(
+                    currentFilters,
+                    setLotes,
+                    setDataCalibres,
+                    setDataCalidades,
+                    setTotalesLotes,
+                    filtrosCalidad,
+                    setFiltrosExportacion)
             } else {
                 await datosProceso(setData, setDataOriginal, setDataExportacion, setDataExportacionOriginal, setFiltrosExportacion, currentFilters)
             }
@@ -193,7 +199,7 @@ export default function ShowIndicadores(): JSX.Element {
                     showFechaInicio={true}
                     showFechaFin={true}
                     showProveedor={(tipoIndicador === "rendimiento-predios")}
-                    showTipoFruta2={(tipoIndicador === "rendimiento-predios")}
+                    showTipoFruta={(tipoIndicador === "rendimiento-predios")}
                     ggnId="indicadoresGGN"
                     onFiltersChange={setCurrentFilters}
                 />
@@ -240,9 +246,11 @@ export default function ShowIndicadores(): JSX.Element {
                 }
                 {tipoIndicador === 'rendimiento-predios' &&
                     <EficienciaPredios
+                        lotes={lotes}
+                        dataCalibres={dataCalibres}
+                        dataCalidades={dataCalidades}
                         filtrosCalibre={filtrosCalibre}
                         selectFiltroExportacion={selectFiltroExportacion}
-                        data={lotes}
                         totalLotes={totalesLotes}
                         filtrosCalidad={filtrosCalidad} />}
             </div>

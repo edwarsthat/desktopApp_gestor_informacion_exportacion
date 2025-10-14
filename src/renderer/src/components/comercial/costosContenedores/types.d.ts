@@ -1,9 +1,11 @@
 /* eslint-disable prettier/prettier */
 
 export type costoContenedorData = {
-    [numeroContenedor: string]: {
-        [enf: string]: {
-            [calidad: string]: number
-        }
+    _id: string,
+    nombre: string,
+    tipoFruta: string,
+    [calidad: string]: {
+        precio: number,
+        kilos: number
     }
 }

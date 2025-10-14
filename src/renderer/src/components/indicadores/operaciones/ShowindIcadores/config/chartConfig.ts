@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 // src/utils/chartConfigBuilders.ts
 
-import { filtroExportacionesSelectType, IndicadorKilosProcesados, itemExportacionType, totalesLotesType } from '../validations/types';
+import { dataLotesType, filtroExportacionesSelectType, IndicadorKilosProcesados, itemExportacionType, totalesLotesType } from '../validations/types';
 import { formatearFecha } from '@renderer/functions/fechas';
 import { convertir_fecha_a_mes, convertir_fecha_a_semana, sumar_calibre_tipoFruta, sumar_calidad_tipoFruta, sumar_tipoFruta, total_exportacion, total_procesado } from '../function';
 import { ChartConfiguration } from 'chart.js';
@@ -9,7 +9,6 @@ import { lotesType } from '@renderer/types/lotesType';
 import { generateColors } from '../services/procesarData';
 import { tiposFrutasType } from '@renderer/types/tiposFrutas';
 import { nombreTipoFruta2, tipoCalidad } from '@renderer/utils/tipoFrutas';
-import { totalExportacion } from '@renderer/functions/operacionesLotes';
 
 // Utilidad para obtener labels según agrupación
 export function getLabels(data: IndicadorKilosProcesados[], agrupacion: string): string[] {
@@ -263,7 +262,7 @@ export function buildExportacionChartConfig(
     };
 }
 export function buildEficienciaPrediosPieChartConfig(
-    totalLotes: totalesLotesType, filtrosCalidad: string[], filtrosCalibre: string[], selectFiltroExportacion: filtroExportacionesSelectType, tiposFrutas: tiposFrutasType[]
+    totalLotes: totalesLotesType, dataCalibres: dataLotesType[], dataCalidades: dataLotesType[], filtrosCalidad: string[], filtrosCalibre: string[], selectFiltroExportacion: filtroExportacionesSelectType, tiposFrutas: tiposFrutasType[]
 ): ChartConfiguration<'pie'> {
     let kilosDeshidratado, claves, totales, COLOR_MAP: Record<string, string>
 
@@ -274,10 +273,10 @@ export function buildEficienciaPrediosPieChartConfig(
         const newClaves = filtrosCalidad.map(clave => tipoCalidad(clave, tiposFrutas));
         claves = [...newClaves, "Descarte", "Deshidratacion", "otros"];
 
-        console.log("claves", claves)
         const totalesCalidad: number[] = []
         filtrosCalidad.forEach(calidad => {
-            totalesCalidad.push(totalLotes.calidades[calidad])
+            const dataCalidad = dataCalidades.filter(item => item._id === calidad);
+            totalesCalidad.push(dataCalidad.length > 0 ? dataCalidad[0].totalKilos : 0);
         })
         const otros = totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalesCalidad.reduce((acu, item) => acu += item, 0) + kilosDeshidratado);
         totales = [
@@ -305,8 +304,14 @@ export function buildEficienciaPrediosPieChartConfig(
         kilosDeshidratado = Math.max(totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalLotes.totalKilosExportacion), 0);
         claves = [...filtrosCalibre, "Descarte", "Deshidratacion", "otros"];
         // Valores
-        const totalesCalibre = filtrosCalibre.map(calibre => totalLotes.calibresTotal[calibre]?.kilos || 0);
+        const totalesCalibre: number[] = []
+        filtrosCalibre.forEach(calidad => {
+            const datacalibre = dataCalibres.filter(item => item._id === calidad);
+            totalesCalibre.push(datacalibre.length > 0 ? datacalibre[0].totalKilos : 0);
+        })
+        
         const otros = totalLotes.totalKilosProcesados - (totalLotes.totalKilosDescarte + totalesCalibre.reduce((acu, item) => acu + item, 0) + kilosDeshidratado);
+        
         totales = [
             ...totalesCalibre,
             totalLotes.totalKilosDescarte,
@@ -427,24 +432,29 @@ export function buildEficienciaPrediosBarChartConfig(
 
     if (elemento === 'kilosExportacion') {
         labels = data.map(item => item.enf);
-        kilos = data.map(item => totalExportacion(item));
+        kilos = data.map(item => item.salidaExportacion ? item.salidaExportacion.totalKilos : 0);
     } else if (elemento === "kilosDescarte") {
         labels = data.map(item => item.enf);
         kilos = data.map(item => (
             (item.descarteLavado ? Object.values(item.descarteLavado).reduce((sum, value) => sum + value, 0) : 0) +
             (item.descarteEncerado ? Object.values(item.descarteEncerado).reduce((sum, value) => sum + value, 0) : 0)
         ));
-    } else {
+    } else if (elemento === "kilos" || elemento === "kilosVaciados") {
+        labels = data.map(item => item.enf);
+        kilos = data.map(item => item[elemento] ? item[elemento] : 0);
+    } 
+    
+    else {
         labels = data.map(item => item.enf);
         for(const lote of data){
-            if(!lote.exportacion || Object.keys(lote.exportacion).length === 0) {
+                console.log("lote sin salidaExportacion o porCalidad:", lote);
+
+            if(lote.salidaExportacion && Object.keys(lote.salidaExportacion.porCalidad).length > 0) {
+                console.log("lote sin salidaExportacion o porCalidad:", lote);
+                const kilosCal = lote.salidaExportacion.porCalidad.find(cal => cal.calidadId === elemento);
+                kilos.push(kilosCal ? kilosCal.kilos : 0);
+            }  else {
                 kilos.push(0);
-            } else {
-                for(const cont of Object.keys(lote.exportacion)) {
-                    if(lote.exportacion[cont][elemento]) {
-                        kilos.push(lote.exportacion[cont][elemento]);
-                    }
-                }
             }
         }
 

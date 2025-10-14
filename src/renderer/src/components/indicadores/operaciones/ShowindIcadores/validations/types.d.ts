@@ -48,10 +48,11 @@ export type totalesLotesType = {
     totalKilosProcesados: number;
     totalKilosExportacion: number;
     totalKilosDescarte: number;
-    calibresTotal: {
-        [key: string]: { kilos: number };
-    },
-    calidades: { [key: string]: number };
+}
+
+export type dataLotesType = {
+    _id: string;
+    totalKilos: number;
 }
 
 export type itemLotesExcelType = {
@@ -59,3 +60,4 @@ export type itemLotesExcelType = {
     Kilos: number;
     Porcentage: number;
 }
+

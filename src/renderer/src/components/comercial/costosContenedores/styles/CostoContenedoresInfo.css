@@ -59,6 +59,83 @@
     color: var(--color-Celifrut);
 }
 
+/* Sección de totales por tipo de fruta */
+.totales-por-fruta-section {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.totales-por-fruta-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--color-Celifrut);
+}
+
+.totales-por-fruta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.fruta-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.fruta-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.fruta-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-Celifrut);
+    margin: 0 0 15px 0;
+    text-transform: capitalize;
+    border-bottom: 2px solid #e8f5e9;
+    padding-bottom: 8px;
+}
+
+.fruta-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.fruta-card-row:last-child {
+    margin-bottom: 0;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.fruta-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+}
+
+.fruta-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+}
+
+.fruta-value.highlight {
+    color: var(--color-Celifrut);
+    font-size: 17px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .contenedores-title {
@@ -85,5 +162,37 @@
 
     .total-value {
         font-size: 16px;
+    }
+
+    .totales-por-fruta-section {
+        padding: 15px;
+    }
+
+    .totales-por-fruta-title {
+        font-size: 18px;
+    }
+
+    .totales-por-fruta-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fruta-card {
+        padding: 16px;
+    }
+
+    .fruta-card-title {
+        font-size: 16px;
+    }
+
+    .fruta-label {
+        font-size: 13px;
+    }
+
+    .fruta-value {
+        font-size: 14px;
+    }
+
+    .fruta-value.highlight {
+        font-size: 15px;
     }
 }

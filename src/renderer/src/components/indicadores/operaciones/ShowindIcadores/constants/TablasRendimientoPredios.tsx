@@ -2,11 +2,13 @@
 
 import { tipoCalidad } from "@renderer/utils/tipoFrutas";
 import { porcentajeCalibreLotes } from "../services/procesarData";
-import { filtroExportacionesSelectType, totalesLotesType } from "../validations/types";
+import { dataLotesType, filtroExportacionesSelectType, totalesLotesType } from "../validations/types";
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 
 
 type propsType = {
+    dataCalibres: dataLotesType[];
+    dataCalidades: dataLotesType[];
     totalLotes: totalesLotesType;
     filtrosCalidad: string[];
     filtrosCalibre: string[];
@@ -15,7 +17,8 @@ type propsType = {
 }
 
 export default function TablasRendimientoPredios({
-    totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion }: propsType): JSX.Element {
+    totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion, dataCalidades, dataCalibres
+}: propsType): JSX.Element {
     const header = ["Totales", "Kilos", "Porcentaje"]
     const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
     if (selectFiltroExportacion.calidad) {
@@ -44,13 +47,13 @@ export default function TablasRendimientoPredios({
                         <td>{totalLotes.totalKilosProcesados.toLocaleString('es-CO')}</td>
                         <td>{totalLotes.totalKilosProcesados > 0 ? ((totalLotes.totalKilosProcesados / totalLotes.totalKilosIngreso) * 100).toFixed(2) + '%' : '0%'}</td>
                     </tr>
-                    {Object.entries(totalLotes.calidades || {}).map(([key, value]) => {
-                        if(filtrosCalidad.includes(key)) {
+                    {(dataCalidades || []).map(item => {
+                        if (filtrosCalidad.includes(item._id)) {
                             return (
-                                <tr className={'fondo-impar'} key={key + value + "tablaPredioIndicador"}>
-                                    <td>{tipoCalidad(key, tiposFruta)}</td>
-                                    <td>{value.toLocaleString('es-CO')}</td>
-                                    <td>{value > 0 ? ((value / totalLotes.totalKilosProcesados) * 100).toFixed(2) + '%' : '0%'}</td>
+                                <tr className={'fondo-impar'} key={item._id + "tablaPredioIndicador"}>
+                                    <td>{tipoCalidad(item._id, tiposFruta)}</td>
+                                    <td>{item.totalKilos.toLocaleString('es-CO')}</td>
+                                    <td>{item.totalKilos > 0 ? ((item.totalKilos / totalLotes.totalKilosProcesados) * 100).toFixed(2) + '%' : '0%'}</td>
                                 </tr>
                             )
                         } else {
@@ -98,13 +101,19 @@ export default function TablasRendimientoPredios({
                         <td>{totalLotes.totalKilosProcesados.toLocaleString('es-CO')}</td>
                         <td>{totalLotes.totalKilosProcesados > 0 ? ((totalLotes.totalKilosProcesados / totalLotes.totalKilosIngreso) * 100).toFixed(2) + '%' : '0%'}</td>
                     </tr>
-                    {filtrosCalibre.map((calibre, index) => (
-                        <tr className={'fondo-impar'} key={calibre + index}>
-                            <td>{calibre}</td>
-                            <td>{totalLotes.calibresTotal[calibre]?.kilos.toLocaleString('es-CO')}</td>
-                            <td>{porcentajeCalibreLotes(totalLotes, calibre) || "0%"}</td>
-                        </tr>
-                    ))}
+                    {(dataCalibres || []).map(item => {
+                        if (filtrosCalibre.includes(item._id)) {
+                            return (
+                                <tr className={'fondo-impar'} key={item._id + "tablaPredioIndicador"}>
+                                    <td>{item._id}</td>
+                                    <td>{item.totalKilos.toLocaleString('es-CO')}</td>
+                                    <td>{item.totalKilos > 0 ? ((item.totalKilos / totalLotes.totalKilosProcesados) * 100).toFixed(2) + '%' : '0%'}</td>
+                                </tr>
+                            )
+                        } else {
+                            return null
+                        }
+                    })}
                     <tr className={'fondo-par'}>
                         <td>Descartes</td>
                         <td>{totalLotes.totalKilosDescarte.toLocaleString('es-CO')}</td>
