@@ -15,15 +15,17 @@ import { initialForm } from './validations/validateRequest'
 import ModalDespachoFruta from './components/ModalDespachoFruta'
 import useAppContext from '@renderer/hooks/useAppContext'
 import ModalCrearRegistroFrutaDescompuesta from './components/ModalCrearRegistroFrutaDescompuesta'
+import useTipoFrutaStore from '@renderer/store/useTipoFrutaStore'
 
 export default function ReprocesoDescarte(): JSX.Element {
+  const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
   const {eventoServidor,triggerServer} = useAppContext();
   const { setCurrentFilters, currentFilters, resetCurrentValue } = useFiltroValue();
   const {
     formState, handleChange, setFormState,
     resetForm, formErrors, validateForm
   } = useForm<formType>(initialForm)
-  const { data, obtenerFruta } = useDataInventarioDescartes({ currentFilters })
+  const { data, obtenerFruta } = useDataInventarioDescartes({ currentFilters, tiposFruta })
   const [openDespacho, setOpenDespacho] = useState<boolean>(false)
   const [openDescompuesta, setOpenDescompuesta] = useState<boolean>(false)
 
@@ -32,10 +34,12 @@ export default function ReprocesoDescarte(): JSX.Element {
   }, [])
 
   useEffect(() => {
+    // const nombreTipoFruta = tiposFruta.find(item => item._id === currentFilters.tipoFruta) || '' 
     setFormState({
       ...formState,
       tipoFruta: currentFilters.tipoFruta
     })
+
   }, [currentFilters])
 
   useEffect(() => {

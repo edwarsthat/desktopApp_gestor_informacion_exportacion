@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import { formatearFecha } from "@renderer/functions/fechas";
-import { aplicar_ggn_fecha } from "../functions/ggn";
 import { itemPalletType } from "@renderer/types/contenedores/itemsPallet";
 
 type propsType = {
@@ -72,10 +71,9 @@ export default function TablaInfoListaEmpaque({ items, final }: propsType): JSX.
                         <td>{
                             item.SISPAP ? item.lote && item.lote.predio.ICA && item.lote.predio.ICA.code : 'Sin SISPAP'
                         }</td>
-                        <td>{item.lote.predio.GGN ? item.lote?.predio.GGN?.code : ''}</td>
+                        <td>{item.GGN ? item.lote?.predio.GGN?.code : 'N/A'}</td>
                         <td>
-                            {aplicar_ggn_fecha(item) !== "" ?
-                                formatearFecha(aplicar_ggn_fecha(item)) : "N/A"}
+                            {item.GGN ? formatearFecha(item.lote?.predio.GGN?.fechaVencimiento || "") : 'N/A'}
                         </td>
                     </tr>
 

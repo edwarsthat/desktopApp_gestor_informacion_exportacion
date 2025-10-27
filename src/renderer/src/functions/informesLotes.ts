@@ -7,30 +7,7 @@ import { lotesType } from "@renderer/types/lotesType"
 export function obtenerPorcentage(dato: number, total: number): number {
     return ((dato * 100) / total)
 }
-export function totalExportacion(lote: lotesType): number {
-    let total = 0;
-    if (!lote) return total;
-    if(!lote.exportacion) return total;
 
-    for (const cont of Object.values(lote.exportacion)) {
-        for (const key of Object.keys(cont)) {
-            total += cont[key];
-        }
-    }
-    return total;
-}
-export function totalExportacionCalidad(lote: lotesType, calidad:string): number {
-    let total = 0;
-    if (!lote) return total;
-
-    for (const cont of Object.values(lote.exportacion)) {
-        for (const key of Object.keys(cont)) {
-            if(key === calidad)
-                total += cont[key];
-        }
-    }
-    return total;
-}
 export function totalDescarte(lote: lotesType): number {
     let descarteEncerado: number
     let descarteLavado: number
@@ -44,19 +21,24 @@ export function totalDescarte(lote: lotesType): number {
     } else {
         descarteLavado = 0
     }
-    let deshidratacion
+
+    let deshidratacion = 0
     if (lote.deshidratacion) {
         deshidratacion = lote.deshidratacion === 0 ? 0 :
             (lote.deshidratacion / 100) * lote.kilos
     }
 
+    console.log("deshidratacion", deshidratacion)
+
+
     return descarteEncerado + descarteLavado + deshidratacion
 }
 export function totalLote(lote: lotesType): number {
     const descarte = totalDescarte(lote);
+    const directo_nacional = lote.directoNacional ?? 0;
     const fruta_nacional = lote.frutaNacional ?? 0;
-    const total_exportacion = totalExportacion(lote) ?? 0;
-    return total_exportacion + descarte + lote.directoNacional + fruta_nacional
+    const total_exportacion = lote?.salidaExportacion?.totalKilos ?? 0;
+    return descarte + directo_nacional + fruta_nacional + total_exportacion
 }
 export function getDataToInformeCalidad(lote: lotesType, contenedores: contenedoresType[]): void | null {
     if (!lote) return null;
@@ -154,7 +136,6 @@ export function totalPrecios(lote: lotesType): number {
         : 0;
 
     const exportacion = precioExportacion(lote) ?? 0;
-
     const deshidratacion = lote.deshidratacion === 0 ? 0 :
         ((lote.deshidratacion / 100) * lote.kilos) * (lote.precio?.descarte ?? 0)
 
@@ -216,12 +197,13 @@ export function total_precio_descarte(lote: lotesType): number {
 }
 function precioExportacion(lote: lotesType): number {
     let total = 0
-    if (!lote.exportacion) return total
-    for (const item of Object.values(lote.exportacion)) {
-        for (const [key, value] of Object.entries(item)) {
-            console.log("exportacion", key)
-            total += (lote.precio.exportacion[key] * value || 0)
-        }
+
+    if (!lote.salidaExportacion) return total;
+    if (!lote.precio?.exportacion) return total;
+    if (!lote.salidaExportacion.porCalidad) return total;
+    for (const [key, value] of Object.entries(lote.salidaExportacion.porCalidad)) {
+        console.log("exportacion", key)
+        total += (lote.precio.exportacion[key] * Number(value.kilos) || 0)
     }
     return total
 }

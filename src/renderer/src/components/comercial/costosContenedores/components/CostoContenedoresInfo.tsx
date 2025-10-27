@@ -51,7 +51,6 @@ export default function CostoContenedoresInfo({ data, setShowData, tipo }: props
         });
 
         setTotalTipoFruta(totalesPorTipoFruta);
-        console.log('Total por tipo de fruta:', totalesPorTipoFruta);
     }, [data, tipo])
 
     if (!data || data.length === 0) {
@@ -79,7 +78,7 @@ export default function CostoContenedoresInfo({ data, setShowData, tipo }: props
                             <th>{tipo === 'lote' ? "Enf" : "Contenedor"}</th>
                             <th>{tipo === 'lote' ? "Predio" : "Cliente"}</th>
                             {Object.keys(data[0] || {}).map(item => {
-                                if (item === "_id" || item === "nombre") return null;
+                                if (item === "_id" || item === "nombre" || item === "tipoFruta") return null;
                                 return <React.Fragment key={item + "headercalidad"}>
                                     <th >{calidadesExpt.find(calidad => calidad._id === item)?.nombre || item} Kg</th>
                                     <th >{calidadesExpt.find(calidad => calidad._id === item)?.nombre || item} Costo</th>
@@ -94,7 +93,7 @@ export default function CostoContenedoresInfo({ data, setShowData, tipo }: props
                                     <td>{item._id}</td>
                                     <td>{item.nombre}</td>
                                     {Object.keys(item).map((calidad, index) => {
-                                        if (calidad === "_id" || calidad === "nombre") return null;
+                                        if (calidad === "_id" || calidad === "nombre" || calidad === "tipoFruta") return null;
                                         return <React.Fragment key={index}>
                                             <td >
                                                 {Number(item[calidad].kilos || 0).toFixed(2)}
@@ -129,7 +128,7 @@ export default function CostoContenedoresInfo({ data, setShowData, tipo }: props
                             <td><strong>Total</strong></td>
                             <td><strong></strong></td>
                             {Object.keys(data[0] || {}).map((calidad) => {
-                                if (calidad === "_id" || calidad === "nombre") return null;
+                                if (calidad === "_id" || calidad === "nombre" || calidad === "tipoFruta") return null;
                                 return <React.Fragment key={calidad + "totalcalidad"}>
                                     <td>
                                         {(data || []).reduce((acu, item) => acu += Number(item[calidad]?.kilos || 0), 0).toFixed(2)}

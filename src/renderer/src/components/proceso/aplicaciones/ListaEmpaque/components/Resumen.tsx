@@ -14,6 +14,7 @@ type propsType = {
 export default function Resumen({ pallets }: propsType): JSX.Element {
 
     const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta)
+    const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades)
 
     const [resumen, setResumen] = useState<ResumenContenedores>();
     const [soloHoy, setSoloHoy] = useState<string>('')
@@ -109,7 +110,7 @@ export default function Resumen({ pallets }: propsType): JSX.Element {
                                     <tbody>
                                         {Object.entries(resumen[tipoFruta].calidad).map(([calidad, value], index) => (
                                             <tr className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`} key={calidad}>
-                                                <td>{tipoCalidad(calidad, tiposFrutas)}</td>
+                                                <td>{tipoCalidad(calidad, tiposCalidades)}</td>
                                                 {verKilos &&
                                                     <td>{value.kilos.toLocaleString('es-CO')} Kg</td>}
                                                 {verCajas &&

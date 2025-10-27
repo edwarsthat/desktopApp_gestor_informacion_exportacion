@@ -34,8 +34,8 @@ export default function ViewInformeData(props: propsType): JSX.Element {
 
     useEffect(() => {
         if (props.loteSeleccionado &&
-            props.loteSeleccionado.contenedores &&
-            props.loteSeleccionado.contenedores?.length > 0) {
+            props.loteSeleccionado.salidaExportacion &&
+            props.loteSeleccionado.salidaExportacion.contenedores?.length > 0) {
             buscarContenedores()
         }
     }, [])

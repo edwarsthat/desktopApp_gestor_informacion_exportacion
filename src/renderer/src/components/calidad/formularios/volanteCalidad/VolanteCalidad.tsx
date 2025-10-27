@@ -77,7 +77,7 @@ export default function VolanteCalidad(): JSX.Element {
             <Filtros
                 showFechaInicio={true}
                 showFechaFin={true}
-                showTipoFruta2={true}
+                showTipoFruta={true}
                 showButton={true}
                 findFunction={obtenerDatos}
                 ggnId="volanteCalidad"

@@ -3,7 +3,6 @@ import { lotesType } from "@renderer/types/lotesType"
 import { filtroColumnasType } from "../type/types"
 import { KEYS_FILTROS_COL } from "../functions/constantes"
 import { total_data, total_descarte } from "@renderer/functions/resumenlotes"
-import { totalExportacionLotes } from "@renderer/functions/operacionesLotes"
 
 type propsType = {
     columnVisibility: filtroColumnasType
@@ -26,7 +25,8 @@ export default function TotalesProceso(props: propsType): JSX.Element {
                             return (<p key={index}>{KEYS_FILTROS_COL[item]}: {total_descarte(props.data, item).toLocaleString()}</p>)
                         } 
                         else if (item === 'exportacion') {
-                            return (<p key={index}>{KEYS_FILTROS_COL[item]}: {totalExportacionLotes(props.data).toLocaleString()}</p>)
+                            return (<p key={index}>{KEYS_FILTROS_COL[item]}: {props.data.reduce((acu, kilos) =>
+                                    (acu += kilos?.salidaExportacion?.totalKilos ? kilos.salidaExportacion.totalKilos : 0), 0).toLocaleString()}</p>)
                         } 
                         // else if(item === 'exportacionCalidad'){
                         //     return (<p key={index}>{KEYS_FILTROS_COL[item]}: {total_porcentaje_exportacion_calidad(props.data)} </p>)

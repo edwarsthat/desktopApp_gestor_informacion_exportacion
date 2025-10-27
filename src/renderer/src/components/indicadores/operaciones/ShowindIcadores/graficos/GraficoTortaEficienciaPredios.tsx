@@ -23,7 +23,7 @@ export default function GraficoTortaEficienciaPredios({
     totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion, dataCalibres, dataCalidades
 }: propsType): JSX.Element {
     const chartRef = useRef<Chart | null>(null);
-    const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
+    const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades);
 
     useEffect(() => {
         const canvas = document.getElementById('myChart_indicadores_operativo_eficiencia_predios') as HTMLCanvasElement;
@@ -34,7 +34,7 @@ export default function GraficoTortaEficienciaPredios({
         // Cleanup del chart anterior
         chartRef.current?.destroy();
         // Usa el generador de config
-        const config = buildEficienciaPrediosPieChartConfig(totalLotes, dataCalibres, dataCalidades, filtrosCalidad, filtrosCalibre, selectFiltroExportacion, tiposFrutas);
+        const config = buildEficienciaPrediosPieChartConfig(totalLotes, dataCalibres, dataCalidades, filtrosCalidad, filtrosCalibre, selectFiltroExportacion, tiposCalidades);
 
         chartRef.current = new Chart(ctx, config);
 

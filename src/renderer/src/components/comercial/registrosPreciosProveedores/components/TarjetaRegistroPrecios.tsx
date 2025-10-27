@@ -17,6 +17,7 @@ type propsType = {
 
 export default function TarjetaRegistroPrecios({ item, proveedores, setOpen, setItem }: propsType): JSX.Element {
     const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
+    const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades);
 
     const formatCurrency = (value: number): string => {
         return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(value);
@@ -47,7 +48,7 @@ export default function TarjetaRegistroPrecios({ item, proveedores, setOpen, set
                     {/* Precios de exportación dinámicos */}
                     {Object.entries(item.exportacion || {}).map(([key, precio]) => (
                         <div key={key + item._id} className="precio-item">
-                            <span className="precio-label">{tipoCalidad(key, tiposFrutas)}:</span>
+                            <span className="precio-label">{tipoCalidad(key, tiposCalidades)}:</span>
                             <span className="precio-value">{formatCurrency(Number(precio) || 0)}</span>
                         </div>
                     ))}

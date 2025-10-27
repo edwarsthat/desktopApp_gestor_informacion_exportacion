@@ -5,7 +5,6 @@ import { useState } from "react";
 import CostosContenedoresFiltros from "./components/CostosContenedoresFiltros";
 import { costoContenedorData } from "./types";
 import CostoContenedoresInfo from "./components/CostoContenedoresInfo";
-import { set } from "date-fns";
 
 export default function CostosContenedores(): JSX.Element {
 

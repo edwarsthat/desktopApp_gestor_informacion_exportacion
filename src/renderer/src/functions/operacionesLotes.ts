@@ -29,24 +29,24 @@ export const promedioDescartes = (datos: lotesType[], llave: keyof lotesType & s
 
 
 //#region exportacion
-export function totalExportacion(lote: lotesType): number {
-    let total = 0;
-    if (!lote) return total;
-    if(!lote.exportacion) return total;
+// export function totalExportacion(lote: lotesType): number {
+//     let total = 0;
+//     if (!lote) return total;
+//     if(!lote.exportacion) return total;
 
-    for (const cont of Object.values(lote.exportacion)) {
-        for (const key of Object.keys(cont)) {
-            total += cont[key];
-        }
-    }
-    return total;
-}
-export function totalExportacionLotes(lotes: lotesType[]): number {
-    return lotes.reduce((acu, item) => acu += totalExportacion(item), 0);
-}
-export const promedioExportacion = (datos: lotesType[]): number => {
-    return averageBy(datos, totalExportacion);
-};
+//     for (const cont of Object.values(lote.exportacion)) {
+//         for (const key of Object.keys(cont)) {
+//             total += cont[key];
+//         }
+//     }
+//     return total;
+// }
+// export function totalExportacionLotes(lotes: lotesType[]): number {
+//     return lotes.reduce((acu, item) => acu += totalExportacion(item), 0);
+// }
+// export const promedioExportacion = (datos: lotesType[]): number => {
+//     return averageBy(datos, totalExportacion);
+// };
 
 //#region desverdizado
 export const totalDataDesverdizado = (datos: lotesType[]): number => {

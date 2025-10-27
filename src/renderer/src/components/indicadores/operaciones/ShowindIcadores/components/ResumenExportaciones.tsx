@@ -20,6 +20,7 @@ export default function ResumenExportaciones({
     data, filtrosTipoFruta, filtrosCalidad, filtrosCalibre
 }: propsType): JSX.Element {
     const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
+    const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades);
     const [exportacionOriginal, setExportacionOriginal] = useState<number>(0);
     const [totalProcesado, setTotalProcesado] = useState<number>(0);
     const [porcentajeExportacion, setPorcentajeExportacion] = useState<number>(0);
@@ -163,7 +164,7 @@ export default function ResumenExportaciones({
                                     <div key={`calidad-${calidadIndex}`} className="json-level json-level-2">
                                         <div className="json-line">
                                             <span className="json-icon">⭐</span>
-                                            <span className="json-key">{tipoCalidad(calidad, tiposFrutas)}:</span>
+                                            <span className="json-key">{tipoCalidad(calidad, tiposCalidades)}:</span>
                                             <span className="json-value">{formatNumero(sumar_arbol_calidad_tipoFruta(arbolExportacion, tipoFruta, calidad))} kg</span>
                                         </div>
 

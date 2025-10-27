@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { clienteType } from "./clientesType"
 import { vehiculosType } from "./salidaTransporte/vehiculos"
+import { calidadesType, tiposFrutasType } from "./tiposFrutas"
 
 export type contenedoresType = {
   _id: string
@@ -49,9 +50,9 @@ export type infoContendorType = {
   fechaFinalizado: string
   fechaSalida: string
   ultimaModificacion: string
-  tipoFruta: string[]
+  tipoFruta: tiposFrutasType[]
   tipoCaja: string[]
-  calidad: string[]
+  calidad: calidadesType[]
   cerrado: boolean
   observaciones: string
   sombra: string

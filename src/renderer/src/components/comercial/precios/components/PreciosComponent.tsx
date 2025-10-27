@@ -3,17 +3,18 @@
 import useAppContext from "@renderer/hooks/useAppContext"
 import useForm from "@renderer/hooks/useForm"
 import { proveedoresType } from "@renderer/types/proveedoresType"
-import { tiposFrutasType } from "@renderer/types/tiposFrutas"
+import { tiposFrutasType, calidadesType } from "@renderer/types/tiposFrutas"
 import { formInit, formType, formSchema } from "../validations/validations"
 import React from "react"
 
 type propsType = {
     tiposFrutas: tiposFrutasType[]
+    tiposCalidades: calidadesType[]
     selectedProveedores: proveedoresType[] | undefined
     setSelectedProveedores: (proveedor: React.SetStateAction<proveedoresType[] | undefined>) => void
 }
 
-export default function PreciosComponent({ tiposFrutas, selectedProveedores, setSelectedProveedores }: propsType): JSX.Element {
+export default function PreciosComponent({ tiposFrutas, tiposCalidades, selectedProveedores, setSelectedProveedores }: propsType): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
     const { formState, handleChange, formErrors, validateForm, resetForm } = useForm<formType>(formInit)
 
@@ -80,7 +81,7 @@ export default function PreciosComponent({ tiposFrutas, selectedProveedores, set
                     {formErrors?.week && <span className="error-text">{formErrors.week}</span>}
                 </div>
 
-                {formState?.tipoFruta && tiposFrutas.find(fruta => fruta._id === formState.tipoFruta)?.calidades.map(calidad => (
+                {formState?.tipoFruta && tiposCalidades.filter(calidad => calidad.tipoFruta._id === formState.tipoFruta).map(calidad => (
                     <div className="fila" key={calidad._id}>
                         <label htmlFor={calidad._id}>{calidad.nombre}</label>
                         <input onChange={handleChange} name={"exportacion." + calidad._id}

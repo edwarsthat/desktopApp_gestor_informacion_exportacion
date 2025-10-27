@@ -10,23 +10,22 @@ type propsType = {
 
 export default function ViewInformeResultados({ loteSeleccionado }: propsType): JSX.Element {
     const calidadesExport = useTipoFrutaStore((state) => state.tiposCalidades);
-    const calidadesLote = loteSeleccionado?.salidaExportacion?.porCalidad?.map(c => c.calidadId) || [];
+    const calidadesExportSort = [...calidadesExport].sort((a, b) =>  a.importancia - b.importancia);
 
-    const calidadIds = calidadesExport.filter(c => calidadesLote.includes(c._id)).sort((a, b) =>
-        a.importancia - b.importancia).map(c => c._id);
     return (
         <>
-            {(calidadIds || []).map((id) => {
-                const calidadLoteKilos = loteSeleccionado.salidaExportacion.porCalidad.find(c => c.calidadId === id)?.kilos || 0;
-                return <tr key={id}>
-                    <td>Exportación Tipo {calidadesExport.find(c => c._id === id)?.descripcion}</td>
+            {(calidadesExportSort || []).map((id) => {
+                if(!loteSeleccionado?.salidaExportacion?.porCalidad?.[id._id]) return null;
+                const calidadLoteKilos = loteSeleccionado.salidaExportacion.porCalidad[id._id]?.kilos || 0;
+                return <tr key={id._id}>
+                    <td>Exportación Tipo {calidadesExport.find(c => c._id === id._id)?.descripcion}</td>
                     <td>{calidadLoteKilos.toFixed(2)} Kg</td>
                     <td>{
                         obtenerPorcentage(calidadLoteKilos, loteSeleccionado.kilos).toFixed(2)
                     }% </td>
                     <MostrarPrecios
                         loteSeleccionado={loteSeleccionado}
-                        tipoPrecio={id}
+                        tipoPrecio={id._id}
                         kilosFruta={calidadLoteKilos}
                     />
                 </tr>

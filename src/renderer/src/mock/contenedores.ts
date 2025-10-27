@@ -34,16 +34,35 @@ export function generateMockContenedor(overrides = {}): contenedoresType {
                 calibre: randomPick(calibres)
             },
             EF1: generateArray(numEF1, () => ({
-                lote: `mock_lote_${randomInt(1, 9999)}`,
+                _id: `mock_ef1_${randomInt(1, 9999)}`,
+                lote: {
+                    enf: `ENF-${randomInt(1, 100)}`,
+                    predio: `Predio ${randomInt(1, 50)}`,
+                    _id: `mock_lote_id_${randomInt(1, 9999)}`,
+                    ICA: {
+                        code: `ICA-${randomInt(1000, 9999)}`,
+                        fechaVencimiento: String(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000))
+                    },
+                    GGN: {
+                        code: `GGN-${randomInt(1000, 9999)}`,
+                        fechaVencimiento: String(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)),
+                        paises: ["Colombia", "USA"],
+                        tipo_fruta: [randomPick(frutas)]
+                    },
+                    VENCIMIENTO: String(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)),
+                    predioID: `predio_${randomInt(1, 100)}`,
+                    SISPAP: Math.random() < 0.8
+                },
                 cajas: randomInt(1, 100),
                 tipoCaja: randomPick(cajas),
-                calibre: Number(randomPick(calibres)),
-                calidad: Number(randomPick(calidades)),
-                fecha: new Date(),
+                calibre: randomPick(calibres),
+                calidad: randomPick(calidades),
+                fecha: String(new Date()),
                 tipoFruta: randomPick(frutas),
                 SISPAP: Math.random() < 0.8,
                 GGN: Math.random() < 0.5
             })),
+            cajasTotal: randomInt(100, 500),
             listaLiberarPallet: {
                 rotulado: Math.random() < 0.5,
                 paletizado: Math.random() < 0.5,
@@ -54,24 +73,22 @@ export function generateMockContenedor(overrides = {}): contenedoresType {
         };
     });
 
-    const entregaPrecintoSchema = {
-        entrega: `Entrego aleatoria ${randomInt(1, 999)}`,
-        recibe: `Recibió aleatoria ${randomInt(1, 999)}`,
-        createdAt: String(new Date()),
-        fechaEntrega: String(new Date()),
-        fotos: ["https://example.com/foto1.jpg", "https://example.com/foto2.jpg"],
-        user: `User ${randomInt(1, 100)} `,
-        observaciones: `Observacion random ${randomInt(1, 100)} `
-    }
-
     const contenedor = {
         _id: `mock_id_${randomInt(1, 9999)}`,
         numeroContenedor: numero,
         pallets: pallets,
-        entregaPrecinto: entregaPrecintoSchema,
         infoContenedor: {
-            clienteInfo: `mock_cliente_${randomInt(1, 100)
-                }`,
+            clienteInfo: {
+                _id: `mock_cliente_id_${randomInt(1, 100)}`,
+                CLIENTE: `Cliente Mock ${randomInt(1, 100)}`,
+                PAIS_DESTINO: ["USA", "Europa"],
+                CODIGO: randomInt(1000, 9999),
+                CORREO: `cliente${randomInt(1, 100)}@mock.com`,
+                DIRECCIÓN: `Calle Mock ${randomInt(1, 100)}`,
+                ID: `ID-${randomInt(1000, 9999)}`,
+                TELEFONO: `+57 30012345${randomInt(1, 9)}`,
+                activo: true
+            },
             fechaCreacion: String(new Date()),
             fechaInicio: String(new Date()),
             fechaInicioReal: String(new Date()),
@@ -79,9 +96,38 @@ export function generateMockContenedor(overrides = {}): contenedoresType {
             fechaEstimadaCargue: String(new Date()),
             fechaSalida: "",
             ultimaModificacion: String(new Date()),
-            tipoFruta: [randomPick(frutas)],
+            tipoFruta: [{
+                _id: `mock_tipo_fruta_${randomInt(1, 100)}`,
+                tipoFruta: randomPick(frutas),
+                valorPromedio: randomInt(10, 50),
+                defectos: ["Defecto1", "Defecto2"],
+                rengoDeshidratacionPositiva: 5,
+                rengoDeshidratacionNegativa: -5,
+                createdAt: String(new Date()),
+                calibres: [randomPick(calibres), randomPick(calibres)],
+                codNacional: `CN-${randomInt(100, 999)}`,
+                codExportacion: `CE-${randomInt(100, 999)}`
+            }],
             tipoCaja: [randomPick(cajas)],
-            calidad: [randomPick(calidades)],
+            calidad: [{
+                _id: `mock_calidad_${randomInt(1, 100)}`,
+                nombre: randomPick(calidades),
+                descripcion: `Descripción calidad ${randomPick(calidades)}`,
+                importancia: randomInt(1, 5),
+                codContabilidad: `COD-${randomInt(100, 999)}`,
+                tipoFruta: {
+                    _id: `mock_tipo_fruta_${randomInt(1, 100)}`,
+                    tipoFruta: randomPick(frutas),
+                    valorPromedio: randomInt(10, 50),
+                    defectos: ["Defecto1", "Defecto2"],
+                    rengoDeshidratacionPositiva: 5,
+                    rengoDeshidratacionNegativa: -5,
+                    createdAt: String(new Date()),
+                    calibres: [randomPick(calibres)],
+                    codNacional: `CN-${randomInt(100, 999)}`,
+                    codExportacion: `CE-${randomInt(100, 999)}`
+                }
+            }],
             sombra: `${randomInt(0, 100)}% `,
             defecto: `${randomInt(0, 10)}% `,
             mancha: "N/A",

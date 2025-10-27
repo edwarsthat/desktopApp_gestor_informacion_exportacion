@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import useAppContext from "@renderer/hooks/useAppContext"
 import { FilterValues } from "@renderer/hooks/useFiltro"
 import { inventarioDescarteType } from "../types/types"
+import { tiposFrutasType } from "@renderer/types/tiposFrutas"
 
 type outType = {
     data: inventarioDescarteType
@@ -11,9 +12,11 @@ type outType = {
 }
 type propsType = {
     currentFilters: FilterValues
+    tiposFruta: tiposFrutasType[]
+
 }
 
-export default function useDataInventarioDescartes({ currentFilters }: propsType): outType {
+export default function useDataInventarioDescartes({ currentFilters, tiposFruta }: propsType): outType {
     const initInventario = {
         total: {
             descarteLavado: {
@@ -40,6 +43,7 @@ export default function useDataInventarioDescartes({ currentFilters }: propsType
             setLoading(true)
             const request = { action: 'get_inventarios_frutaDescarte_fruta' };
             const frutaActual = await window.api.server2(request)
+            console.log('frutaActual', frutaActual)
             if (frutaActual.status !== 200) throw new Error(`Code ${frutaActual.status}: ${frutaActual.message}`)
             setDataOriginal(frutaActual.data)
 
@@ -75,7 +79,9 @@ export default function useDataInventarioDescartes({ currentFilters }: propsType
             const newObject = obtener_total_inventario(dataOriginal)
             setData(newObject)
         } else {
-            const newObject = structuredClone(dataOriginal[currentFilters.tipoFruta])
+            const tipoFruta = tiposFruta.find(item => item._id === currentFilters.tipoFruta)?.tipoFruta
+            if(!tipoFruta) return
+            const newObject = structuredClone(dataOriginal[tipoFruta])
             setData({total:newObject})
         }
     }, [currentFilters])

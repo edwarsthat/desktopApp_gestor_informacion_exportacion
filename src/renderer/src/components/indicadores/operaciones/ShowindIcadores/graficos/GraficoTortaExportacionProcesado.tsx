@@ -21,6 +21,7 @@ export default function GraficoTortaExportacionProcesado({
     data, agrupacion, filtrosTipoFruta, filtrosCalidad, filtrosCalibre, dataOriginal
 }: propsType): JSX.Element {
     const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
+    const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades);
     const chartRef = useRef<Chart | null>(null);
 
     useEffect(() => {
@@ -33,7 +34,7 @@ export default function GraficoTortaExportacionProcesado({
         chartRef.current?.destroy();
 
         // Usa el generador de config
-        const config = buildExportacionChartConfig( dataOriginal, data, filtrosTipoFruta, filtrosCalidad, filtrosCalibre, tiposFrutas);
+        const config = buildExportacionChartConfig( dataOriginal, data, filtrosTipoFruta, filtrosCalidad, filtrosCalibre, tiposFrutas, tiposCalidades);
 
         chartRef.current = new Chart(ctx, config);
 

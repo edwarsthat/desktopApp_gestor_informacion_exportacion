@@ -74,7 +74,7 @@ export default function RegistrosPreciosProveedores(): JSX.Element {
             <Filtros
                 showFechaInicio={true}
                 showFechaFin={true}
-                showTipoFruta2={true}
+                showTipoFruta={true}
                 showProveedor={true}
                 showButton={true}
                 allId="comercial-registroProveedores-registroPrecios"

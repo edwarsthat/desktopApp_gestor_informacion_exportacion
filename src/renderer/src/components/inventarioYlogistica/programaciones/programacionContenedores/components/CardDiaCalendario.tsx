@@ -69,7 +69,8 @@ export default function CardDiaCalendario(props: propsType): JSX.Element {
             {showModal &&
                 <ModalInfoContenedor
                     clientes={props.clientes}
-                    closeModal={closeModal}
+                    open={showModal}
+                    onClose={():void => closeModal()}
                     contenedor={contenedorSeleccionado} />
             }
         </div>

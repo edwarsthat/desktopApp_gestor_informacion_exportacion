@@ -27,7 +27,6 @@ export default function ProcesoData(): JSX.Element {
         obtenerProveedores,
         obtenerData,
         data,
-        numeroContenedor
     } = useLotes({ currentFilters });
 
     const [tipoGraficas, setTipoGraficas] = useState<string>('')
@@ -121,7 +120,6 @@ export default function ProcesoData(): JSX.Element {
             <div>
                 <TableInfoLotes
                     data={data}
-                    numeroContenedor={numeroContenedor}
                     columnVisibility={columnVisibility} />
             </div>
         </div>

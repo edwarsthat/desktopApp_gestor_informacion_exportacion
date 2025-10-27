@@ -1,21 +1,22 @@
 /* eslint-disable prettier/prettier */
 
-import { totalesLotesType } from "../validations/types";
+// import { totalesLotesType } from "../validations/types";
 
-export const porcentajeCalibreLotes = (totales: totalesLotesType, calibre: string): string => {
-    const total = Object.values(totales.calibresTotal).reduce((acc, curr) => acc + curr.kilos, 0);
+// Funciones comentadas porque no se usan actualmente
+// export const porcentajeCalibreLotes = (totales: totalesLotesType, calibre: string): string => {
+//     const total = Object.values(totales.calibresTotal).reduce((acc, curr) => acc + curr.kilos, 0);
 
-    const calibreData = totales.calibresTotal[calibre];
-    if (calibreData) {
-        const porcentaje = total > 0 ? ((calibreData.kilos / total) * 100).toFixed(2) + '%' : '0%';
-        return `${porcentaje}`;
-    }
-    return "0%"
-}
+//     const calibreData = totales.calibresTotal[calibre];
+//     if (calibreData) {
+//         const porcentaje = total > 0 ? ((calibreData.kilos / total) * 100).toFixed(2) + '%' : '0%';
+//         return `${porcentaje}`;
+//     }
+//     return "0%"
+// }
 
-export const totalSumatoriaCalibreLotes = (totales: totalesLotesType): number => {
-    return Object.values(totales.calibresTotal).reduce((acc, curr) => acc + curr.kilos, 0) || 0;
-}
+// export const totalSumatoriaCalibreLotes = (totales: totalesLotesType): number => {
+//     return Object.values(totales.calibresTotal).reduce((acc, curr) => acc + curr.kilos, 0) || 0;
+// }
 
 export function generateColors(count): string[] {
     const colors = [

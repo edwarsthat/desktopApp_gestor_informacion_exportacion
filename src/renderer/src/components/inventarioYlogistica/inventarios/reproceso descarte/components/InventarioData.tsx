@@ -13,6 +13,7 @@ type propsType = {
 }
 
 export default function InventarioData(props: propsType): JSX.Element {
+    console.log("props.data", props.data)
     return (
         <div className="container-inventario-descarte-data">
             <div>

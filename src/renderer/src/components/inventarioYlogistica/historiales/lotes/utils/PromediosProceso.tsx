@@ -4,7 +4,6 @@ import { filtroColumnasType } from "../type/types"
 import { KEYS_FILTROS_COL } from "../functions/constantes"
 import { lotesType } from "@renderer/types/lotesType"
 import { promedio_data } from "@renderer/functions/resumenlotes"
-import { promedioExportacion } from "@renderer/functions/operacionesLotes"
 
 type propsType = {
     columnVisibility: filtroColumnasType
@@ -25,7 +24,10 @@ export default function PromediosProceso(props: propsType): JSX.Element {
                             return null
                         }
                         else if (item === 'exportacion') {
-                            return (<p key={index}>{KEYS_FILTROS_COL[item]}: {promedioExportacion(props.data).toFixed(2)}</p>)
+                            return (<p key={index}>{KEYS_FILTROS_COL[item]}: {(
+                                props.data.reduce((acu, kilos) =>
+                                    (acu += kilos?.salidaExportacion?.totalKilos ? kilos.salidaExportacion.totalKilos : 0), 0) / (props.data.length || 1))
+                                .toFixed(2)}</p>)
                         }
                         else {
                             return (<p key={index}>{KEYS_FILTROS_COL[item]}: {promedio_data(props.data, item).toFixed(2)}</p>)

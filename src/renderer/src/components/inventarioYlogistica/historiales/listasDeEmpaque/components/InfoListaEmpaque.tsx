@@ -5,11 +5,12 @@ import InformeListaEmpaque from "./InformeListaEmpaque"
 import InformeReportePredios from "./InformeReportePredios"
 import useAppContext from "@renderer/hooks/useAppContext"
 import { itemPalletType } from "@renderer/types/contenedores/itemsPallet"
+import { contenedoresType } from "@renderer/types/contenedoresType"
 
 type propsType = {
     items: itemPalletType[]
     handleVolverTabla: () => void
-    contenedorSeleccionado: string | null
+    contenedorSeleccionado: contenedoresType | null
 }
 
 export default function InfoListaEmpaque({ items, handleVolverTabla, contenedorSeleccionado }: propsType): JSX.Element {
@@ -25,7 +26,7 @@ export default function InfoListaEmpaque({ items, handleVolverTabla, contenedorS
             const req = {
                 action: "get_inventarios_historiales_listaDeEmpaque_crearDocumento",
                 tipo: tipo,
-                contenedor: contenedorSeleccionado,
+                contenedor: contenedorSeleccionado?._id,
             }
             const response = await window.api.server2(req);
             if (response.status !== 200) {
@@ -66,7 +67,7 @@ export default function InfoListaEmpaque({ items, handleVolverTabla, contenedorS
         }
     };
 
-    if (items === undefined) {
+    if (items === undefined || contenedorSeleccionado === null) {
         return (
             <div>Contenedor no seleccionado...</div>
         )
@@ -99,6 +100,7 @@ export default function InfoListaEmpaque({ items, handleVolverTabla, contenedorS
                     :
                     <InformeListaEmpaque
                         final={final}
+                        contenedorSeleccionado={contenedorSeleccionado}
                         items={items} />
                 }
             </div>

@@ -23,6 +23,7 @@ export default function FiltrosExportaciones({
     setFiltrosCalibre, filtrosCalibre,
 }: propsType): JSX.Element {
     const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta);
+    const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades);
     return (
         <div className="select-indicador-container">
             <div className="filtros-exportaciones-contenido">
@@ -101,7 +102,7 @@ export default function FiltrosExportaciones({
                                             }
                                         }}
                                     />
-                                    <span>{tipoCalidad(calidad, tiposFrutas)}</span>
+                                    <span>{tipoCalidad(calidad, tiposCalidades)}</span>
                                 </label>
                             ))}
                         </div>

@@ -4,7 +4,7 @@ import { clientesNacionalesType } from "./clientesType";
 import { contenedoresType } from "./contenedoresType";
 import { precioProveedorType } from "./preciosTypes";
 import { proveedoresType } from "./proveedoresType";
-import { tiposFrutasType } from "./tiposFrutas";
+import { calidadesType, tiposFrutasType } from "./tiposFrutas";
 
 /* eslint-disable @typescript-eslint/ban-types */
 export type lotesType = {
@@ -65,8 +65,8 @@ interface salidaExportacionType {
     kilosGGN: number;
     totalKilos: number;
     totalCajas: number;
-    porCalidad: { calidadId: string; kilos: number; cajas: number }[];
-    porCalibre: { calibre: string; kilos: number; cajas: number }[];
+    porCalidad: { [calidadId: string]: { kilos: number; cajas: number } };
+    porCalibre: { [calibre: string]: { kilos: number; cajas: number } };
     contenedores: contenedoresType[];
 }
 
@@ -141,7 +141,7 @@ type calidadType = {
         fecha: string;
         semillas: boolean;
         user: string;
-        calidad: string;
+        calidad: calidadesType;
     };
     clasificacionCalidad?: {
         acaro: number;

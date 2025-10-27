@@ -11,13 +11,13 @@ type propsType = {
 }
 
 export default function GraficosBarrasEficienciaPredios({ lotes, filtrosCalidad }: propsType): JSX.Element {
-    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta);
+    const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades);
 
     if (filtrosCalidad.length > 0) {
         return (
             <>
                 {(filtrosCalidad || []).map(calidadId => {
-                    const trueTitulo = tipoCalidad(calidadId, tiposFruta);
+                    const trueTitulo = tipoCalidad(calidadId, tiposCalidades);
                     return (
                         <div key={calidadId}>
                             <GraficoBarrasLotesDatos

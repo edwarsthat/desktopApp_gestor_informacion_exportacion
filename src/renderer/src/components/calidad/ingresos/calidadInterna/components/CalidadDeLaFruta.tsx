@@ -13,6 +13,7 @@ type propsType = {
 }
 export default function CalidadDeLaFruta({ lote, handleChange, formErrors }: propsType): JSX.Element {
     const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
+    const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades)
     if (!lote || !lote.tipoFruta) {
         return (
             <div className="calidad-interna-calidad-div">
@@ -26,7 +27,7 @@ export default function CalidadDeLaFruta({ lote, handleChange, formErrors }: pro
             <h2>Calidad</h2>
 
             <div className="radio-group">
-                {fruta && fruta.calidades && fruta.calidades.map((calidad) => (
+                {fruta && tiposCalidades && tiposCalidades.map((calidad) => (
                     <label className="radio-option" key={calidad._id}>
                         <input type="radio" name="calidad" value={calidad._id} onChange={handleChange} />
                         {calidad.nombre}

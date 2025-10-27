@@ -26,7 +26,7 @@ export default function HistorialListaEmpaque(): JSX.Element {
     })
     const [itemsPallet, setItemsPallet] = useState<itemPalletType[]>([])
     const [showTable, setShowTable] = useState<boolean>(true)
-    const [contenedorSeleccionado, setContenedorSeleccionado] = useState<string>("")
+    const [contenedorSeleccionado, setContenedorSeleccionado] = useState<contenedoresType | null>(null)
 
     useEffect(() => {
         obtenerData()
@@ -44,9 +44,10 @@ export default function HistorialListaEmpaque(): JSX.Element {
             if (response.error) {
                 throw new Error(`Code ${response.status} : ${response.message}`)
             }
+            console.log(response)
             setItemsPallet(response.data)
             setShowTable(false)
-            setContenedorSeleccionado(cont._id)
+            setContenedorSeleccionado(cont)
         } catch (error) {
             if (error instanceof Error) {
                 messageModal("error", error.message)

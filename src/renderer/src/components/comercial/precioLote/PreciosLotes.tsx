@@ -14,6 +14,7 @@ export default function PreciosLotes(): JSX.Element {
     const { messageModal, setLoading, loading } = useAppContext();
     const { formState, handleChange, formErrors, validateForm, resetForm } = useForm<formType>(formInit);
     const tiposFrutas = useTipoFrutaStore(state => state.tiposFruta)
+    const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades)
 
     const handleSave = async (event): Promise<void> => {
         event.preventDefault()
@@ -23,7 +24,6 @@ export default function PreciosLotes(): JSX.Element {
             setLoading(true)
             const formulario = { ...formState }
             formulario.comentario = formulario.enf + " " + formulario.comentario
-
             const request = {
                 action: "put_comercial_precios_precioLotes",
                 data: formulario
@@ -80,7 +80,7 @@ export default function PreciosLotes(): JSX.Element {
                     }
                 })}
                 {formState.tipoFruta !== "" && (
-                    tiposFrutas.find(item => item._id === formState.tipoFruta)?.calidades.map(calidad => (
+                    tiposCalidades.filter(calidad => calidad.tipoFruta._id === formState.tipoFruta).map(calidad => (
                         <FormInput
                             key={calidad._id}
                             name={`exportacion.${calidad._id}`}

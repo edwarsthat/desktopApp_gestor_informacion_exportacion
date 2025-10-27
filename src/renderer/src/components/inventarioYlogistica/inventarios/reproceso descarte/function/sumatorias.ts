@@ -5,7 +5,6 @@ import { descarteEncerado, descarteLavadoType, formType, inventarioDescarteType 
 export const sumatoriaTipoDescarte = (data: descarteEncerado | descarteLavadoType, tipoDescarte: string): number => {
   if (!data) return 0
   if (tipoDescarte !== 'descarteLavado' && tipoDescarte !== 'descarteEncerado') return 0
-
   const sumatoria = Object.values(data).reduce((acu, item) => acu += Number(item), 0)
 
   return sumatoria

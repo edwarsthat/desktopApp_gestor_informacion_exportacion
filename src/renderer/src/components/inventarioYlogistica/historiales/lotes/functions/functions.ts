@@ -4,7 +4,7 @@
 import { graficaDataType, graficaDonaDataType } from '../type/types'
 import { lotesType } from '@renderer/types/lotesType'
 // import { KEYS_FILTROS_COL } from './constantes'
-import { sumaDescarte, totalExportacion, totalDescarteLotes, totalExportacionLotes } from '@renderer/functions/operacionesLotes'
+import { sumaDescarte, totalDescarteLotes } from '@renderer/functions/operacionesLotes'
 type calibreType = {
   [key: string]: {
     cajas: number,
@@ -58,7 +58,7 @@ export const datosGraficas = (datos: lotesType[]): graficaDataType[] => {
       kilosVaciadosProm += lote.kilosVaciados || 0;
       descarteLavadoProm += sumaDescarte(lote, 'descarteLavado');
       descarteEnceradoProm += sumaDescarte(lote, 'descarteEncerado');
-      exportacionProm += totalExportacion(lote);
+      exportacionProm += lote?.salidaExportacion?.totalKilos || 0;
     }
 
     kilosProm = kilosProm / cantidadDatos || 0;
@@ -131,7 +131,7 @@ export const datosGraficaDona = (datos: lotesType[]): graficaDonaDataType => {
   const totalFrutaNacional = datos.reduce((acu, kilos) => (acu += kilos.frutaNacional ? kilos.frutaNacional : 0), 0)
   const totalDirectoNacional = datos.reduce((acu, kilos) => (acu += kilos.directoNacional ? kilos.directoNacional : 0), 0)
 
-  const totalExportacion = totalExportacionLotes(datos);
+  const totalExportacion = datos.reduce((acu, kilos) => (acu += kilos.salidaExportacion.totalKilos ? kilos.salidaExportacion.totalKilos : 0), 0)
 
   const total = totalDescarteEncerado + totalDescarteLavado + totalExportacion + totalDeshidratacion + totalFrutaNacional + totalDirectoNacional
 

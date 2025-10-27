@@ -19,7 +19,7 @@ export default function FiltroRendimientoPredios({
     setFiltrosCalibre, filtrosCalibre,
 }: propsType): JSX.Element {
 
-    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta);
+    const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades);
     return (
         <div className="select-indicador-container">
             <div className="filtros-exportaciones-contenido">
@@ -60,7 +60,7 @@ export default function FiltroRendimientoPredios({
                                             }
                                         }}
                                     />
-                                    <span>{tipoCalidad(calidad, tiposFruta)}</span>
+                                    <span>{tipoCalidad(calidad, tiposCalidades)}</span>
                                 </label>
                             ))}
                         </div>

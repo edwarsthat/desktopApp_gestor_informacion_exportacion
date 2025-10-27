@@ -12,7 +12,6 @@ type propsType = {
 }
 
 export default function ResumenKilosFruta({ lote, itemsPallet }: propsType): JSX.Element {
-    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
     const calidadesExport = useTipoFrutaStore((state) => state.tiposCalidades);
     // useEffect(() => { console.log(props.lote) }, [])
     const sumardescartes_pagos = (): JSX.Element => {
@@ -108,19 +107,18 @@ export default function ResumenKilosFruta({ lote, itemsPallet }: propsType): JSX
         if (lote.salidaExportacion) {
             const textCopyArrCont = (lote.salidaExportacion.contenedores ?? []).map(
                 (cont) => {
-                    return lote.salidaExportacion.porCalidad.map(
-                        (item) => {
-
-                            const valueCalidad = itemsPallet.filter(i => (i.contenedor._id === cont._id) && (i.calidad._id === item.calidadId))
+                    return Object.keys(lote?.salidaExportacion?.porCalidad ?? {}).map(
+                        (key) => {
+                            const valueCalidad = itemsPallet.filter(i => (i.contenedor._id === cont._id) && (i.calidad._id === key))
                                 .reduce((acu, it) => (acu += it.kilos), 0)
 
                             const kilos = decimalToComma(valueCalidad as number);
-                            const precioKey = decimalToComma(lote.precio.exportacion[item.calidadId]);
+                            const precioKey = decimalToComma(lote.precio.exportacion[key]);
                             const subTotal = decimalToComma(
-                                lote.precio.exportacion[item.calidadId] * (valueCalidad as number)
+                                lote.precio.exportacion[key] * (valueCalidad as number)
                             );
-                            const cod = calidadesExport.find(c => c._id === item.calidadId)?.codContabilidad || 'N/A';
-
+                            const cod = calidadesExport.find(c => c._id === key)?.codContabilidad || 'N/A';
+                            if (kilos === '0.00') return undefined;
                             return (
                                 `2\t${cod}\tKg\t${kilos}\t${precioKey}\t\t${subTotal}\t\t\t\t\t\t\tPCONT${cont.numeroContenedor}\n`
                             );
@@ -192,16 +190,17 @@ export default function ResumenKilosFruta({ lote, itemsPallet }: propsType): JSX
                 </thead>
                 <tbody>
                     {lote.salidaExportacion && (lote.salidaExportacion?.contenedores || []).map((cont, index) => {
-                        return (lote.salidaExportacion.porCalidad).map((calidadItem) => {
-
-                            const valueCalidad = itemsPallet.filter(i => (i.contenedor._id === cont._id) && (i.calidad._id === calidadItem.calidadId))
+                        return Object.keys(lote?.salidaExportacion?.porCalidad || {}).map((calidadItem) => {
+                            console.log(itemsPallet);
+                            const valueCalidad = itemsPallet.filter(i => (i.contenedor._id === cont._id) && (i.calidad._id.toString() === calidadItem))
                                 .reduce((acu, it) => (acu += it.kilos), 0)
+
                             if (valueCalidad === 0) return null;
-                            const calidadData = calidadesExport.find(c => c._id === calidadItem.calidadId);
+                            const calidadData = calidadesExport.find(c => c._id === calidadItem);
                             const cod = calidadData?.codContabilidad || 'N/A';
 
                             return (
-                                <tr key={`${cont._id}-${calidadItem.calidadId}`} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
+                                <tr key={`${cont._id}-${calidadItem}`} className={`${index % 2 === 0 ? 'fondo-par' : 'fondo-impar'}`}>
                                     <td>{cont.numeroContenedor}</td>
                                     <td>{cod}</td>
                                     <td>{valueCalidad as React.ReactNode}</td>

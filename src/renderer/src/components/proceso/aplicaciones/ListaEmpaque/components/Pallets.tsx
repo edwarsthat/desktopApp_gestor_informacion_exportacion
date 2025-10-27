@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 
 
-import ConfirmacionModal from "@renderer/messages/ConfirmacionModal";
 import { CuartoFrioType } from "@renderer/types/cuartosFrios";
 import { itemPalletType } from "@renderer/types/contenedores/itemsPallet";
 import { formatearFecha } from "@renderer/functions/fechas";

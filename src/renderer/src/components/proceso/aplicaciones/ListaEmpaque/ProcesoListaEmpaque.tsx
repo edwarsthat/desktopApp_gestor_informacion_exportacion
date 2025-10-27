@@ -129,7 +129,7 @@ export default function ProcesoListaEmpaque(): JSX.Element {
             if (contenedor === undefined || contenedor === null)
                 throw new Error("Error: contenedor no seleccionado")
             const request = {
-                action: 'cerrar_contenedor',
+                action: 'put_proceso_aplicaciones_listaEmpaque_Cerrar',
                 _id: contenedor._id
             }
             const response = await window.api.server2(request);

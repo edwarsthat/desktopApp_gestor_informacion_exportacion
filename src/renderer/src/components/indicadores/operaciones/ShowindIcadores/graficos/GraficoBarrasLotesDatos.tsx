@@ -25,8 +25,8 @@ export default function GraficoBarrasLotesDatos({
     const chartRef = useRef<Chart | null>(null);
     let trueTitulo
     if(tituloId){
-        const tiposFruta = useTipoFrutaStore(state => state.tiposFruta);
-        trueTitulo = tipoCalidad(tituloId, tiposFruta);
+        const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades);
+        trueTitulo = tipoCalidad(tituloId, tiposCalidades);
     }
 
     useEffect(() => {

@@ -12,6 +12,7 @@ import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 export default function PreciosProveedores(): JSX.Element {
     const { messageModal, setLoading } = useAppContext();
     const tiposFrutas = useTipoFrutaStore((state) => state.tiposFruta);
+    const tiposCalidades = useTipoFrutaStore((state) => state.tiposCalidades);
     const { proveedores, obtenerPredios } = useGetSysData({});
     const [selectedProveedores, setSelectedProveedores] = useState<proveedoresType[]>();
 
@@ -51,7 +52,8 @@ export default function PreciosProveedores(): JSX.Element {
                     <PreciosComponent
                         setSelectedProveedores={setSelectedProveedores}
                         selectedProveedores={selectedProveedores}
-                        tiposFrutas={tiposFrutas} />
+                        tiposFrutas={tiposFrutas}
+                        tiposCalidades={tiposCalidades} />
                 </div>
             </div>
         </div>

@@ -12,9 +12,6 @@ files:
 asarUnpack:
   - resources/**
   - tsclibnet.dll
-  - Entrega_Instrucciones.docx
-  - carta_responsabilidad.docx
-  - Check_list_tractomula.xlsx
   - docs/build/**
 afterSign: build/notarize.js
 win:

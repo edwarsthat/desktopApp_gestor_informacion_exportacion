@@ -3,17 +3,18 @@
 import { useEffect, useState } from "react"
 import { resumenCalidad } from "../functions/resumen"
 import { itemPalletType } from "@renderer/types/contenedores/itemsPallet"
+import { calidadesType } from "@renderer/types/tiposFrutas"
 
 type propsType = {
     items: itemPalletType[]
-    calidad: string
+    calidad: calidadesType
 }
 
 export default function TablaCalidadesInfo({ items, calidad }: propsType): JSX.Element {
     const [resumen, setResumen] = useState<object>()
     useEffect(() => {
         if (items !== undefined) {
-            const res = resumenCalidad(items, calidad)
+            const res = resumenCalidad(items, calidad._id)
             setResumen(res)
         }
     }, [items])
@@ -24,7 +25,7 @@ export default function TablaCalidadesInfo({ items, calidad }: propsType): JSX.E
                 <thead>
                     <tr>
                         <th>SUMMARY CATEGORY</th>
-                        <th>{calidad}</th>
+                        <th>{calidad.nombre}</th>
                         <th></th>
                         <th></th>
                     </tr>

@@ -3,7 +3,6 @@ import { useState } from "react"
 import { filtroColumnasType } from "../type/types"
 import { KEYS_FILTROS_COL } from "../functions/constantes"
 import { lotesType } from "@renderer/types/lotesType"
-import { numeroContenedorType } from "../functions/request"
 // import { total_porcentaje_calibre } from "../functions/functions"
 import { formatearFecha } from "@renderer/functions/fechas"
 // import { PredioDatosType } from "@renderer/functions/resumenContenedores"
@@ -11,7 +10,6 @@ import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore"
 
 type propsType = {
   data: lotesType[]
-  numeroContenedor: numeroContenedorType | undefined
   columnVisibility: filtroColumnasType
 }
 export default function TableInfoLotes(props: propsType): JSX.Element {
@@ -92,8 +90,8 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
 
                         return <td key={lote + item} >
                           {lote.salidaExportacion?.contenedores?.reduce((acu, cont) => {
-                            if (props.numeroContenedor) {
-                              acu += props.numeroContenedor[cont] + ' - ';
+                            if (cont.numeroContenedor) {
+                              acu += cont.numeroContenedor + ' - ';
                             }
                             return acu;
                           }, '')}
@@ -117,7 +115,7 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                               <td className="text-center p-2">
                                 <div className="flex flex-col items-center space-y-2 py-1">
 
-                                  {(lote.salidaExportacion.porCalidad || []).map((calidad) => (
+                                  {Object.keys(lote?.salidaExportacion?.porCalidad || {}).map((calidad) => (
 
                                     <div
                                       key={calidad + lote._id}
@@ -125,10 +123,10 @@ export default function TableInfoLotes(props: propsType): JSX.Element {
                                     >
                                       <div className="flex items-center justify-center space-x-2 text-center">
                                         <span className="font-semibold text-blue-800 text-xs">
-                                          {calidadesExp.find(c => c._id === calidad.calidadId)?.nombre || calidad.calidadId}:
+                                          {calidadesExp.find(c => c._id === calidad)?.nombre || calidad}:
                                         </span>
                                         <span className="font-medium text-gray-700 text-xs">
-                                          {calidad.kilos}
+                                          {lote.salidaExportacion.porCalidad[calidad].kilos}
                                         </span>
                                       </div>
                                     </div>

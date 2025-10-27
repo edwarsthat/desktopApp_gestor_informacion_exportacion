@@ -50,8 +50,10 @@ export default function useDataHistorialProcesado({ fechaInicio, fechaFin, tipoF
 
     useEffect(()=> {
         let filterData = dataOriginal
+        console.log("tipoFruta", tipoFruta)
+        console.log("filterData", filterData)
         if(tipoFruta){
-            filterData = filterData.filter(item => item.documento.tipoFruta.tipoFruta === tipoFruta)
+            filterData = filterData.filter(item => item.documento.tipoFruta._id === tipoFruta)
         }
         if(GGN){
             filterData = filterData.filter(item => item.documento.GGN)

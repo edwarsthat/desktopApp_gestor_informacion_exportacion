@@ -7,7 +7,7 @@ import { convertir_fecha_a_mes, convertir_fecha_a_semana, sumar_calibre_tipoFrut
 import { ChartConfiguration } from 'chart.js';
 import { lotesType } from '@renderer/types/lotesType';
 import { generateColors } from '../services/procesarData';
-import { tiposFrutasType } from '@renderer/types/tiposFrutas';
+import { tiposFrutasType, calidadesType } from '@renderer/types/tiposFrutas';
 import { nombreTipoFruta2, tipoCalidad } from '@renderer/utils/tipoFrutas';
 
 // Utilidad para obtener labels según agrupación
@@ -129,7 +129,7 @@ export function buildKilosHoraChartConfig(
     };
 }
 export function buildExportacionChartConfig(
-    dataOriginal: itemExportacionType[], data: itemExportacionType[], filtrosTipoFruta: string[], filtrosCalidad: string[], filtrosCalibre: string[], tiposFrutas: tiposFrutasType[]
+    dataOriginal: itemExportacionType[], data: itemExportacionType[], filtrosTipoFruta: string[], filtrosCalidad: string[], filtrosCalibre: string[], tiposFrutas: tiposFrutasType[], tiposCalidades: calidadesType[]
 ): ChartConfiguration<'pie'> {
     // Sumatoria total de kilos procesados y exportados
     // console.log("dataOriginal:", data);
@@ -166,7 +166,7 @@ export function buildExportacionChartConfig(
 
         totales.push(otros >= 0 ? otros : 0);
         totales.push(descarte)
-        const newClaves = filtrosCalidad.map(clave => tipoCalidad(clave, tiposFrutas))
+        const newClaves = filtrosCalidad.map(clave => tipoCalidad(clave, tiposCalidades))
         claves = [...newClaves, 'Otros', 'Descarte'];
     }
     else if (filtrosCalibre.length > 0) {
@@ -262,7 +262,7 @@ export function buildExportacionChartConfig(
     };
 }
 export function buildEficienciaPrediosPieChartConfig(
-    totalLotes: totalesLotesType, dataCalibres: dataLotesType[], dataCalidades: dataLotesType[], filtrosCalidad: string[], filtrosCalibre: string[], selectFiltroExportacion: filtroExportacionesSelectType, tiposFrutas: tiposFrutasType[]
+    totalLotes: totalesLotesType, dataCalibres: dataLotesType[], dataCalidades: dataLotesType[], filtrosCalidad: string[], filtrosCalibre: string[], selectFiltroExportacion: filtroExportacionesSelectType, tiposCalidades: calidadesType[]
 ): ChartConfiguration<'pie'> {
     let kilosDeshidratado, claves, totales, COLOR_MAP: Record<string, string>
 
@@ -270,7 +270,7 @@ export function buildEficienciaPrediosPieChartConfig(
         kilosDeshidratado = Math.max(totalLotes.totalKilosProcesados -
             (totalLotes.totalKilosDescarte + totalLotes.totalKilosExportacion), 0);
 
-        const newClaves = filtrosCalidad.map(clave => tipoCalidad(clave, tiposFrutas));
+        const newClaves = filtrosCalidad.map(clave => tipoCalidad(clave, tiposCalidades));
         claves = [...newClaves, "Descarte", "Deshidratacion", "otros"];
 
         const totalesCalidad: number[] = []
@@ -295,7 +295,7 @@ export function buildEficienciaPrediosPieChartConfig(
         };
         // Asigna colores a los calibres
         filtrosCalidad.forEach((calidad, idx) => {
-            COLOR_MAP[tipoCalidad(calidad, tiposFrutas)] = calidadColors[idx];
+            COLOR_MAP[tipoCalidad(calidad, tiposCalidades)] = calidadColors[idx];
         });
 
         console.log(COLOR_MAP)
@@ -451,7 +451,7 @@ export function buildEficienciaPrediosBarChartConfig(
 
             if(lote.salidaExportacion && Object.keys(lote.salidaExportacion.porCalidad).length > 0) {
                 console.log("lote sin salidaExportacion o porCalidad:", lote);
-                const kilosCal = lote.salidaExportacion.porCalidad.find(cal => cal.calidadId === elemento);
+                const kilosCal = lote.salidaExportacion.porCalidad[elemento];
                 kilos.push(kilosCal ? kilosCal.kilos : 0);
             }  else {
                 kilos.push(0);

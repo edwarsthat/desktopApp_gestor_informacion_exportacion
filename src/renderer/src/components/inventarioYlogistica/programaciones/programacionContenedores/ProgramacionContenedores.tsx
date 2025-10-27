@@ -6,19 +6,18 @@ import useAppContext from '@renderer/hooks/useAppContext';
 import { contenedoresType } from '@renderer/types/contenedoresType';
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { FaArrowCircleRight } from "react-icons/fa";
-import { clienteType } from '@renderer/types/clientesType';
+import useGetSysData from '@renderer/hooks/useGetSysData';
 
 export default function ProgramacionContenedores(): JSX.Element {
     const { messageModal } = useAppContext();
+    const { obtenerClientes, clientes} = useGetSysData({});
     const headers = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"]
     const [fecha, setFecha] = useState(new Date());
     const [dias, setDias] = useState<string[]>([]);
     const [mes, setMes] = useState<string>('');
     const [contenedores, setContenedores] = useState<contenedoresType[]>()
-    const [clientes, setClientes] = useState<clienteType[]>()
 
     useEffect(() => {
-        console.log(fecha)
         // Obtener el año y el mes actual
         const year = fecha.getFullYear();
         const month = fecha.getMonth();
@@ -43,21 +42,17 @@ export default function ProgramacionContenedores(): JSX.Element {
         obtenerClientes()
 
     }, [fecha]);
-
-
     // Función para cambiar el mes
     const mesAnterior = (): void => {
         const newMonth = fecha.getMonth() - 1;
         const nuevaFecha = new Date(fecha.getFullYear(), newMonth, 1, 1);
         setFecha(nuevaFecha)
     }
-
     const mesSiguiente = (): void => {
         const newMonth = fecha.getMonth() + 1;
         const nuevaFecha = new Date(fecha.getFullYear(), newMonth, 1, 1);
         setFecha(nuevaFecha)
     }
-
     const obtenerData = async (): Promise<void> => {
         try {
             const request = {
@@ -71,21 +66,6 @@ export default function ProgramacionContenedores(): JSX.Element {
         } catch (err) {
             if (err instanceof Error) {
                 messageModal('error', err.message)
-            }
-        }
-    }
-    const obtenerClientes = async (): Promise<void> => {
-        try {
-            const request = {
-                action: 'get_data_clientes',
-            }
-            const response = await window.api.server2(request);
-            if (response.status !== 200)
-                throw new Error(`Code ${response.status}: ${response.message}`)
-            setClientes(response.data)
-        } catch (err) {
-            if (err instanceof Error) {
-                messageModal("error", err.message)
             }
         }
     }

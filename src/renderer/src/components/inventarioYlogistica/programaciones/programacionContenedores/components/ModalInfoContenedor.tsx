@@ -1,372 +1,170 @@
 /* eslint-disable prettier/prettier */
 import { contenedoresType } from "@renderer/types/contenedoresType"
-import { useEffect, useState } from "react";
-import { IoSaveSharp } from "react-icons/io5";
-import { GiCancel } from "react-icons/gi";
+import { useEffect } from "react";
 import useAppContext from "@renderer/hooks/useAppContext";
-import { IoMdCloseCircle } from "react-icons/io";
-import { formatearFecha } from "@renderer/functions/fechas";
-import { MdEditDocument } from "react-icons/md";
 import { clienteType } from "@renderer/types/clientesType";
+import { formLabels, formSchema, formType, initialForm } from "../validations/validations";
+import useForm from "@renderer/hooks/useForm";
+import FormInput from "@renderer/components/UI/components/Forminput";
+import FormSelect from "@renderer/components/UI/components/FormSelect";
+import FormMultipleSelect from "@renderer/components/UI/components/FormMultipleSelect";
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
-import { nombreTipoFruta2, tipoCalidad } from "@renderer/utils/tipoFrutas";
+
 
 type propsType = {
     contenedor: contenedoresType | undefined
-    closeModal: () => void
     clientes: clienteType[] | undefined
+    open: boolean
+    onClose: () => void
 }
-const ids = ["66b6707777549ed0672a9029", "66db296f3d43194ad7a7f2b2", "66e06dff4440112c276a5bbb"]
 
-export default function ModalInfoContenedor(props: propsType): JSX.Element {
-    const { messageModal, seleccionWindow } = useAppContext();
-    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta);
-    const [modificando, setModificando] = useState<boolean>(false);
-    const [modificandoObservaciones, setModificandoObservaciones] = useState<boolean>(false)
-    const [modificandoCLiente, setModificandoCliente] = useState<boolean>(false)
-    const [tipoFruta, setTipoFruta] = useState<string>('')
-    const [tipoCaja, setTipoCaja] = useState<string>('')
-    const [calibres, setCalibres] = useState<string>('')
-    const [calidad, setCalidad] = useState<string>('')
-    const [observaciones, setObservaciones] = useState<string>('')
-    const [numeroContenedor, setNumeroContenedor] = useState<string>('')
-    const [cliente, setCliente] = useState<string>('')
+export default function ModalInfoContenedor({ contenedor, onClose, clientes, open }: propsType): JSX.Element {
+    const { messageModal, loading, setLoading } = useAppContext();
+    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
+    const tiposCalidad = useTipoFrutaStore(state => state.tiposCalidades)
+    const calibres = tiposFruta.flatMap(item => item.calibres)
+    const { formState, handleChange, setFormState, formErrors, handleArrayChange, validateForm, resetForm } = useForm<formType>(initialForm)
 
     useEffect(() => {
-        if (props.contenedor !== undefined) {
-            setTipoFruta(props.contenedor?.infoContenedor.tipoFruta.reduce((acu, item) => acu += nombreTipoFruta2(item, tiposFruta) + " , ", ''));
-            setObservaciones(props.contenedor.infoContenedor.observaciones);
-            setNumeroContenedor(String(props.contenedor.numeroContenedor));
-            setTipoCaja(props.contenedor?.infoContenedor.tipoCaja.reduce((acu, item) => acu += item + " , ", ''));
-            setCalibres(props.contenedor?.infoContenedor.calibres.reduce((acu, item) => acu += item + " , ", ''));
-            setCalidad(props.contenedor?.infoContenedor.calidad.reduce((acu, item) => acu += tipoCalidad(item, tiposFruta) + " , ", ''));
+        const obj = { ...formState }
+        obj.calibres = contenedor?.infoContenedor?.calibres || [""]
+        obj.calidad = contenedor?.infoContenedor?.calidad.map(cal => cal._id) || [""]
+        obj.cliente = contenedor?.infoContenedor?.clienteInfo?._id || ""
+        obj.defecto = contenedor?.infoContenedor?.defecto || ""
+        obj.fechaCreacion = contenedor?.infoContenedor?.fechaCreacion || ""
+        obj.fechaInicio = contenedor?.infoContenedor?.fechaInicio || ""
+        obj.fechaInicioReal = contenedor?.infoContenedor?.fechaInicioReal || ""
+        obj.fechaEstimadaCargue = contenedor?.infoContenedor?.fechaEstimadaCargue || ""
+        obj.fechaFinalizado = contenedor?.infoContenedor?.fechaFinalizado || ""
+        obj.fechaSalida = contenedor?.infoContenedor?.fechaSalida || ""
+        obj.mancha = contenedor?.infoContenedor?.mancha || ""
+        obj.observaciones = contenedor?.infoContenedor?.observaciones || ""
+        obj.sombra = contenedor?.infoContenedor?.sombra || ""
+        obj.tipoCaja = contenedor?.infoContenedor?.tipoCaja || [""]
+        obj.tipoFruta = contenedor?.infoContenedor?.tipoFruta.map(tf => tf._id) || [""]
+        obj.verdeManzana = contenedor?.infoContenedor?.verdeManzana || ""
+        setFormState(obj)
+    }, [])
 
-            if (typeof props.contenedor.infoContenedor.clienteInfo === 'object' ) 
-                setCliente(props.contenedor.infoContenedor.clienteInfo._id)
-
-
-
-        }
-    }, [props.contenedor])
-    const modificar = (): void => {
-        setModificando(!modificando)
-    }
-    const modificarObservaciones = (): void => {
-        setModificandoObservaciones(!modificandoObservaciones)
-    }
-    const modificarCliente = (): void => {
-        setModificandoCliente(!modificandoCLiente)
-    }
-
-    const guardarCambiosInfoProceso = async (): Promise<void> => {
+    const modificarContenedor = async (): Promise<void> => {
         try {
-            //se crean los arreglos
-            const stringTipoCaja = tipoCaja.replace(/\s+/g, "");
-            const stringCalidad = calidad.replace(/\s+/g, "");
-            const stringCalibres = calibres.replace(/\s+/g, "");
-            const arrTipoCaja = stringTipoCaja.split(",")
-            const arrCalidad = stringCalidad.split(",")
-            const arrCalibres = stringCalibres.split(",")
-
-            if (arrTipoCaja[arrTipoCaja.length - 1] === '') {
-                arrTipoCaja.pop()
-            }
-            if (arrCalidad[arrCalidad.length - 1] === '') {
-                arrCalidad.pop()
-            }
-            if (arrCalibres[arrCalibres.length - 1] === '') {
-                arrCalibres.pop()
+            setLoading(true)
+            const valid = validateForm(formSchema)
+            if(!valid){
+                return;
             }
             const request = {
                 action: "put_inventarios_programacion_contenedores",
-                _id: props.contenedor?._id,
-                __v: props.contenedor?.__v,
-                infoContenedor: {
-                    "infoContenedor.tipoFruta": tipoFruta,
-                    "infoContenedor.tipoCaja": arrTipoCaja,
-                    "infoContenedor.calidad": arrCalidad,
-                    "infoContenedor.calibres": arrCalibres
-                }
+                data: formState,
+                idContenedor: contenedor?._id
             }
-            const response = await window.api.server2(request);
-            if (response.status !== 200)
-                throw new Error(`Code ${response.status}: ${response.message}`);
-            messageModal("success", "Datos modificado con exito");
-
+            const response = await window.api.server2(request)
+            if(response.status !== 200){
+                throw new Error(`Code ${response.status}: ${response.message}`)
+            }
+            messageModal("success", "Modificado con exito!")
+            resetForm();
         } catch (err) {
             if (err instanceof Error) {
                 messageModal("error", err.message)
             }
         } finally {
-            modificar()
+            setLoading(false);
+            onClose();
         }
     }
-    const guardarCambiosObservaciones = async (): Promise<void> => {
-        try {
-            const request = {
-                action: "put_inventarios_programacion_contenedores",
-                _id: props.contenedor?._id,
-                __v: props.contenedor?.__v,
-                infoContenedor: {
-                    "infoContenedor.observaciones": observaciones,
-                }
-            }
-            const response = await window.api.server2(request);
-            if (response.status !== 200)
-                throw new Error(`Code ${response.status}: ${response.message}`);
-            messageModal("success", "Datos modificado con exito");
-        } catch (err) {
-            if (err instanceof Error) {
-                messageModal("error", err.message)
-            }
-        } finally {
-            modificarObservaciones()
-        }
-    }
-    const guardarCambiosNumeroConedorCliente = async (): Promise<void> => {
-        try {
-            const request = {
-                action: "put_inventarios_programacion_contenedores",
-                _id: props.contenedor?._id,
-                __v: props.contenedor?.__v,
-                infoContenedor: {
-                    numeroContenedor: numeroContenedor,
-                    "infoContenedor.clienteInfo": cliente
-                }
-            }
-            const response = await window.api.server2(request);
-            if (response.status !== 200)
-                throw new Error(`Code ${response.status}: ${response.message}`);
-            messageModal("success", "Datos modificado con exito");
-        } catch (err) {
-            if (err instanceof Error) {
-                messageModal("error", err.message)
-            }
-        } finally {
-            modificarCliente()
-        }    }
-    if (props.contenedor === undefined) {
+    if (contenedor === undefined) {
         return (
             <div>No hay información del contenedor</div>
         )
     }
-    const handleVentana = (id, name): void => {
-        seleccionWindow(id, name)
-        props.closeModal()
 
-        if (ids.includes(id)) {
-            localStorage.setItem("inventario-lista-insumos-contenedor", props.contenedor?._id ? props.contenedor?._id : '')
-        }
-        if (ids.includes(id)) {
-            localStorage.setItem("proceso-listaempaque-id-contenedor", props.contenedor?._id ? props.contenedor?._id : '')
-        }
-        if (ids.includes(id)) {
-            localStorage.setItem("proceso-historial-listaempaque-id-contenedor", props.contenedor?._id ? props.contenedor?._id : '')
-        }
-    }
     return (
-        <div className="fondo-modal">
-            <div className="modal-container">
-                <div className='modal-header-agree'>
+        <dialog open={open} className="dialog-container">
+            <div className="dialog-header">
+                <h3>Informacion Contenedor</h3>
+                <button className="close-button" aria-label="Cerrar" onClick={onClose}>×</button>
 
-
-                    <div >
-                        {modificandoCLiente ?
-                            <div className='modal-header-agree-change-numero-cliente'>
-                                <input
-                                    onChange={(e): void => setNumeroContenedor(e.target.value)}
-                                    type="text"
-                                    value={numeroContenedor} />
-                                <select onChange={(e): void => setCliente(e.target.value)} value={cliente}>
-                                    <option>
-                                        Cliente
-                                    </option>
-                                    {props.clientes && props.clientes.map(item => (
-                                        <option value={item._id} key={item._id}>
-                                            {item.CLIENTE}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            :
-                            <h2>
-                                {props.contenedor.numeroContenedor + " - " +
-                                    (typeof props.contenedor.infoContenedor.clienteInfo === "object" ?
-                                        props.contenedor.infoContenedor.clienteInfo.CLIENTE : "")}
-                            </h2>
-                        }
-                    </div>
-                    <section>
-                        {!modificandoCLiente && <button onClick={modificarCliente}><MdEditDocument color="blue" /></button>}
-                        {modificandoCLiente && <button onClick={guardarCambiosNumeroConedorCliente} style={{ color: 'green' }}><IoSaveSharp /></button>}
-                        {modificandoCLiente && <button onClick={modificarCliente} style={{ color: 'red' }}><GiCancel /></button>}
-                    </section>
-                </div>
-                <div></div>
-                <div className="modal-container-body-contenedor">
-                    <div className='modal-container-body-contenedor-info'>
-                        {/* Fechas */}
-                        <div className="modal-container-body-contenedor-info-fechas">
-                            <h3>Fechas</h3>
-                            <div >
-                                <h4>Fecha Creación:</h4>
-                                <h5>
-                                    {props.contenedor.infoContenedor.fechaCreacion ?
-                                        formatearFecha(props.contenedor.infoContenedor.fechaCreacion, true) : ""}
-                                </h5>
-                            </div>
-                            <div>
-                                <h4>Fecha Inicio:</h4>
-                                <h5>
-                                    {props.contenedor.infoContenedor.fechaInicio ?
-                                        formatearFecha(props.contenedor.infoContenedor.fechaInicio) : ""}
-                                </h5>
-                            </div>
-                            <div>
-                                <h4>Fecha Estimada de cargue:</h4>
-                                <h5>
-                                    {props.contenedor.infoContenedor.fechaEstimadaCargue ?
-                                        formatearFecha(props.contenedor.infoContenedor.fechaEstimadaCargue) : ""}
-                                </h5>
-                            </div>
-                            <div>
-                                <h4>Fecha Finalizado:</h4>
-                                <h5>
-                                    {props.contenedor.infoContenedor.fechaFinalizado ?
-                                        formatearFecha(props.contenedor.infoContenedor.fechaFinalizado, true) : ""}
-                                </h5>
-                            </div>
-                            <div>
-                                <h4>Fecha Salida:</h4>
-                                <h5>
-                                    {props.contenedor.infoContenedor.fechaSalida ?
-                                        formatearFecha(props.contenedor.infoContenedor.fechaSalida) : ""}
-                                </h5>
-                            </div>
-                            <div>
-                                <h4>Ultima modificación:</h4>
-                                <h5>
-                                    {props.contenedor.infoContenedor.ultimaModificacion ?
-                                        formatearFecha(props.contenedor.infoContenedor.ultimaModificacion) : ""}
-                                </h5>
-                            </div>
-                        </div>
-                        {/* observaciones */}
-                        <div className="modal-container-body-contenedor-info-observaciones">
-                            <h3>Observaciones</h3>
-                            <div >
-                                {modificandoObservaciones ?
-                                    <textarea
-                                        value={observaciones}
-                                        onChange={(e): void => setObservaciones(e.target.value)} />
-                                    :
-                                    <h5>{observaciones}</h5>}
-
-                            </div>
-                            <section>
-                                {!modificandoObservaciones && <button onClick={modificarObservaciones}><MdEditDocument /></button>}
-                                {modificandoObservaciones && <button onClick={guardarCambiosObservaciones} style={{ color: 'green' }}><IoSaveSharp /></button>}
-                                {modificandoObservaciones && <button onClick={modificarObservaciones} style={{ color: 'red' }}><GiCancel /></button>}
-                            </section>
-                        </div>
-                        {/* Info proceso */}
-                        <div className="modal-container-body-contenedor-info-fechas">
-                            <h3>Info. Proceso</h3>
-                            <div>
-                                <h4>Tipo fruta:</h4>
-                                {modificando ?
-                                    <input type="text" value={tipoFruta} onChange={(e): void => setTipoFruta(e.target.value)} />
-                                    :
-                                    <h5>{tipoFruta}</h5>
-                                }
-                            </div>
-                            <div >
-                                <h4>Tipo Caja:</h4>
-                                {modificando ?
-                                    <input type="text" value={tipoCaja} onChange={(e): void => setTipoCaja(e.target.value)} />
-                                    :
-                                    <h5>{tipoCaja}</h5>}
-
-                            </div>
-                            <div >
-                                <h4>Calibres:</h4>
-                                {modificando ?
-                                    <input type="text" value={calibres} onChange={(e): void => setCalibres(e.target.value)} />
-                                    :
-                                    <h5>{calibres}</h5>}
-                            </div>
-                            <div >
-                                <h4>Calidad:</h4>
-                                {modificando ?
-                                    <input type="text" value={calidad} onChange={(e): void => setCalidad(e.target.value)} />
-                                    :
-                                    <h5>{calidad}</h5>}
-                            </div>
-                            <section>
-                                {!modificando && <button onClick={modificar}><MdEditDocument /></button>}
-                                {modificando && <button onClick={guardarCambiosInfoProceso} style={{ color: 'green' }}><IoSaveSharp /></button>}
-                                {modificando && <button onClick={modificar} style={{ color: 'red' }}><GiCancel /></button>}
-                            </section>
-                        </div>
-                        {/* Info extra */}
-                        <div className="modal-container-body-contenedor-info-fechas">
-                            <h3>Info. Extra</h3>
-                            <div>
-                                <h4>Sombra:</h4>
-                                <h5>
-                                    {props.contenedor.infoContenedor.sombra ?
-                                        props.contenedor.infoContenedor.sombra : ""}
-                                </h5>
-                            </div>
-                            <div>
-                                <h4>Defecto:</h4>
-                                <h5>
-                                    {props.contenedor.infoContenedor.defecto ?
-                                        props.contenedor.infoContenedor.defecto : ""}
-                                </h5>
-                            </div>
-                            <div>
-                                <h4>Mancha:</h4>
-                                <h5>
-                                    {props.contenedor.infoContenedor.mancha ?
-                                        props.contenedor.infoContenedor.mancha : ""}
-                                </h5>
-                            </div>
-                            <div>
-                                <h4>Verde manzana:</h4>
-                                <h5>
-                                    {props.contenedor.infoContenedor.verdeManzana ?
-                                        props.contenedor.infoContenedor.verdeManzana : ""}
-                                </h5>
-                            </div>
-                            <div>
-                                <h4>Desverdizado:</h4>
-                                <h5>
-                                    {props.contenedor.infoContenedor.desverdizado ?
-                                        "Desverdizado" : "N/A"}
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="modal-container-buttons">
-                    {props.contenedor.infoContenedor.fechaFinalizado !== null &&
-                        <button onClick={(): void => handleVentana("66db296f3d43194ad7a7f2b2", "Ingreso insumos contenedor")} className='defaulButtonAgree'>Insumos</button>}
-                    {props.contenedor.infoContenedor.fechaFinalizado === null &&
-                        <button onClick={(): void => handleVentana("66b6707777549ed0672a9029", "Lista de empaque")} className='defaulButtonAgree'>
-                            Lista de empaque
-                        </button>}
-                    {props.contenedor.infoContenedor.fechaFinalizado !== null && props.contenedor.infoContenedor.fechaInicioReal &&
-                        <button onClick={(): void => handleVentana("66e06dff4440112c276a5bbb", "Listas de empaque")} className='defaulButtonAgree'>
-                            Lista de empaque
-                        </button>}
-                </div>
-                <button onClick={props.closeModal} className="modal-container-close-button">
-
-                    <IoMdCloseCircle />
-
-                </button>
             </div>
-        </div>
+            <div className="dialog-body">
+                {Object.entries(formLabels).map(([key, label]) => {
+                    if (key.startsWith("fecha")) {
+                        return (
+                            <FormInput
+                                key={key}
+                                name={key}
+                                label={label}
+                                type="date"
+                                value={formState[key]}
+                                onChange={handleChange}
+                                error={formErrors[key]}
+                            />
+                        )
+                    } else if (key === "cliente" && clientes !== undefined) {
+                        return (
+                            <FormSelect
+                                key={key}
+                                name={key}
+                                value={formState[key]}
+                                label={label}
+                                onChange={handleChange}
+                                error={formErrors[key]}
+                                data={clientes.map((item) => ({ _id: item._id, name: item.CLIENTE }))}
+                            />
+                        )
+                    } else if (key === "tipoFruta") {
+                        return (
+                            <FormMultipleSelect
+                                key={key}
+                                name={key}
+                                value={formState[key] as string[]}
+                                label={label}
+                                onChange={handleArrayChange}
+                                error={formErrors[key]}
+                                data={tiposFruta.map((item) => ({ _id: item._id, name: item.tipoFruta }))}
+                            />
+                        )
+                    } else if (key === "calibres") {
+                        return (
+                            <FormMultipleSelect
+                                key={key}
+                                name={key}
+                                value={formState[key] as string[]}
+                                label={label}
+                                onChange={handleArrayChange}
+                                error={formErrors[key]}
+                                data={calibres.map((item) => ({ _id: item, name: item }))}
+                            />
+                        )
+                    } else if (key === "calidad") {
+                        return (
+                            <FormMultipleSelect
+                                key={key}
+                                name={key}
+                                value={formState[key] as string[]}
+                                label={label}
+                                onChange={handleArrayChange}
+                                error={formErrors[key]}
+                                data={tiposCalidad.map((item) => ({ _id: item._id, name: item.nombre }))}
+                            />
+                        )
+                    }
+
+                    return <FormInput
+                        key={key}
+                        name={key}
+                        label={label}
+                        type="text"
+                        value={formState[key]}
+                        onChange={handleChange}
+                        error={formErrors[key]}
+                    />
+                })}
+            </div>
+            <div className="dialog-footer">
+                <button className="default-button-agree" disabled={loading} onClick={modificarContenedor}>Modificar</button>
+                <button className="default-button-error" onClick={onClose}>Cerrar</button>
+            </div>
+        </dialog>
     )
 }

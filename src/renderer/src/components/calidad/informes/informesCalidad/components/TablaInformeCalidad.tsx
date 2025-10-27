@@ -75,7 +75,7 @@ export default function TablaInformeCalidad(props: propsType): JSX.Element {
                                 {item.calidad && Object.prototype.hasOwnProperty.call(item.calidad, 'calidadInterna') &&
                                     Object.prototype.hasOwnProperty.call(item.calidad, 'clasificacionCalidad') &&
                                     Object.prototype.hasOwnProperty.call(item.calidad, 'fotosCalidad') &&
-                                    item.deshidratacion && item.deshidratacion <= 3 && item.deshidratacion >= -1 ?
+                                    item.deshidratacion <= 3 && item.deshidratacion >= -1 ?
                                     <button
                                         onClick={(): void => props.handleAccederDocumento(item)}>
                                         <FontAwesomeIcon icon={faFileAlt} />

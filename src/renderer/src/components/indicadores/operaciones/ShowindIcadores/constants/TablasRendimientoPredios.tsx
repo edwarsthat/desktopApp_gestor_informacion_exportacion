@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 
 import { tipoCalidad } from "@renderer/utils/tipoFrutas";
-import { porcentajeCalibreLotes } from "../services/procesarData";
 import { dataLotesType, filtroExportacionesSelectType, totalesLotesType } from "../validations/types";
 import useTipoFrutaStore from "@renderer/store/useTipoFrutaStore";
 
@@ -20,7 +19,7 @@ export default function TablasRendimientoPredios({
     totalLotes, filtrosCalidad, filtrosCalibre, selectFiltroExportacion, dataCalidades, dataCalibres
 }: propsType): JSX.Element {
     const header = ["Totales", "Kilos", "Porcentaje"]
-    const tiposFruta = useTipoFrutaStore(state => state.tiposFruta)
+    const tiposCalidades = useTipoFrutaStore(state => state.tiposCalidades)
     if (selectFiltroExportacion.calidad) {
         return (
             <table className="table-main"
@@ -51,7 +50,7 @@ export default function TablasRendimientoPredios({
                         if (filtrosCalidad.includes(item._id)) {
                             return (
                                 <tr className={'fondo-impar'} key={item._id + "tablaPredioIndicador"}>
-                                    <td>{tipoCalidad(item._id, tiposFruta)}</td>
+                                    <td>{tipoCalidad(item._id, tiposCalidades)}</td>
                                     <td>{item.totalKilos.toLocaleString('es-CO')}</td>
                                     <td>{item.totalKilos > 0 ? ((item.totalKilos / totalLotes.totalKilosProcesados) * 100).toFixed(2) + '%' : '0%'}</td>
                                 </tr>

@@ -42,7 +42,7 @@ export default function ListaProveedores({
     useEffect(() => {
         if (proveedores) {
             let new_data = proveedores
-
+            console.log(filtro.tipoFruta)
             if (filtro.tipoFruta !== '') {
                 new_data = new_data.filter(proveedor => (
                     proveedor.tipo_fruta && Object.keys(proveedor.tipo_fruta).length > 0 ?
@@ -136,7 +136,7 @@ export default function ListaProveedores({
                         className="tool-select">
                         <option value=""></option>
                         {tiposFrutas && tiposFrutas.map(fruta =>
-                            <option value={fruta._id} key={fruta._id}>{fruta.tipoFruta}</option>
+                            <option value={fruta.tipoFruta} key={fruta._id}>{fruta.tipoFruta}</option>
                         )}
                     </select>
                 </div>
